@@ -8,6 +8,8 @@ if (!isLoggedIn()) {
 }
 
 $user_id = $_SESSION['user_id'];
+$university_id = $_SESSION['university_id'] ?? null;
+
 $sql = "SELECT b.*, e.name as equipment_name, e.equipment_code 
         FROM borrowings b
         JOIN equipment e ON b.equipment_id = e.equipment_id
@@ -46,4 +48,8 @@ if (isset($_GET['cancel']) && !empty($_GET['cancel'])) {
 }
 
 include 'my_borrowings.html';
+
+if ($university_id) {
+    echo "<p>University ID: $university_id</p>";
+}
 ?>
