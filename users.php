@@ -44,13 +44,10 @@ if (!empty($params)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Process delete user if requested
 if (isset($_GET['delete']) && isAdmin()) {
     $delete_id = (int)$_GET['delete'];
     
-    // Don't allow deleting yourself
     if ($delete_id != $_SESSION['user_id']) {
-        // Check if user has active borrowings
         $check_sql = "SELECT COUNT(*) as count FROM borrowings WHERE user_id = ? AND status = 'active'";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("i", $delete_id);
@@ -59,7 +56,6 @@ if (isset($_GET['delete']) && isAdmin()) {
         $active_count = $check_result->fetch_assoc()['count'];
         
         if ($active_count == 0) {
-            // Safe to delete the user
             $delete_sql = "DELETE FROM users WHERE user_id = ?";
             $delete_stmt = $conn->prepare($delete_sql);
             $delete_stmt->bind_param("i", $delete_id);
@@ -75,8 +71,7 @@ if (isset($_GET['delete']) && isAdmin()) {
     } else {
         $_SESSION['error'] = "You cannot delete your own account.";
     }
-    
-    // Redirect to refresh the page
+
     header("Location: users.php");
     exit();
 }

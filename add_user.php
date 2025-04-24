@@ -2,15 +2,12 @@
 session_start();
 require_once 'db_connection.php';
 
-// Check if user is logged in and is admin
 if (!isLoggedIn() || !isAdmin()) {
     header("Location: login.php");
     exit();
 }
 
-// Process form submission
 if (isset($_POST['add_user'])) {
-    // Get form data
     $first_name = sanitize($_POST['first_name']);
     $last_name = sanitize($_POST['last_name']);
     $email = sanitize($_POST['email']);
@@ -20,8 +17,7 @@ if (isset($_POST['add_user'])) {
     $department = sanitize($_POST['department']);
     $phone = isset($_POST['phone']) ? sanitize($_POST['phone']) : '';
     $university_id = sanitize($_POST['university_id']);
-    
-    // Validate form data
+
     $errors = [];
     
     if (empty($first_name) || empty($last_name)) {
@@ -33,8 +29,7 @@ if (isset($_POST['add_user'])) {
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = "Invalid email format";
     }
-    
-    // Check if email already exists
+ 
     $check_email = "SELECT COUNT(*) as count FROM users WHERE email = ?";
     $stmt = $conn->prepare($check_email);
     $stmt->bind_param("s", $email);
@@ -69,13 +64,10 @@ if (isset($_POST['add_user'])) {
     if (empty($university_id)) {
         $errors[] = "University ID is required.";
     }
-    
-    // If no errors, proceed with user creation
+   
     if (empty($errors)) {
-        // Hash the password
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        
-        // Insert new user into database
+     
         $sql = "INSERT INTO users (
             first_name, 
             last_name, 
@@ -100,7 +92,6 @@ if (isset($_POST['add_user'])) {
             $_SESSION['error'] = "Error adding user: " . $conn->error;
         }
     } else {
-        // Set error messages
         $_SESSION['error'] = implode("<br>", $errors);
     }
 }

@@ -110,7 +110,6 @@
                                 <a href="view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small">View</a>
                                 
                                 <?php if (isAdmin()): ?>
-                                    <!-- Quick status change dropdown -->
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
                                     <form method="post" action="equipment.php" style="display:inline-block; margin-right: 5px;" onsubmit="return validateStatusChange(this.new_status)">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
@@ -127,7 +126,6 @@
                                     
                                     <a href="edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
                                     
-                                    <!-- Delete form -->
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
                                     <form method="post" action="equipment.php" style="display:inline-block;">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">

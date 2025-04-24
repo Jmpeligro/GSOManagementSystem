@@ -2,13 +2,11 @@
 session_start();
 require_once 'db_connection.php';
 
-// Check if user is logged in and is admin
 if (!isLoggedIn() || !isAdmin()) {
     header("Location: login.php");
     exit();
 }
 
-// Initialize variables
 $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $mode = $user_id > 0 ? 'edit' : 'add';
 $title = $mode === 'edit' ? 'Edit User' : 'Add New User';
@@ -22,7 +20,6 @@ $phone = '';
 $role = '';
 $errors = [];
 
-// If editing, fetch user data
 if ($mode === 'edit') {
     $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
     $stmt->bind_param("i", $user_id);
@@ -45,9 +42,7 @@ if ($mode === 'edit') {
     $role = $user['role'];
 }
 
-// Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Validate and sanitize input
     $university_id = sanitize($_POST['university_id']);
     $first_name = sanitize($_POST['first_name']);
     $last_name = sanitize($_POST['last_name']);
@@ -57,8 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $role = sanitize($_POST['role']);
     $password = isset($_POST['password']) ? $_POST['password'] : '';
     $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
-    
-    // Validate inputs
+
     if (empty($university_id)) {
         $errors[] = "University ID is required";
     }
@@ -86,8 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!in_array($role, ['admin', 'faculty', 'staff', 'student'])) {
         $errors[] = "Invalid role selected";
     }
-    
-    // If adding a new user, password is required
+ 
     if ($mode === 'add') {
         if (empty($password)) {
             $errors[] = "Password is required for new users";
@@ -101,8 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (!empty($password) && strlen($password) < 8) {
         $errors[] = "Password must be at least 8 characters";
     }
-    
-    // Check email uniqueness (excluding current user if editing)
+
     $email_check_stmt = $conn->prepare("SELECT user_id FROM users WHERE email = ? AND user_id != ?");
     $different_id = $mode === 'edit' ? $user_id : 0;
     $email_check_stmt->bind_param("si", $email, $different_id);
@@ -112,18 +104,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($email_result->num_rows > 0) {
         $errors[] = "Email already exists";
     }
-    
-    // If no errors, proceed with database operation
+
     if (empty($errors)) {
         if ($mode === 'edit') {
-            // Update existing user
             if (!empty($password)) {
-                // If password is provided, update it as well
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                 $stmt = $conn->prepare("UPDATE users SET university_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, phone = ?, role = ?, password = ?, updated_at = NOW() WHERE user_id = ?");
                 $stmt->bind_param("ssssssssi", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $hashed_password, $user_id);
             } else {
-                // Otherwise, update everything except password
                 $stmt = $conn->prepare("UPDATE users SET university_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, phone = ?, role = ?, updated_at = NOW() WHERE user_id = ?");
                 $stmt->bind_param("sssssssi", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $user_id);
             }
@@ -136,7 +124,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $errors[] = "Error updating user: " . $conn->error;
             }
         } else {
-            // Add new user
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
             $stmt = $conn->prepare("INSERT INTO users (university_id, first_name, last_name, email, department, phone, role, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
             $stmt->bind_param("ssssssss", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $hashed_password);

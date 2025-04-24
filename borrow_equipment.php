@@ -7,7 +7,6 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Restrict borrowing functionality for admin users
 if ($_SESSION['role'] === 'admin') {
     $_SESSION['error'] = "Admins are not allowed to borrow equipment.";
     header("Location: dashboard.php");
@@ -60,7 +59,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $user_id = $_SESSION['user_id'];
 
-        // Update the INSERT query to include all required fields
         $sql = "INSERT INTO borrowings (
             equipment_id, 
             user_id, 

@@ -1,37 +1,30 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize report options visibility
     const reportOptions = document.querySelectorAll('.report-options');
     reportOptions.forEach(option => {
         option.style.display = 'none';
     });
     
-    // Handle report card clicks
     const reportCards = document.querySelectorAll('.report-card');
     reportCards.forEach(card => {
         card.addEventListener('click', function() {
             const reportType = this.getAttribute('data-report');
-            
-            // Hide all report options
+ 
             reportOptions.forEach(option => {
                 option.style.display = 'none';
             });
-            
-            // Show selected report options
+         
             const selectedOption = document.getElementById(`report-options-${reportType}`);
             if (selectedOption) {
                 selectedOption.style.display = 'block';
-                
-                // Highlight the selected card
+    
                 reportCards.forEach(c => c.classList.remove('active'));
                 this.classList.add('active');
-                
-                // Scroll to options if needed
+
                 selectedOption.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         });
     });
     
-    // Handle custom date range toggle in usage report
     const usagePeriodSelect = document.getElementById('usage-period');
     const customDateRange = document.querySelector('.custom-date-range');
     
@@ -44,12 +37,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Initialize form validation
+
     const reportForms = document.querySelectorAll('form[id$="-report-form"]');
     reportForms.forEach(form => {
         form.addEventListener('submit', function(e) {
-            // Basic validation for date ranges
             const dateFrom = this.querySelector('input[name="date_from"]');
             const dateTo = this.querySelector('input[name="date_to"]');
             
@@ -60,8 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     return false;
                 }
             }
-            
-            // For the usage report with custom date range
+ 
             if (this.id === 'usage-report-form') {
                 const periodSelect = document.getElementById('usage-period');
                 if (periodSelect.value === 'custom') {
@@ -75,11 +65,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             }
-            
-            // Additional validation for specific reports
+
             switch (this.querySelector('input[name="report_type"]').value) {
                 case 'borrowings':
-                    // Check if at least one filter is selected
                     const borrowingsFilters = [
                         this.querySelector('select[name="status"]'),
                         this.querySelector('select[name="approval_status"]'),
@@ -91,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         filter && filter.value && filter.value !== '');
                     
                     if (!hasFilter) {
-                        // It's okay to submit without filters, just a warning
                         if (!confirm('You are about to generate a report with no filters. This might return a large dataset. Continue?')) {
                             e.preventDefault();
                             return false;
@@ -100,7 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
                     
                 case 'maintenance':
-                    // If cost analysis is selected, ensure we're showing cost details
                     const sumCost = this.querySelector('input[name="sum_cost"]');
                     const showCost = this.querySelector('input[name="show_cost"]');
                     
@@ -109,8 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     break;
             }
-            
-            // If we're generating a PDF, warn about potentially large reports
+    
             const formatRadios = this.querySelectorAll('input[name="format"]');
             let selectedFormat = '';
             formatRadios.forEach(radio => {
@@ -130,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Auto-select the first report type
     if (reportCards.length > 0) {
         reportCards[0].click();
     }

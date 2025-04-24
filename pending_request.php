@@ -13,7 +13,6 @@ if (isset($_POST['approve_request'])) {
     $conn->begin_transaction();
     
     try {
-        // Update borrowing with all required fields
         $update_borrowing = "UPDATE borrowings 
             SET approval_status = 'approved',
                 status = 'active',
@@ -26,7 +25,6 @@ if (isset($_POST['approve_request'])) {
         $stmt->bind_param("ii", $_SESSION['user_id'], $borrowing_id);
         $stmt->execute();
 
-        // Update equipment status
         $update_equipment = "UPDATE equipment 
             SET status = 'borrowed',
                 updated_at = NOW() 
@@ -70,7 +68,6 @@ if (isset($_POST['deny_request'])) {
     exit();
 }
 
-// Update the SELECT query to include all relevant fields
 $sql = "SELECT 
     b.borrowing_id,
     b.equipment_id,

@@ -95,7 +95,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             $stmt->execute();
             
-            // Update equipment status
             $update_equipment = "UPDATE equipment 
                                 SET status = 'borrowed', 
                                     updated_at = NOW() 

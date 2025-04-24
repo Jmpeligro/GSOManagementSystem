@@ -452,6 +452,16 @@
     border-radius: 4px;
   }
 
+  .btn-small-primary {
+    background-color: var(--primary);
+    color: white;
+  } 
+
+  .btn-small:hover {
+    background-color: var(--accent);
+
+  }
+
   .btn-add-equipment {
     background-color: var(--primary);
     color: white;

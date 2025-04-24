@@ -7,7 +7,6 @@ if (!isLoggedIn()) {
     exit();
 }
 
-// Check if equipment ID is provided
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     $_SESSION['error'] = "No equipment specified.";
     header("Location: equipment.php");
@@ -16,7 +15,6 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 
 $equipment_id = (int)$_GET['id'];
 
-// Get equipment details
 $sql = "SELECT e.*, c.name as category_name 
         FROM equipment e
         JOIN categories c ON e.category_id = c.category_id
@@ -35,7 +33,6 @@ if ($result->num_rows === 0) {
 
 $equipment = $result->fetch_assoc();
 
-// Get borrowing history
 $sql_history = "SELECT b.borrowing_id, u.first_name, u.last_name, 
                 b.borrow_date, b.due_date, b.return_date, b.status
                 FROM borrowings b
@@ -49,7 +46,6 @@ $stmt_history->bind_param("i", $equipment_id);
 $stmt_history->execute();
 $history_result = $stmt_history->get_result();
 
-// Get current borrower if equipment is borrowed
 $current_borrower = null;
 if ($equipment['status'] == 'borrowed') {
     $sql_current = "SELECT b.borrowing_id, u.first_name, u.last_name, u.email,

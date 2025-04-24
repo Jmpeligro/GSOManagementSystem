@@ -9,8 +9,7 @@ if (!isLoggedIn()) {
 
 if (isset($_POST['delete_equipment']) && isAdmin()) {
     $equipment_id = (int)$_POST['equipment_id'];
-    
-    // Check if equipment is borrowed by looking in the borrowings table
+   
     $check_sql = "SELECT COUNT(*) as count FROM borrowings 
                   WHERE equipment_id = ? AND status = 'active'";
     $check_stmt = $conn->prepare($check_sql);
@@ -45,7 +44,6 @@ if (isset($_POST['update_status']) && isAdmin()) {
     } elseif (!in_array($new_status, $allowed_statuses)) {
         $_SESSION['error'] = "Invalid status selected.";
     } else {
-        // Check if equipment is borrowed
         $check_borrow_sql = "SELECT COUNT(*) as count FROM borrowings 
                             WHERE equipment_id = ? AND status = 'active'";
         $check_stmt = $conn->prepare($check_borrow_sql);
@@ -79,7 +77,6 @@ $status_filter = isset($_GET['status']) ? sanitize($_GET['status']) : '';
 $category_filter = isset($_GET['category']) ? (int)$_GET['category'] : 0;
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 
-// Base SQL query
 $sql = "SELECT 
     e.*, 
     c.name as category_name,
