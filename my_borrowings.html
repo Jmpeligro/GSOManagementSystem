@@ -80,6 +80,15 @@
                 </div>
             <?php endif; ?>
         </div>
+        
+        <?php
+        // Hide borrow-related actions for admin users
+        if ($_SESSION['role'] !== 'admin') {
+        ?>
+            <a href="borrow_equipment.php" class="btn btn-primary">Borrow Equipment</a>
+        <?php
+        }
+        ?>
     </div>
     
     <?php include 'footer.php'; ?>
