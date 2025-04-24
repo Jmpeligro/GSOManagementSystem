@@ -14,13 +14,27 @@ $equipment_filter = isset($_GET['equipment_id']) ? (int)$_GET['equipment_id'] : 
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 $date_from = isset($_GET['date_from']) ? sanitize($_GET['date_from']) : '';
 $date_to = isset($_GET['date_to']) ? sanitize($_GET['date_to']) : '';
+$condition_filter = isset($_GET['condition']) ? sanitize($_GET['condition']) : '';
 
-$sql = "SELECT b.*, e.name as equipment_name, e.equipment_code, 
-         u.first_name, u.last_name, u.email
-         FROM borrowings b
-         JOIN equipment e ON b.equipment_id = e.equipment_id
-         JOIN users u ON b.user_id = u.user_id
-         WHERE 1=1";
+$sql = "SELECT 
+    b.*, 
+    e.name as equipment_name, 
+    e.equipment_code,
+    u.first_name, 
+    u.last_name, 
+    u.email,
+    b.condition_on_return,
+    b.admin_notes,
+    b.return_notes,
+    b.approved_by,
+    b.approval_date,
+    b.admin_issued_id,
+    b.admin_received_id,
+    b.returned_by
+    FROM borrowings b
+    JOIN equipment e ON b.equipment_id = e.equipment_id
+    JOIN users u ON b.user_id = u.user_id
+    WHERE 1=1";
 
 if (!empty($status_filter)) {
     $sql .= " AND b.status = '$status_filter'";
@@ -52,6 +66,10 @@ if (!empty($search_query)) {
               u.email LIKE '%$search_query%')";
 }
 
+if (!empty($condition_filter)) {
+    $sql .= " AND b.condition_on_return = '$condition_filter'";
+}
+
 $sql .= " ORDER BY b.borrow_date DESC";
 
 $result = $conn->query($sql);
@@ -81,7 +99,8 @@ if (isset($_GET['return']) && isLoggedIn()) {
                 status = 'returned', 
                 return_date = NOW(), 
                 return_notes = 'Returned via system', 
-                returned_by = ?
+                returned_by = ?,
+                condition_on_return = 'good'  // Add condition check
                 WHERE borrowing_id = ?";
 
             $update_stmt = $conn->prepare($update_borrowing_sql);

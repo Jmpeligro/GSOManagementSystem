@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add_category'])) {
         if ($existing_count > 0) {
             $_SESSION['error'] = "A category with this name already exists.";
         } else {
-            $insert_sql = "INSERT INTO categories (name, description) VALUES (?, ?)";
+            $insert_sql = "INSERT INTO categories (name, description, created_at) VALUES (?, ?, NOW())";
             $insert_stmt = $conn->prepare($insert_sql);
             $insert_stmt->bind_param("ss", $name, $description);
 

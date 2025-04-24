@@ -12,20 +12,37 @@ if (!isLoggedIn() || !isAdmin()) {
 $role_filter = isset($_GET['role']) ? sanitize($_GET['role']) : '';
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 
-// Build the SQL query with filters
+// Build the SQL query with filters using prepared statements
 $sql = "SELECT * FROM users WHERE 1=1";
+$params = [];
+$types = "";
 
 if (!empty($role_filter)) {
-    $sql .= " AND role = '$role_filter'";
+    $sql .= " AND role = ?";
+    $params[] = $role_filter;
+    $types .= "s";
 }
 
 if (!empty($search_query)) {
-    $sql .= " AND (first_name LIKE '%$search_query%' OR last_name LIKE '%$search_query%' OR email LIKE '%$search_query%' OR department LIKE '%$search_query%')";
+    $sql .= " AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR department LIKE ? OR university_id LIKE ?)";
+    $search_param = "%" . $search_query . "%";
+    $params[] = $search_param;
+    $params[] = $search_param;
+    $params[] = $search_param;
+    $params[] = $search_param;
+    $params[] = $search_param;
+    $types .= "sssss";
 }
 
 $sql .= " ORDER BY last_name ASC, first_name ASC";
 
-$result = $conn->query($sql);
+// Prepare and execute the query
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Process delete user if requested
 if (isset($_GET['delete']) && isAdmin()) {

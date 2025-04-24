@@ -44,10 +44,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($condition_status)) {
         $errors[] = "Condition status is required";
+    } elseif (!in_array($condition_status, ['new', 'good', 'fair', 'poor'])) {
+        $errors[] = "Invalid condition status";
     }
 
     if (empty($status)) {
         $errors[] = "Equipment status is required";
+    } elseif (!in_array($status, ['available', 'maintenance', 'retired'])) {
+        $errors[] = "Invalid equipment status";
     }
 
     if (empty($acquisition_date)) {
@@ -60,15 +64,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (empty($errors)) {
-        $sql = "INSERT INTO equipment (name, description, equipment_code, category_id, condition_status, status, acquisition_date) 
-                VALUES ('$name', '$description', '$equipment_code', $category_id, '$condition_status', '$status', '$acquisition_date')";
+        $sql = "INSERT INTO equipment (
+            name, 
+            description, 
+            equipment_code, 
+            category_id, 
+            condition_status, 
+            status, 
+            acquisition_date,
+            notes,
+            created_at,
+            updated_at
+        ) VALUES (
+            ?, ?, ?, ?, ?, ?, ?, 
+            '', 
+            NOW(), 
+            NOW()
+        )";
 
-        if ($conn->query($sql) === TRUE) {
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssss", 
+            $name, 
+            $description, 
+            $equipment_code, 
+            $category_id, 
+            $condition_status, 
+            $status, 
+            $acquisition_date
+        );
+
+        if ($stmt->execute()) {
             $success_message = "Equipment added successfully!";
             $name = $description = $equipment_code = $acquisition_date = '';
             $category_id = $condition_status = $status = '';
         } else {
-            $errors[] = "Error: " . $conn->error;
+            $errors[] = "Error: " . $stmt->error;
         }
     }
 }

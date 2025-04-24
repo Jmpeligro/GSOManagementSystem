@@ -76,8 +76,18 @@ if (isset($_POST['add_user'])) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
         // Insert new user into database
-        $sql = "INSERT INTO users (first_name, last_name, email, password, role, department, phone, university_id, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $sql = "INSERT INTO users (
+            first_name, 
+            last_name, 
+            email, 
+            password, 
+            role, 
+            department, 
+            phone, 
+            university_id, 
+            created_at,
+            updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
         
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssssssss", $first_name, $last_name, $email, $hashed_password, $role, $department, $phone, $university_id);
@@ -95,6 +105,5 @@ if (isset($_POST['add_user'])) {
     }
 }
 
-// Include the HTML template
 include 'add_user.html';
 ?>

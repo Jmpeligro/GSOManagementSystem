@@ -14,9 +14,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $is_email = filter_var($login_credential, FILTER_VALIDATE_EMAIL);
         
         if ($is_email) {
-            $query = "SELECT user_id, first_name, last_name, email, university_id, password, role FROM users WHERE email = ?";
+            $query = "SELECT 
+                user_id, 
+                first_name, 
+                last_name, 
+                email, 
+                university_id, 
+                password, 
+                role,
+                department,
+                phone,
+                created_at,
+                updated_at 
+            FROM users 
+            WHERE email = ?";
         } else {
-            $query = "SELECT user_id, first_name, last_name, email, university_id, password, role FROM users WHERE university_id = ?";
+            $query = "SELECT 
+                user_id, 
+                first_name, 
+                last_name, 
+                email, 
+                university_id, 
+                password, 
+                role,
+                department,
+                phone,
+                created_at,
+                updated_at 
+            FROM users 
+            WHERE university_id = ?";
         }
         
         $stmt = $conn->prepare($query);
@@ -34,6 +60,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['university_id'] = $user['university_id'];
                 $_SESSION['role'] = $user['role'];
+                $_SESSION['department'] = $user['department'];
+                $_SESSION['phone'] = $user['phone'];
 
                 header("Location: dashboard.php");
                 exit();

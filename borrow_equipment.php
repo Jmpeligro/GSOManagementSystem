@@ -60,10 +60,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $user_id = $_SESSION['user_id'];
 
-        $sql = "INSERT INTO borrowings (equipment_id, user_id, borrow_date, due_date, status, notes, approval_status)
-                VALUES (?, ?, ?, ?, 'pending', ?, 'pending')";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iisss", $equipment_id, $user_id, $borrow_date, $due_date, $purpose);
+        // Update the INSERT query to include all required fields
+        $sql = "INSERT INTO borrowings (
+            equipment_id, 
+            user_id, 
+            borrow_date, 
+            due_date, 
+            status, 
+            notes, 
+            approval_status,
+            created_at,
+            updated_at
+        ) VALUES (
+            ?, ?, ?, ?, 
+            'pending', 
+            ?, 
+            'pending',
+            NOW(),
+            NOW()
+        )";
+
+        $stmt->bind_param("iisss", 
+            $equipment_id, 
+            $user_id, 
+            $borrow_date, 
+            $due_date, 
+            $purpose
+        );
 
         if ($stmt->execute()) {
             $success = "Equipment borrow request submitted successfully. An administrator will review your request shortly.";

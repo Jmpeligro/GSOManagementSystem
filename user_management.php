@@ -13,10 +13,12 @@ $user_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 $mode = $user_id > 0 ? 'edit' : 'add';
 $title = $mode === 'edit' ? 'Edit User' : 'Add New User';
 
+$university_id = '';
 $first_name = '';
 $last_name = '';
 $email = '';
 $department = '';
+$phone = '';
 $role = '';
 $errors = [];
 
@@ -34,24 +36,33 @@ if ($mode === 'edit') {
     }
     
     $user = $result->fetch_assoc();
+    $university_id = $user['university_id'];
     $first_name = $user['first_name'];
     $last_name = $user['last_name'];
     $email = $user['email'];
     $department = $user['department'];
+    $phone = $user['phone'];
     $role = $user['role'];
 }
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate and sanitize input
+    $university_id = sanitize($_POST['university_id']);
     $first_name = sanitize($_POST['first_name']);
     $last_name = sanitize($_POST['last_name']);
     $email = sanitize($_POST['email']);
     $department = sanitize($_POST['department']);
+    $phone = sanitize($_POST['phone']);
     $role = sanitize($_POST['role']);
     $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $confirm_password = isset($_POST['confirm_password']) ? $_POST['confirm_password'] : '';
     
     // Validate inputs
+    if (empty($university_id)) {
+        $errors[] = "University ID is required";
+    }
+    
     if (empty($first_name)) {
         $errors[] = "First name is required";
     }
@@ -72,32 +83,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     if (empty($role)) {
         $errors[] = "Role is required";
+    } elseif (!in_array($role, ['admin', 'faculty', 'staff', 'student'])) {
+        $errors[] = "Invalid role selected";
+    }
+    
+    // If adding a new user, password is required
+    if ($mode === 'add') {
+        if (empty($password)) {
+            $errors[] = "Password is required for new users";
+        } elseif (strlen($password) < 8) {
+            $errors[] = "Password must be at least 8 characters";
+        }
+        
+        if ($password !== $confirm_password) {
+            $errors[] = "Passwords do not match";
+        }
+    } elseif (!empty($password) && strlen($password) < 8) {
+        $errors[] = "Password must be at least 8 characters";
     }
     
     // Check email uniqueness (excluding current user if editing)
-    $email_check_sql = "SELECT user_id FROM users WHERE email = ?";
-    if ($mode === 'edit') {
-        $email_check_sql .= " AND user_id != ?";
-    }
-    
-    $email_check_stmt = $conn->prepare($email_check_sql);
-    
-    if ($mode === 'edit') {
-        $email_check_stmt->bind_param("si", $email, $user_id);
-    } else {
-        $email_check_stmt->bind_param("s", $email);
-    }
-    
+    $email_check_stmt = $conn->prepare("SELECT user_id FROM users WHERE email = ? AND user_id != ?");
+    $different_id = $mode === 'edit' ? $user_id : 0;
+    $email_check_stmt->bind_param("si", $email, $different_id);
     $email_check_stmt->execute();
     $email_result = $email_check_stmt->get_result();
     
     if ($email_result->num_rows > 0) {
         $errors[] = "Email already exists";
-    }
-    
-    // If adding a new user, password is required
-    if ($mode === 'add' && empty($password)) {
-        $errors[] = "Password is required for new users";
     }
     
     // If no errors, proceed with database operation
@@ -107,12 +120,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (!empty($password)) {
                 // If password is provided, update it as well
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                $stmt = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, department = ?, role = ?, password = ? WHERE user_id = ?");
-                $stmt->bind_param("ssssssi", $first_name, $last_name, $email, $department, $role, $hashed_password, $user_id);
+                $stmt = $conn->prepare("UPDATE users SET university_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, phone = ?, role = ?, password = ?, updated_at = NOW() WHERE user_id = ?");
+                $stmt->bind_param("ssssssssi", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $hashed_password, $user_id);
             } else {
                 // Otherwise, update everything except password
-                $stmt = $conn->prepare("UPDATE users SET first_name = ?, last_name = ?, email = ?, department = ?, role = ? WHERE user_id = ?");
-                $stmt->bind_param("sssssi", $first_name, $last_name, $email, $department, $role, $user_id);
+                $stmt = $conn->prepare("UPDATE users SET university_id = ?, first_name = ?, last_name = ?, email = ?, department = ?, phone = ?, role = ?, updated_at = NOW() WHERE user_id = ?");
+                $stmt->bind_param("sssssssi", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $user_id);
             }
             
             if ($stmt->execute()) {
@@ -125,8 +138,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // Add new user
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $conn->prepare("INSERT INTO users (first_name, last_name, email, department, role, password) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssss", $first_name, $last_name, $email, $department, $role, $hashed_password);
+            $stmt = $conn->prepare("INSERT INTO users (university_id, first_name, last_name, email, department, phone, role, password, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())");
+            $stmt->bind_param("ssssssss", $university_id, $first_name, $last_name, $email, $department, $phone, $role, $hashed_password);
             
             if ($stmt->execute()) {
                 $_SESSION['success'] = "User added successfully";
@@ -140,5 +153,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 include 'user_management.html';
-
 ?>

@@ -58,15 +58,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $conn->begin_transaction();
         
         try {
-            $insert_borrowing = "INSERT INTO borrowings 
-                                (equipment_id, user_id, borrow_date, due_date, status, notes, 
-                                 approval_status, admin_issued_id)
-                                VALUES (?, ?, ?, ?, 'active', ?, 'approved', ?)";
+            $insert_borrowing = "INSERT INTO borrowings (
+                equipment_id, 
+                user_id, 
+                borrow_date, 
+                due_date, 
+                status, 
+                notes, 
+                approval_status, 
+                admin_issued_id,
+                created_at,
+                updated_at,
+                approval_date,
+                admin_notes
+            ) VALUES (
+                ?, ?, ?, ?, 
+                'active', 
+                ?, 
+                'approved', 
+                ?,
+                NOW(),
+                NOW(),
+                NOW(),
+                'Approved at creation'
+            )";
+            
             $stmt = $conn->prepare($insert_borrowing);
-            $stmt->bind_param("iisssi", $equipment_id, $user_id, $borrow_date, $due_date, $notes, $_SESSION['user_id']);
+            $stmt->bind_param("iisssi", 
+                $equipment_id, 
+                $user_id, 
+                $borrow_date, 
+                $due_date, 
+                $notes, 
+                $_SESSION['user_id']
+            );
+            
             $stmt->execute();
             
-            $update_equipment = "UPDATE equipment SET status = 'borrowed', updated_at = NOW() 
+            // Update equipment status
+            $update_equipment = "UPDATE equipment 
+                                SET status = 'borrowed', 
+                                    updated_at = NOW() 
                                 WHERE equipment_id = ?";
             $stmt = $conn->prepare($update_equipment);
             $stmt->bind_param("i", $equipment_id);

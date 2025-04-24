@@ -90,7 +90,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Code</th>
+                            <th>Code</th>   
                             <th>Name</th>
                             <th>Category</th>
                             <th>Status</th>
@@ -104,14 +104,14 @@
                             <td><?php echo htmlspecialchars($row['equipment_code']); ?></td>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
                             <td><?php echo htmlspecialchars($row['category_name']); ?></td>
-                            <td><span class="status-badge status-<?php echo $row['status']; ?>"><?php echo ucfirst($row['status']); ?></span></td>
+                            <td><span class="status-badge status-<?php echo $row['display_status']; ?>"><?php echo ucfirst($row['display_status']); ?></span></td>
                             <td><?php echo ucfirst($row['condition_status']); ?></td>
                             <td class="actions">
                                 <a href="view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small">View</a>
                                 
                                 <?php if (isAdmin()): ?>
                                     <!-- Quick status change dropdown -->
-                                    <?php if ($row['status'] != 'borrowed'): ?>
+                                    <?php if ($row['display_status'] != 'borrowed'): ?>
                                     <form method="post" action="equipment.php" style="display:inline-block; margin-right: 5px;" onsubmit="return validateStatusChange(this.new_status)">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
                                         <select name="new_status" class="status-select" style="padding: 4px; border-radius: 3px;">
@@ -128,7 +128,7 @@
                                     <a href="edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
                                     
                                     <!-- Delete form -->
-                                    <?php if ($row['status'] != 'borrowed'): ?>
+                                    <?php if ($row['display_status'] != 'borrowed'): ?>
                                     <form method="post" action="equipment.php" style="display:inline-block;">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
                                         <input type="hidden" name="delete_equipment" value="1">
@@ -140,7 +140,7 @@
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 
-                                <?php if ($row['status'] == 'available' && $_SESSION['role'] !== 'admin'): ?>
+                                <?php if ($row['display_status'] == 'available' && $_SESSION['role'] !== 'admin'): ?>
                                 <a href="borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">Borrow</a>
                                 <?php endif; ?>
                             </td>

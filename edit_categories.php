@@ -46,7 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($existing_count > 0) {
             $_SESSION['error'] = "Another category with this name already exists.";
         } else {
-            $update_sql = "UPDATE categories SET name = ?, description = ? WHERE category_id = ?";
+            $update_sql = "UPDATE categories 
+                          SET name = ?, 
+                              description = ?,
+                              updated_at = NOW() 
+                          WHERE category_id = ?";
             $update_stmt = $conn->prepare($update_sql);
             $update_stmt->bind_param("ssi", $name, $description, $category_id);
             

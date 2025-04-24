@@ -51,7 +51,7 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>University ID</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Role</th>
@@ -62,7 +62,7 @@
                     <tbody>
                         <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $row['user_id']; ?></td>
+                            <td><?php echo $row['university_id']; ?></td>
                             <td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
                             <td><?php echo $row['email']; ?></td>
                             <td><?php echo ucfirst($row['role']); ?></td>
