@@ -1,330 +1,137 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const reportTypeSelect = document.getElementById('report_type');
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
-    const categorySelect = document.getElementById('category_id');
-    const generateReportButton = document.getElementById('generate-report');
-    const reportTitle = document.getElementById('report-title');
-    const reportResults = document.getElementById('report-results');
-    const chartContainer = document.getElementById('chart-container');
-    const tableContainer = document.getElementById('table-container');
-
-    // Set default dates
-    startDateInput.value = getDateString(-30); // 30 days ago
-    endDateInput.value = getDateString(0); // today
-
-    // Fetch categories for the dropdown
-    fetch('get_categories.php')
-        .then(response => response.json())
-        .then(categories => {
-            categories.forEach(category => {
-                const option = document.createElement('option');
-                option.value = category.category_id;
-                option.textContent = category.name;
-                categorySelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error fetching categories:', error));
-
-    // Connect toggle function to the report type change event
-    reportTypeSelect.addEventListener('change', toggleDateFilter);
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize report options visibility
+    const reportOptions = document.querySelectorAll('.report-options');
+    reportOptions.forEach(option => {
+        option.style.display = 'none';
+    });
     
-    // Call it once on page load to set initial state
-    toggleDateFilter();
-
-    // Toggle date filter visibility based on report type
-    function toggleDateFilter() {
-        const reportType = reportTypeSelect.value;
-        const dateFilters = document.querySelectorAll('.date-filter');
-        const categoryFilter = document.querySelectorAll('.category-filter');
-        
-        // Toggle date filters
-        dateFilters.forEach(filter => {
-            filter.style.display = (reportType === 'borrowing_activity') ? 'block' : 'none';
-        });
-        
-        // Toggle category filter
-        categoryFilter.forEach(filter => {
-            filter.style.display = (reportType === 'popular_equipment') ? 'block' : 'none';
-        });
-    }
-
-    // Generate report event
-    generateReportButton.addEventListener('click', () => {
-        const reportType = reportTypeSelect.value;
-        const startDate = startDateInput.value;
-        const endDate = endDateInput.value;
-        const categoryId = categorySelect.value;
-
-        // Show loading state
-        generateReportButton.disabled = true;
-        generateReportButton.innerHTML = 'Generating...';
-        
-        fetch(`reports.php?report_type=${reportType}&start_date=${startDate}&end_date=${endDate}&category_id=${categoryId}&ajax=true`)
-            .then(response => response.json())
-            .then(data => {
-                // Log the data to debug
-                console.log("Report data received:", data);
-                
-                reportTitle.textContent = getReportTitle(reportType);
-                renderChart(reportType, data.chart_data);
-                renderTable(reportType, data.report_data);
-                
-                // Show the report results
-                reportResults.classList.add('active');
-                
-                // Scroll to results
-                reportResults.scrollIntoView({ behavior: 'smooth' });
-            })
-            .catch(error => {
-                console.error('Error fetching report data:', error);
-                alert('Failed to generate report. Please try again.');
-            })
-            .finally(() => {
-                // Reset button state
-                generateReportButton.disabled = false;
-                generateReportButton.innerHTML = 'Generate Report';
+    // Handle report card clicks
+    const reportCards = document.querySelectorAll('.report-card');
+    reportCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const reportType = this.getAttribute('data-report');
+            
+            // Hide all report options
+            reportOptions.forEach(option => {
+                option.style.display = 'none';
             });
+            
+            // Show selected report options
+            const selectedOption = document.getElementById(`report-options-${reportType}`);
+            if (selectedOption) {
+                selectedOption.style.display = 'block';
+                
+                // Highlight the selected card
+                reportCards.forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Scroll to options if needed
+                selectedOption.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
     });
-
-    // Print report function
-    document.getElementById('printReport').addEventListener('click', function() {
-        window.print();
+    
+    // Handle custom date range toggle in usage report
+    const usagePeriodSelect = document.getElementById('usage-period');
+    const customDateRange = document.querySelector('.custom-date-range');
+    
+    if (usagePeriodSelect && customDateRange) {
+        usagePeriodSelect.addEventListener('change', function() {
+            if (this.value === 'custom') {
+                customDateRange.style.display = 'block';
+            } else {
+                customDateRange.style.display = 'none';
+            }
+        });
+    }
+    
+    // Initialize form validation
+    const reportForms = document.querySelectorAll('form[id$="-report-form"]');
+    reportForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            // Basic validation for date ranges
+            const dateFrom = this.querySelector('input[name="date_from"]');
+            const dateTo = this.querySelector('input[name="date_to"]');
+            
+            if (dateFrom && dateTo && dateFrom.value && dateTo.value) {
+                if (new Date(dateFrom.value) > new Date(dateTo.value)) {
+                    e.preventDefault();
+                    alert('Start date cannot be after end date.');
+                    return false;
+                }
+            }
+            
+            // For the usage report with custom date range
+            if (this.id === 'usage-report-form') {
+                const periodSelect = document.getElementById('usage-period');
+                if (periodSelect.value === 'custom') {
+                    const customFrom = document.getElementById('usage-date-from');
+                    const customTo = document.getElementById('usage-date-to');
+                    
+                    if (!customFrom.value || !customTo.value) {
+                        e.preventDefault();
+                        alert('Please specify both start and end dates for custom date range.');
+                        return false;
+                    }
+                }
+            }
+            
+            // Additional validation for specific reports
+            switch (this.querySelector('input[name="report_type"]').value) {
+                case 'borrowings':
+                    // Check if at least one filter is selected
+                    const borrowingsFilters = [
+                        this.querySelector('select[name="status"]'),
+                        this.querySelector('select[name="approval_status"]'),
+                        this.querySelector('input[name="date_from"]'),
+                        this.querySelector('select[name="user_id"]')
+                    ];
+                    
+                    const hasFilter = borrowingsFilters.some(filter => 
+                        filter && filter.value && filter.value !== '');
+                    
+                    if (!hasFilter) {
+                        // It's okay to submit without filters, just a warning
+                        if (!confirm('You are about to generate a report with no filters. This might return a large dataset. Continue?')) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+                    break;
+                    
+                case 'maintenance':
+                    // If cost analysis is selected, ensure we're showing cost details
+                    const sumCost = this.querySelector('input[name="sum_cost"]');
+                    const showCost = this.querySelector('input[name="show_cost"]');
+                    
+                    if (sumCost && sumCost.checked && showCost && !showCost.checked) {
+                        showCost.checked = true;
+                    }
+                    break;
+            }
+            
+            // If we're generating a PDF, warn about potentially large reports
+            const formatRadios = this.querySelectorAll('input[name="format"]');
+            let selectedFormat = '';
+            formatRadios.forEach(radio => {
+                if (radio.checked) selectedFormat = radio.value;
+            });
+            
+            if (selectedFormat === 'pdf' && !this.hasAttribute('data-pdf-warned')) {
+                const groupByNone = this.querySelector('input[value="none"][name="group_by"]');
+                if (groupByNone && groupByNone.checked) {
+                    if (!confirm('Generating a non-grouped PDF report may result in a large file. Continue?')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    this.setAttribute('data-pdf-warned', 'true');
+                }
+            }
+        });
     });
-
-    function getDateString(daysOffset) {
-        const date = new Date();
-        date.setDate(date.getDate() + daysOffset);
-        return date.toISOString().split('T')[0];
+    
+    // Auto-select the first report type
+    if (reportCards.length > 0) {
+        reportCards[0].click();
     }
-
-    function getReportTitle(reportType) {
-        switch (reportType) {
-            case 'equipment_status': return 'Equipment Status Report';
-            case 'borrowing_activity': return 'Borrowing Activity Report';
-            case 'overdue_items': return 'Overdue Items Report';
-            case 'popular_equipment': return 'Popular Equipment Report';
-            case 'user_activity': return 'User Activity Report';
-            default: return 'Report';
-        }
-    }
-
-    function renderChart(reportType, chartData) {
-        console.log(`Rendering ${reportType} chart with data:`, chartData);
-        chartContainer.innerHTML = ''; // Clear previous chart
-        
-        // Make sure chart container is visible and has dimensions
-        chartContainer.style.minHeight = '300px';
-        chartContainer.style.display = 'block';
-        
-        if (!chartData || chartData.length === 0) {
-            const noDataMessage = document.createElement('p');
-            noDataMessage.textContent = 'No chart data available.';
-            noDataMessage.style.textAlign = 'center';
-            noDataMessage.style.padding = '20px';
-            noDataMessage.style.color = 'var(--gray)';
-            chartContainer.appendChild(noDataMessage);
-            return;
-        }
-        
-        const canvas = document.createElement('canvas');
-        canvas.id = 'chart-canvas';
-        canvas.style.width = '100%';
-        canvas.style.height = '100%';
-        chartContainer.appendChild(canvas);
-
-        // Create chart with appropriate context
-        const ctx = canvas.getContext('2d');
-
-        if (reportType === 'equipment_status') {
-            // Destroy previous chart if it exists
-            if (window.statusChart) {
-                window.statusChart.destroy();
-            }
-            
-            window.statusChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: chartData.map(item => item.label),
-                    datasets: [{
-                        data: chartData.map(item => item.value),
-                        backgroundColor: chartData.map(item => item.color || getRandomColor()),
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            display: true
-                        },
-                        title: {
-                            display: true,
-                            text: 'Equipment Status Distribution'
-                        }
-                    }
-                }
-            });
-        } else if (reportType === 'borrowing_activity') {
-            // Destroy previous chart if it exists
-            if (window.activityChart) {
-                window.activityChart.destroy();
-            }
-            
-            window.activityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: chartData.map(item => item.date),
-                    datasets: [{
-                        label: 'Number of Borrowings',
-                        data: chartData.map(item => item.count),
-                        backgroundColor: 'rgba(52, 152, 219, 0.2)',
-                        borderColor: 'rgba(52, 152, 219, 1)',
-                        borderWidth: 2,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Borrowing Activity Over Time'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-        } else if (reportType === 'popular_equipment' || reportType === 'user_activity') {
-            // Destroy previous chart if it exists
-            if (window.barChart) {
-                window.barChart.destroy();
-            }
-            
-            window.barChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: chartData.map(item => item.name),
-                    datasets: [{
-                        label: 'Number of Borrowings',
-                        data: chartData.map(item => item.count),
-                        backgroundColor: 'rgba(52, 152, 219, 0.7)',
-                        borderColor: 'rgba(52, 152, 219, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: reportType === 'popular_equipment' ? 'Most Popular Equipment' : 'Most Active Users'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                precision: 0
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    // Helper function to generate random colors if needed
-    function getRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    function renderTable(reportType, tableData) {
-        tableContainer.innerHTML = ''; // Clear previous table
-        
-        if (!tableData || tableData.length === 0) {
-            const noDataMessage = document.createElement('p');
-            noDataMessage.textContent = 'No data available for this report.';
-            noDataMessage.style.textAlign = 'center';
-            noDataMessage.style.padding = '20px';
-            noDataMessage.style.color = 'var(--gray)';
-            tableContainer.appendChild(noDataMessage);
-            return;
-        }
-        
-        const table = document.createElement('table');
-        table.classList.add('report-table');
-
-        const thead = document.createElement('thead');
-        const headerRow = document.createElement('tr');
-
-        // Process column headers to make them more readable
-        Object.keys(tableData[0]).forEach(key => {
-            const th = document.createElement('th');
-            // Transform snake_case to Title Case
-            const formattedHeader = key
-                .replace(/_/g, ' ')
-                .replace(/\b\w/g, l => l.toUpperCase());
-            th.textContent = formattedHeader;
-            headerRow.appendChild(th);
-        });
-
-        thead.appendChild(headerRow);
-        table.appendChild(thead);
-
-        const tbody = document.createElement('tbody');
-
-        tableData.forEach(row => {
-            const tr = document.createElement('tr');
-
-            Object.entries(row).forEach(([key, value]) => {
-                const td = document.createElement('td');
-                
-                // Format dates if the column name contains 'date'
-                if (key.includes('date') && value) {
-                    const date = new Date(value);
-                    if (!isNaN(date.getTime())) {
-                        value = date.toLocaleDateString('en-US', { 
-                            year: 'numeric', 
-                            month: 'short', 
-                            day: 'numeric' 
-                        });
-                    }
-                }
-                
-                // Add status badges for status columns
-                if (key === 'status') {
-                    const statusBadge = document.createElement('span');
-                    statusBadge.classList.add('status-badge', `status-${value.toLowerCase()}`);
-                    statusBadge.textContent = value.charAt(0).toUpperCase() + value.slice(1);
-                    td.appendChild(statusBadge);
-                } else {
-                    td.textContent = value;
-                }
-                
-                tr.appendChild(td);
-            });
-
-            tbody.appendChild(tr);
-        });
-
-        table.appendChild(tbody);
-        tableContainer.appendChild(table);
-    }
-});
+}); 
