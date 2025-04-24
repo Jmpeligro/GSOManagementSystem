@@ -7,6 +7,13 @@ if (!isLoggedIn()) {
     exit();
 }
 
+// Restrict borrowing functionality for admin users
+if ($_SESSION['role'] === 'admin') {
+    $_SESSION['error'] = "Admins are not allowed to borrow equipment.";
+    header("Location: dashboard.php");
+    exit;
+}
+
 if (!isset($_GET['id']) || empty($_GET['id'])) {
     header("Location: equipment.php");
     exit();
