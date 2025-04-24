@@ -25,7 +25,7 @@ include_once 'db_connection.php';
         
         <div class="user-menu">
             <button class="user-menu-button" id="userMenuButton">
-                <span><?php echo $_SESSION['name']; ?></span>
+                <span><?php echo isset($_SESSION['first_name'], $_SESSION['last_name']) ? $_SESSION['first_name'] . ' ' . $_SESSION['last_name'] : 'Guest'; ?></span>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>
