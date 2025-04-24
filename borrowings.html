@@ -14,7 +14,14 @@
             <h2>Borrowings Management</h2>
             <div class="action-buttons">
                 <?php if (isAdmin()): ?>
-                <a href="new_borrowing.php" class="btn btn-primary">New Borrowing</a>
+                <?php
+                // Hide borrow button for admin users
+                if ($_SESSION['role'] !== 'admin') {
+                ?>
+                    <a href="new_borrowing.php" class="btn btn-primary">New Borrowing</a>
+                <?php
+                }
+                ?>
                 <a href="pending_request.php" class="btn btn-secondary">Pending Requests 
                     <?php 
                     // Get count of pending requests
