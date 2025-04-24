@@ -19,6 +19,7 @@ if (isset($_POST['add_user'])) {
     $role = sanitize($_POST['role']);
     $department = sanitize($_POST['department']);
     $phone = isset($_POST['phone']) ? sanitize($_POST['phone']) : '';
+    $university_id = sanitize($_POST['university_id']);
     
     // Validate form data
     $errors = [];
@@ -64,6 +65,10 @@ if (isset($_POST['add_user'])) {
     if (empty($department)) {
         $errors[] = "Department/Course is required";
     }
+
+    if (empty($university_id)) {
+        $errors[] = "University ID is required.";
+    }
     
     // If no errors, proceed with user creation
     if (empty($errors)) {
@@ -71,11 +76,11 @@ if (isset($_POST['add_user'])) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         
         // Insert new user into database
-        $sql = "INSERT INTO users (first_name, last_name, email, password, role, department, phone, created_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
+        $sql = "INSERT INTO users (first_name, last_name, email, password, role, department, phone, university_id, created_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssss", $first_name, $last_name, $email, $hashed_password, $role, $department, $phone);
+        $stmt->bind_param("ssssssss", $first_name, $last_name, $email, $hashed_password, $role, $department, $phone, $university_id);
         
         if ($stmt->execute()) {
             $_SESSION['success'] = "User added successfully";
