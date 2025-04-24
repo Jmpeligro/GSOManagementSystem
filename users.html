@@ -12,7 +12,7 @@
     <div class="container">
         <div class="page-header">
             <h2>User Management</h2>
-            <a href="add_user.php" class="btn btn-primary">Add New User</a>
+            <a href="add_user.php" class="btn btn-add-user">Add New User</a>
         </div>
         
         <?php if (isset($_SESSION['success'])): ?>
@@ -41,8 +41,8 @@
                     <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search users...">
                 </div>
                 
-                <button type="submit" class="btn">Apply Filters</button>
-                <a href="users.php" class="btn btn-secondary">Reset</a>
+                <button type="submit" class="btn btn-filter-user">Apply Filters</button>
+                <a href="users.php" class="btn btn-reset-user">Reset</a>
             </form>
         </div>
         
@@ -68,7 +68,6 @@
                             <td><?php echo ucfirst($row['role']); ?></td>
                             <td><?php echo $row['department']; ?></td>
                             <td class="actions">
-                                <a href="user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small">View</a>
                                 <a href="user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
                                 <?php if ($row['user_id'] != $_SESSION['user_id']): ?>
                                 <a href="users.php?delete=<?php echo $row['user_id']; ?>" class="btn btn-small btn-danger" 

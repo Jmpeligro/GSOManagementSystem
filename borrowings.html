@@ -18,11 +18,11 @@
                 // Hide borrow button for admin users
                 if ($_SESSION['role'] !== 'admin') {
                 ?>
-                    <a href="new_borrowing.php" class="btn btn-primary">New Borrowing</a>
+                    <a href="new_borrowing.php" class="btn btn-new-borrow">New Borrowing</a>
                 <?php
                 }
                 ?>
-                <a href="pending_request.php" class="btn btn-secondary">Pending Requests 
+                <a href="pending_request.php" class="btn btn-pending-request">Pending Requests 
                     <?php 
                     // Get count of pending requests
                     $pending_count = $conn->query("SELECT COUNT(*) as count FROM borrowings WHERE approval_status = 'pending'")->fetch_assoc()['count'];
@@ -108,8 +108,8 @@
                 </div>
                 
                 <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Apply Filters</button>
-                    <a href="borrowings.php" class="btn btn-secondary">Clear Filters</a>
+                    <button type="submit" class="btn btn-filter-category">Apply Filters</button>
+                    <a href="borrowings.php" class="btn btn-clear-category">Clear Filters</a>
                 </div>
             </form>
         </div>
