@@ -140,7 +140,7 @@
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 
-                                <?php if ($row['status'] == 'available'): ?>
+                                <?php if ($row['status'] == 'available' && $_SESSION['role'] !== 'admin'): ?>
                                 <a href="borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">Borrow</a>
                                 <?php endif; ?>
                             </td>
