@@ -52,14 +52,20 @@ if (isset($_POST['deny_request'])) {
     exit();
 }
 
-$sql = "SELECT b.*, e.name as equipment_name, e.equipment_code, e.equipment_id,
-               u.first_name, u.last_name
-        FROM borrowings b
-        JOIN equipment e ON b.equipment_id = e.equipment_id
-        JOIN users u ON b.user_id = u.user_id
-        WHERE b.status = 'pending'
-        ORDER BY b.request_date ASC";
-
+$sql = "SELECT 
+            borrowings.borrowing_id,
+            borrowings.equipment_id,
+            borrowings.borrow_date,
+            borrowings.due_date,
+            borrowings.notes,
+            equipment.name AS equipment_name,
+            equipment.equipment_code AS equipment_code,
+            users.first_name,
+            users.last_name
+        FROM borrowings
+        INNER JOIN equipment ON borrowings.equipment_id = equipment.equipment_id
+        INNER JOIN users ON borrowings.user_id = users.user_id
+        WHERE borrowings.approval_status = 'pending'";
 $result = $conn->query($sql);
 
 include 'pending_request.html';

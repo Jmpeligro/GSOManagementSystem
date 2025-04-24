@@ -24,7 +24,7 @@
         <div class="page-header">
             <h2>Equipment Management</h2>
             <?php if (isAdmin()): ?>
-            <a href="equipment_management.php" class="btn btn-primary">Add New Equipment</a>
+            <a href="equipment_management.php" class="btn btn-add-equipment">Add New Equipment</a>
             <?php endif; ?>
         </div>
         
@@ -80,8 +80,8 @@
                     <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search equipment...">
                 </div>
                 
-                <button type="submit" class="btn">Apply Filters</button>
-                <a href="equipment.php" class="btn btn-secondary">Reset</a>
+                <button type="submit" class="btn btn-filter-equipment">Apply Filters</button>
+                <a href="equipment.php" class="btn btn-reset-equipment">Reset</a>
             </form>
         </div>
         

@@ -34,9 +34,8 @@
     <div class="container">
         <div class="page-header">
             <h2>Equipment Categories</h2>
-            <button id="showAddCategoryForm" class="btn btn-primary">Add New Category</button>
+            <button id="showAddCategoryForm" class="btn btn-category">Add New Category</button>
         </div>
-        
         <?php if (isset($_SESSION['success'])): ?>
             <div class="success-message"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
         <?php endif; ?>
