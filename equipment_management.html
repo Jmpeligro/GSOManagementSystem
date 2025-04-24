@@ -31,6 +31,11 @@
             </div>
         <?php endif; ?>
         
+        <?php
+        // Initialize $notes to avoid undefined variable warning
+        $notes = $notes ?? '';
+        ?>
+        
         <form method="post" action="equipment_management.php" class="form">
             <div class="form-group">
                 <label for="name">Equipment Name <span class="required">*</span></label>
