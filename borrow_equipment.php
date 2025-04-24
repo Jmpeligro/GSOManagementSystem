@@ -30,6 +30,12 @@ if ($result->num_rows == 0) {
 
 $equipment = $result->fetch_assoc();
 
+$university_id = $_SESSION['university_id'] ?? null;
+
+if ($university_id) {
+    echo "<p>University ID: $university_id</p>";
+}
+
 $error = '';
 $success = '';
 
