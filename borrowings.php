@@ -30,7 +30,8 @@ $sql = "SELECT
     b.approval_date,
     b.admin_issued_id,
     b.admin_received_id,
-    b.returned_by
+    b.returned_by,
+    b.user_id
     FROM borrowings b
     JOIN equipment e ON b.equipment_id = e.equipment_id
     JOIN users u ON b.user_id = u.user_id
@@ -82,44 +83,62 @@ $equipment_result = $conn->query($equipment_sql);
 
 if (isset($_GET['return']) && isLoggedIn()) {
     $borrowing_id = (int)$_GET['return'];
+    
+    // Check if the user is the borrower or an admin
+    $check_sql = "SELECT user_id FROM borrowings WHERE borrowing_id = ?";
+    $check_stmt = $conn->prepare($check_sql);
+    $check_stmt->bind_param("i", $borrowing_id);
+    $check_stmt->execute();
+    $check_result = $check_stmt->get_result();
+    
+    if ($check_result->num_rows > 0) {
+        $borrower_id = $check_result->fetch_assoc()['user_id'];
+        
+        // Only proceed if current user is the borrower or an admin
+        if ($borrower_id == $_SESSION['user_id'] || isAdmin()) {
+            $conn->begin_transaction();
 
-    $conn->begin_transaction();
+            try {
+                $get_equipment_sql = "SELECT equipment_id FROM borrowings WHERE borrowing_id = ?";
+                $get_stmt = $conn->prepare($get_equipment_sql);
+                $get_stmt->bind_param("i", $borrowing_id);
+                $get_stmt->execute();
+                $equipment_result = $get_stmt->get_result();
 
-    try {
-        $get_equipment_sql = "SELECT equipment_id FROM borrowings WHERE borrowing_id = ?";
-        $get_stmt = $conn->prepare($get_equipment_sql);
-        $get_stmt->bind_param("i", $borrowing_id);
-        $get_stmt->execute();
-        $equipment_result = $get_stmt->get_result();
+                if ($equipment_row = $equipment_result->fetch_assoc()) {
+                    $equipment_id = $equipment_row['equipment_id'];
 
-        if ($equipment_row = $equipment_result->fetch_assoc()) {
-            $equipment_id = $equipment_row['equipment_id'];
+                    $update_borrowing_sql = "UPDATE borrowings SET 
+                        status = 'returned', 
+                        return_date = NOW(), 
+                        return_notes = 'Returned via system', 
+                        returned_by = ?,
+                        condition_on_return = 'good'  // Add condition check
+                        WHERE borrowing_id = ?";
 
-            $update_borrowing_sql = "UPDATE borrowings SET 
-                status = 'returned', 
-                return_date = NOW(), 
-                return_notes = 'Returned via system', 
-                returned_by = ?,
-                condition_on_return = 'good'  // Add condition check
-                WHERE borrowing_id = ?";
+                    $update_stmt = $conn->prepare($update_borrowing_sql);
+                    $update_stmt->bind_param("ii", $_SESSION['user_id'], $borrowing_id);
+                    $update_stmt->execute();
 
-            $update_stmt = $conn->prepare($update_borrowing_sql);
-            $update_stmt->bind_param("ii", $_SESSION['user_id'], $borrowing_id);
-            $update_stmt->execute();
+                    $update_equipment_sql = "UPDATE equipment SET status = 'available' WHERE equipment_id = ?";
+                    $update_equipment_stmt = $conn->prepare($update_equipment_sql);
+                    $update_equipment_stmt->bind_param("i", $equipment_id);
+                    $update_equipment_stmt->execute();
 
-            $update_equipment_sql = "UPDATE equipment SET status = 'available' WHERE equipment_id = ?";
-            $update_equipment_stmt = $conn->prepare($update_equipment_sql);
-            $update_equipment_stmt->bind_param("i", $equipment_id);
-            $update_equipment_stmt->execute();
-
-            $conn->commit();
-            $_SESSION['success'] = "Equipment returned successfully.";
+                    $conn->commit();
+                    $_SESSION['success'] = "Equipment returned successfully.";
+                } else {
+                    throw new Exception("Borrowing record not found.");
+                }
+            } catch (Exception $e) {
+                $conn->rollback();
+                $_SESSION['error'] = "Error returning equipment: " . $e->getMessage();
+            }
         } else {
-            throw new Exception("Borrowing record not found.");
+            $_SESSION['error'] = "You can only return equipment that you borrowed.";
         }
-    } catch (Exception $e) {
-        $conn->rollback();
-        $_SESSION['error'] = "Error returning equipment: " . $e->getMessage();
+    } else {
+        $_SESSION['error'] = "Borrowing record not found.";
     }
 
     header("Location: borrowings.php");

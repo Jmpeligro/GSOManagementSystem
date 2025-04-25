@@ -185,6 +185,7 @@ body {
 }
 
 .user-menu-dropdown.active {
+  border: 2px solid gray; 
   display: block !important;
 }
 
@@ -726,23 +727,6 @@ a:hover {
   color: white;
 }
 
-.btn-filter-equipment {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-main);
-  background-color: var(--gray-light);
-  color: var(--dark);
-  padding: 12px 20px;
-  margin-bottom: 20px;
-}
-
-.btn-filter-equipment:hover {
-  background-color: var(--gray);
-  color: white;
-  text-decoration: none;
-}
-
 .btn-add-user {
   font-family: var(--font-main);
   background-color: var(--primary);
@@ -758,7 +742,8 @@ a:hover {
   color: white;
 }
 
-.btn-filter-user {
+.btn-filter-user,
+.btn-filter-equipment {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -769,11 +754,13 @@ a:hover {
   margin-bottom: 20px;
 }
 
-.btn-filter-user:hover {
+
+.btn-filter-user:hover,
+.btn-filter-equipment:hover {
   background-color: var(--gray);
   color: white;
   text-decoration: none;
-} 
+}
 
 .btn-reset-user {
   background-color: var(--gray-light);
@@ -877,6 +864,133 @@ a:hover {
   color: white;
   text-decoration: none;
 }
+
+.btn-browse-equip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 16px; 
+  font-size: 1rem; 
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.btn-browse-equip:hover { 
+  background-color: var(--secondary);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-back-borrowing,
+.btn-back-myborrowing,
+.btn-back-equipment,
+.btn-back-users{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 16px; 
+  font-size: 1rem; 
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.btn-back-borrowing:hover,
+.btn-back-myborrowing:hover,
+.btn-back-equipment:hover,
+.btn-back-users:hover { 
+  background-color: var(--secondary);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-update-equipment,
+.btn-update-category,
+.btn-update-users {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 16px; 
+  font-size: 1rem; 
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.btn-update-equipment:hover,
+.btn-update-category:hover,
+.btn-update-users:hover {
+  background-color: var(--secondary);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-return-equipment,
+.btn-cancel-equipment,
+.btn-cancel-category,
+.btn-cancel-users {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  background-color: var(--gray-light);
+  color: var(--dark);
+  padding: 10px 16px; 
+  font-size: 1rem; 
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.btn-return-equipment:hover,
+.btn-cancel-equipment:hover,
+.btn-cancel-category:hover,
+.btn-cancel-users:hover {
+  background-color: var(--gray);
+  color: white;
+  text-decoration: none;
+}
+
+.btn-back-category {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-main);
+  background-color: var(--primary);
+  color: white;
+  padding: 10px 16px; 
+  font-size: 1rem; 
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.btn-back-category:hover { 
+  background-color: var(--secondary);
+  color: white;
+  text-decoration: none;
+}
+
   /* Forms */
   .form-group {
     margin-bottom: 20px;

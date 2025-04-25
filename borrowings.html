@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'sidebar.php'; ?>
     
     <div class="container">
         <div class="page-header">
@@ -15,7 +15,6 @@
             <div class="action-buttons">
                 <?php if (isAdmin()): ?>
                 <?php
-                // Hide borrow button for admin users
                 if ($_SESSION['role'] !== 'admin') {
                 ?>
                     <a href="new_borrowing.php" class="btn btn-new-borrow">New Borrowing</a>
@@ -24,7 +23,6 @@
                 ?>
                 <a href="pending_request.php" class="btn btn-pending-request">Pending Requests 
                     <?php 
-                    // Get count of pending requests
                     $pending_count = $conn->query("SELECT COUNT(*) as count FROM borrowings WHERE approval_status = 'pending'")->fetch_assoc()['count'];
                     if ($pending_count > 0) echo "($pending_count)";
                     ?>
@@ -156,7 +154,7 @@
                             <td class="actions">
                                 <a href="view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
                                 
-                                <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved'): ?>
+                                <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved' && $row['user_id'] == $_SESSION['user_id']): ?>
                                 <a href="borrowings.php?return=<?php echo $row['borrowing_id']; ?>" 
                                    class="btn btn-small btn-primary"
                                    onclick="return confirm('Are you sure you want to mark this equipment as returned?')">Return</a>

@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="view_borrowing.css">
 </head>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'sidebar.php'; ?>
     
     <div class="container">
         <div class="page-header">
             <h2>Borrowing Details</h2>
             <div class="action-buttons">
                 <?php if (isAdmin()): ?>
-                    <a href="borrowings.php" class="btn btn-secondary">Back to Borrowings</a>
+                    <a href="borrowings.php" class="btn btn-back-borrowing">Back to Borrowings</a>
                 <?php else: ?>
-                    <a href="my_borrowings.php" class="btn btn-secondary">Back to My Borrowings</a>
+                    <a href="my_borrowings.php" class="btn btn-back-myborrowing">Back to My Borrowings</a>
                 <?php endif; ?>
             </div>
         </div>
@@ -160,7 +160,7 @@
                     <textarea id="return_notes" name="return_notes" rows="2" placeholder="Add any notes about the condition of the equipment or return process"></textarea>
                 </div>
                 <div class="form-buttons">
-                    <button type="submit" name="return" class="btn btn-primary" onclick="return confirm('Are you sure you want to return this equipment?')">Return Equipment</button>
+                    <button type="submit" name="return" class="btn btn-return-equipment" onclick="return confirm('Are you sure you want to return this equipment?')">Return Equipment</button>
                 </div>
             </form>
             <?php endif; ?>

@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <?php include 'header.php'; ?>
+    <?php include 'sidebar.php'; ?>
     
     <div class="container">
         <div class="page-header">
             <h2>Edit Category</h2>
-            <a href="categories.php" class="btn btn-secondary">Back to Categories</a>
+            <a href="categories.php" class="btn btn-back-category">Back to Categories</a>
         </div>
         
         <?php if (isset($_SESSION['error'])): ?>
@@ -32,8 +32,8 @@
                 </div>
                 
                 <div class="form-buttons">
-                    <button type="submit" class="btn btn-primary">Update Category</button>
-                    <a href="categories.php" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-update-category">Update Category</button>
+                    <a href="categories.php" class="btn btn-cancel-category">Cancel</a>
                 </div>
             </form>
         </div>
