@@ -5,6 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const available = parseInt(canvas.getAttribute('data-available')) || 0;
         const borrowed = parseInt(canvas.getAttribute('data-borrowed')) || 0;
         const maintenance = parseInt(canvas.getAttribute('data-maintenance')) || 0;
+     
+        canvas.width = 300;
+        canvas.height = 300;
+   
+        canvas.style.width = '350px';
+        canvas.style.height = '350px';
+        canvas.style.margin = '0 auto'; 
 
         const equipmentStatusChart = new Chart(ctx, {
             type: 'pie',
@@ -17,13 +24,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }]
             },
             options: {
-                responsive: true,
+                responsive: false, 
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            font: {
+                                size: 11
+                            }
+                        }
                     }
                 }
-            }
+            }   
         });
     }
 });
