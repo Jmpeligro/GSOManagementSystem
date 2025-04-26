@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equipment Maintenance - University GSO</title>
+    <link rel="stylesheet" href="../../assets/css/maintenance.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <script>
+        function confirmDelete(id, name) {
+            return confirm('Are you sure you want to delete the maintenance record for "' + name + '"? This action cannot be undone.');
+        }
+        
+        function showAddMaintenanceForm() {
+            document.getElementById('addMaintenanceModal').style.display = 'block';
+        }
+        
+        function closeAddMaintenanceForm() {
+            document.getElementById('addMaintenanceModal').style.display = 'none';
+        }
+        
+        function showUpdateForm(id) {
+            document.getElementById('updateForm' + id).style.display = 'block';
+        }
+        
+        function closeUpdateForm(id) {
+            document.getElementById('updateForm' + id).style.display = 'none';
+        }
+        
+        function validateCost(input) {
+            // Allow only numbers and decimal point
+            input.value = input.value.replace(/[^0-9.]/g, '');
+            
+            // Ensure only one decimal point
+            const parts = input.value.split('.');
+            if (parts.length > 2) {
+                input.value = parts[0] + '.' + parts.slice(1).join('');
+            }
+        }
+    </script>
+</head>
+<body>
+    <?php include '../../components/sidebar.php'; ?>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>Equipment Maintenance Management</h2>
+            <button class="btn btn-add-equipment" onclick="showAddMaintenanceForm()">Add New Maintenance Record</button>
+        </div>
+        
+        <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+            <?php 
+                echo $_SESSION['success']; 
+                unset($_SESSION['success']);
+            ?>
+        </div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger">
+            <?php 
+                echo $_SESSION['error']; 
+                unset($_SESSION['error']);
+            ?>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Add Maintenance Modal -->
+        <div id="addMaintenanceModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Add New Maintenance Record</h3>
+                    <span class="close" onclick="closeAddMaintenanceForm()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="../../php/equipment/maintenance.php">
+                        <div class="form-group">
+                            <label for="equipment_id">Equipment</label>
+                            <select id="equipment_id" name="equipment_id" required>
+                                <option value="">Select Equipment</option>
+                                <?php while ($equipment = $equipment_result->fetch_assoc()): ?>
+                                <option value="<?php echo $equipment['equipment_id']; ?>">
+                                    <?php echo $equipment['equipment_code'] . ' - ' . $equipment['name']; ?>
+                                </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="issue_description">Issue Description</label>
+                            <textarea id="issue_description" name="issue_description" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Additional Notes (Optional)</label>
+                            <textarea id="notes" name="notes" rows="3"></textarea>
+                        </div>
+                        
+                        <input type="hidden" name="add_maintenance" value="1">
+                        <button type="submit" class="btn btn-primary">Add Maintenance Record</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeAddMaintenanceForm()">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Maintenance Records List -->
+        <div class="maintenance-list">
+            <h3>Maintenance Records</h3>
+            
+            <?php if ($result && $result->num_rows > 0): ?>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Issue</th>
+                        <th>Date Reported</th>
+                        <th>Status</th>
+                        <th>Resolved Date</th>
+                        <th>Cost</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['equipment_code'] . ' - ' . $row['equipment_name']); ?></td>
+                        <td><?php echo htmlspecialchars($row['issue_description']); ?></td>
+                        <td><?php echo date('M d, Y', strtotime($row['maintenance_date'])); ?></td>
+                        <td>
+                            <span class="status-badge status-<?php echo $row['status']; ?>">
+                                <?php echo ucfirst(str_replace('_', ' ', $row['status'])); ?>
+                            </span>
+                        </td>
+                        <td>
+                            <?php echo $row['resolved_date'] ? date('M d, Y', strtotime($row['resolved_date'])) : 'Not resolved'; ?>
+                        </td>
+                        <td>
+                            <?php echo $row['cost'] ? '$' . number_format($row['cost'], 2) : '-'; ?>
+                        </td>
+                        <td class="actions">
+                            <button class="btn btn-small btn-secondary" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)">Update</button>
+                            
+                            <form method="post" action="../../php/equipment/maintenance.php" style="display:inline-block;">
+                                <input type="hidden" name="maintenance_id" value="<?php echo $row['maintenance_id']; ?>">
+                                <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
+                                <input type="hidden" name="delete_maintenance" value="1">
+                                <button type="submit" class="btn btn-small btn-danger" 
+                                        onclick="return confirmDelete(<?php echo $row['maintenance_id']; ?>, '<?php echo htmlspecialchars($row['equipment_name'], ENT_QUOTES); ?>')">
+                                    Delete
+                                </button>
+                            </form>
+                            
+                            <!-- Update Form (Hidden by default) -->
+                            <div id="updateForm<?php echo $row['maintenance_id']; ?>" class="modal update-form">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h3>Update Maintenance Record</h3>
+                                        <span class="close" onclick="closeUpdateForm(<?php echo $row['maintenance_id']; ?>)">&times;</span>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form method="post" action="../../php/equipment/maintenance.php">
+                                            <input type="hidden" name="maintenance_id" value="<?php echo $row['maintenance_id']; ?>">
+                                            <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
+                                            
+                                            <div class="form-group">
+                                                <label for="equipment_info">Equipment</label>
+                                                <input type="text" id="equipment_info" value="<?php echo htmlspecialchars($row['equipment_code'] . ' - ' . $row['equipment_name']); ?>" readonly>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="issue_description_view">Issue Description</label>
+                                                <textarea id="issue_description_view" readonly><?php echo htmlspecialchars($row['issue_description']); ?></textarea>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="status<?php echo $row['maintenance_id']; ?>">Status</label>
+                                                <select id="status<?php echo $row['maintenance_id']; ?>" name="status" required>
+                                                    <option value="pending" <?php echo $row['status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                                    <option value="in_progress" <?php echo $row['status'] == 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
+                                                    <option value="completed" <?php echo $row['status'] == 'completed' ? 'selected' : ''; ?>>Completed</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group cost-group" id="costGroup<?php echo $row['maintenance_id']; ?>">
+                                                <label for="cost<?php echo $row['maintenance_id']; ?>">Cost (if completed)</label>
+                                                <input type="text" id="cost<?php echo $row['maintenance_id']; ?>" name="cost" value="<?php echo $row['cost'] ?? ''; ?>" 
+                                                       oninput="validateCost(this)" placeholder="Enter cost if status is completed">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <label for="notes<?php echo $row['maintenance_id']; ?>">Notes</label>
+                                                <textarea id="notes<?php echo $row['maintenance_id']; ?>" name="notes" rows="3"><?php echo htmlspecialchars($row['notes']); ?></textarea>
+                                            </div>
+                                            
+                                            <input type="hidden" name="update_maintenance" value="1">
+                                            <button type="submit" class="btn btn-primary">Update Record</button>
+                                            <button type="button" class="btn btn-secondary" onclick="closeUpdateForm(<?php echo $row['maintenance_id']; ?>)">Cancel</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+            <?php else: ?>
+            <div class="no-records">
+                <p>No maintenance records found.</p>
+            </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    
+    <?php include '../../components/footer.php'; ?>
+    <script src="../../assets/js/sidebar.js"></script>
+</body>
+</html>

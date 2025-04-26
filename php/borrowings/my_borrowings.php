@@ -73,7 +73,7 @@ if (isset($_GET['cancel']) && !empty($_GET['cancel'])) {
     exit();
 }
 
-include '../pages/borrowings/my_borrowings.html';
+include '../../pages/borrowings/my_borrowings.html';
 
 
 ?>

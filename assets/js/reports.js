@@ -95,27 +95,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     break;
             }
-    
-            const formatRadios = this.querySelectorAll('input[name="format"]');
-            let selectedFormat = '';
-            formatRadios.forEach(radio => {
-                if (radio.checked) selectedFormat = radio.value;
-            });
-            
-            if (selectedFormat === 'pdf' && !this.hasAttribute('data-pdf-warned')) {
-                const groupByNone = this.querySelector('input[value="none"][name="group_by"]');
-                if (groupByNone && groupByNone.checked) {
-                    if (!confirm('Generating a non-grouped PDF report may result in a large file. Continue?')) {
-                        e.preventDefault();
-                        return false;
-                    }
-                    this.setAttribute('data-pdf-warned', 'true');
-                }
-            }
         });
     });
     
     if (reportCards.length > 0) {
         reportCards[0].click();
     }
-}); 
+});

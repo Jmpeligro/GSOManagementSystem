@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Borrowings - PLP GSO</title>
-    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/styles.css">
 </head>
 <body>
-    <?php include '../components/sidebar.php'; ?>
+    <?php include '../../components/sidebar.php'; ?>
     
     <div class="container">
         <h2>My Borrowings</h2>
@@ -55,16 +55,16 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <a href="../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
+                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
                                 
                                 <?php if ($row['approval_status'] == 'pending'): ?>
-                                <a href="../php/borrowings/my_borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" 
+                                <a href="../borrowings/my_borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" 
                                    class="btn btn-small btn-danger"
                                    onclick="return confirm('Are you sure you want to cancel this request?')">Cancel</a>
                                 <?php endif; ?>
                                 
                                 <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved'): ?>
-                                <a href="../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>&return=true" 
+                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>&return=true" 
                                    class="btn btn-small btn-primary"
                                    onclick="return confirm('Are you sure you want to mark this equipment as returned?')">Return</a>
                                 <?php endif; ?>
@@ -72,11 +72,11 @@
                         </tr>
                         <?php endwhile; ?>
                     </tbody>
-                </table>
+                </table>    
             <?php else: ?>
                 <div class="no-results">
                     <p>You have no borrowing records at this time.</p>
-                    <a href="../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Borrowing</a>
+                    <a href="../../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Borrowing</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -85,12 +85,12 @@
         // Hide borrow-related actions for admin users
         if ($_SESSION['role'] !== 'admin') {
         ?>
-            <a href="../php/borrowingsborrow_equipment.php" class="btn btn-borrow-equipment">Borrow Equipment</a>
+            <a href="../../php/equipment/equipment.php" class="btn btn-borrow-equipment">Borrow Equipment</a>
         <?php
         }
         ?>
     </div>
     
-    <?php include '../components/footer.php'; ?>
+    <?php include '../../components/footer.php'; ?>
 </body>
 </html>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equipment Management - University GSO</title>
+    <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <script>
         function confirmDelete(id, name) {
@@ -25,8 +26,10 @@
             <h2>Equipment Management</h2>
             <?php if (isAdmin()): ?>
             <a href="../../php/equipment/equipment_management.php" class="btn btn-add-equipment">Add New Equipment</a>
+            <a href="../../php/equipment/maintenance.php" class="btn btn-maintenance">Equipment Maintenance</a>
             <?php endif; ?>
         </div>
+        
         
         <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success">
@@ -47,7 +50,7 @@
         <?php endif; ?>
         
         <div class="filter-section">
-            <form method="get" action="../../php/equipment/equipment.php" class="filter-form">
+            <form method="get" action="../equipment/equipment.php" class="filter-form">
                 <div class="form-group">
                     <label for="status">Status</label>
                     <select id="status" name="status">
@@ -81,7 +84,7 @@
                 </div>
                 
                 <button type="submit" class="btn btn-filter-equipment">Apply Filters</button>
-                <a href="../../php/equipment/equipment.php" class="btn btn-reset-equipment">Reset</a>
+                <a href="../equipment/equipment.php" class="btn btn-reset-equipment">Reset</a>
             </form>
         </div>
         
@@ -107,13 +110,13 @@
                             <td><span class="status-badge status-<?php echo $row['display_status']; ?>"><?php echo ucfirst($row['display_status']); ?></span></td>
                             <td><?php echo ucfirst($row['condition_status']); ?></td>
                             <td class="actions">
-                                <a href="../../php/equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small">View</a>
+                                <a href="../equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">View</a>
                                 
                                 <?php if (isAdmin()): ?>
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
-                                    <form method="post" action="../php/equipment/equipment.php" style="display:inline-block; margin-right: 5px;" onsubmit="return validateStatusChange(this.new_status)">
+                                    <form method="post" action="../equipment/equipment.php" class="status-change-form" onsubmit="return validateStatusChange(this.new_status)">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
-                                        <select name="new_status" class="status-select" style="padding: 4px; border-radius: 3px;">
+                                        <select name="new_status" class="status-select">
                                             <option value="">Change Status</option>
                                             <option value="available" <?php echo $row['status'] == 'available' ? 'disabled' : ''; ?>>Available</option>
                                             <option value="maintenance" <?php echo $row['status'] == 'maintenance' ? 'disabled' : ''; ?>>Maintenance</option>
@@ -124,10 +127,16 @@
                                     </form>
                                     <?php endif; ?>
                                     
-                                    <a href="../../php/equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
+                                    <?php if ($row['display_status'] == 'maintenance'): ?>
+                                    <a href="../../php/equipment/maintenance.php" class="btn btn-small btn-maintenance">View Maintenance</a>
+                                    <?php elseif ($row['display_status'] != 'borrowed' && $row['display_status'] != 'retired'): ?>
+                                    <a href="../../php/equipment/maintenance.php?quick_add=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-maintenance">Send to Maintenance</a>
+                                    <?php endif; ?>
+                            
+                                    <a href="../equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
                                     
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
-                                    <form method="post" action="../php/equipment/equipment.php" style="display:inline-block;">
+                                    <form method="post" action="../equipment/equipment.php" class="delete-form">
                                         <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
                                         <input type="hidden" name="delete_equipment" value="1">
                                         <button type="submit" class="btn btn-small btn-danger" 
@@ -139,7 +148,7 @@
                                 <?php endif; ?>
                                 
                                 <?php if ($row['display_status'] == 'available' && $_SESSION['role'] !== 'admin'): ?>
-                                <a href="../../php/borrowings/borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">Borrow</a>
+                                <a href="../borrowings/borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">Borrow</a>
                                 <?php endif; ?>
                             </td>
                         </tr>

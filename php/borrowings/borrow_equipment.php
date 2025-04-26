@@ -14,7 +14,7 @@ if ($_SESSION['role'] === 'admin') {
 }
 
 if (!isset($_GET['id']) || empty($_GET['id'])) {
-    header("Location: ../php/equipment/equipment.php");
+    header("Location: ../equipment/equipment.php");
     exit();
 }
 
@@ -30,7 +30,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows == 0) {
     $_SESSION['error'] = "Equipment not found or not available for borrowing.";
-    header("Location: ../php/equipment/equipment.php");
+    header("Location: ../equipment/equipment.php");
     exit();
 }
 
@@ -96,5 +96,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-include '../pages/borrowings/borrow_equipment.html';
+include '../../pages/borrowings/borrow_equipment.html';
 ?>

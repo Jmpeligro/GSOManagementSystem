@@ -1029,6 +1029,75 @@ a:hover {
   text-decoration: none;
 }
 
+/* Add these updated button styles to your styles.css file */
+
+/* Small Button Base Style */
+.btn-small {
+  font-family: var(--font-main);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+/* Small Button Variants */
+.btn-small {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-small:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-small.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-small.btn-primary:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-small.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-small.btn-secondary:hover {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+.btn-small.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-small.btn-danger:hover {
+  background-color: #c0392b; /* Darker red */
+  color: white;
+}
+
+/* Fix for action container spacing */
+td.actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  td.actions {
+    flex-direction: column;
+  }
+  
+  .btn-small {
+    text-align: center;
+  }
+}
+
   /* Forms */
   .form-group {
     margin-bottom: 20px;
