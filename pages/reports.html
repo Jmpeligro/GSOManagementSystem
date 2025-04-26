@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - PLP GSO</title>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/reports.css">
+</head>
+<body>
+    <?php include '../components/sidebar.php'; ?>
+    
+    <button class="sidebar-toggle" id="sidebarToggle">Toggle Sidebar</button>
+    
+    <div class="container">
+        <div class="page-header">
+            <h2>Reports</h2>
+        </div>
+        
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="success-message"><?php echo $_SESSION['success']; unset($_SESSION['success']); ?></div>
+        <?php endif; ?>
+        
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+        <?php endif; ?>
+        
+        <div class="reports-dashboard">
+            <div class="report-cards">
+                <div class="report-card" data-report="equipment">
+                    <div class="report-card-header">
+                        <h3>Equipment Inventory Report</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p>Generate a detailed report of all equipment items, their status, and conditions.</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn btn-report" data-report="equipment">Generate Report</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" data-report="borrowings">
+                    <div class="report-card-header">
+                        <h3>Borrowings Report</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p>View report on all borrowings, including active, returned, and overdue items.</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn btn-report" data-report="borrowings">Generate Report</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" data-report="maintenance">
+                    <div class="report-card-header">
+                        <h3>Maintenance Report</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p>Review maintenance activities, costs, and status of equipment repairs.</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn btn-report" data-report="maintenance">Generate Report</button>
+                    </div>
+                </div>
+                
+                <div class="report-card" data-report="usage">
+                    <div class="report-card-header">
+                        <h3>Equipment Usage Report</h3>
+                    </div>
+                    <div class="report-card-body">
+                        <p>Analyze usage patterns of equipment across different departments and users.</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn btn-report" data-report="usage">Generate Report</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="report-options-container">
+                <h3>Report Options</h3>
+                <div id="report-options-equipment" class="report-options">
+                    <form id="equipment-report-form" method="post" action="generate_report.php" target="_blank">
+                        <input type="hidden" name="report_type" value="equipment">
+                        
+                        <div class="form-group">
+                            <label for="equipment-status">Status</label>
+                            <select id="equipment-status" name="status">
+                                <option value="">All Statuses</option>
+                                <option value="available">Available</option>
+                                <option value="borrowed">Borrowed</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment-category">Category</label>
+                            <select id="equipment-category" name="category">
+                                <option value="">All Categories</option>
+                                <?php 
+                                    $categories = $conn->query("SELECT * FROM categories ORDER BY name");
+                                    while ($cat = $categories->fetch_assoc()): 
+                                ?>
+                                <option value="<?php echo $cat['category_id']; ?>"><?php echo $cat['name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment-condition">Condition</label>
+                            <select id="equipment-condition" name="condition">
+                                <option value="">All Conditions</option>
+                                <option value="new">New</option>
+                                <option value="good">Good</option>
+                                <option value="fair">Fair</option>
+                                <option value="poor">Poor</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Order By</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-order-code" name="order_by" value="equipment_code" checked>
+                                    <label for="equipment-order-code">Equipment Code</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-order-name" name="order_by" value="name">
+                                    <label for="equipment-order-name">Name</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-order-category" name="order_by" value="category_id">
+                                    <label for="equipment-order-category">Category</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-order-date" name="order_by" value="acquisition_date">
+                                    <label for="equipment-order-date">Acquisition Date</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Format</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-format-html" name="format" value="html" checked>
+                                    <label for="equipment-format-html">HTML</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-format-pdf" name="format" value="pdf">
+                                    <label for="equipment-format-pdf">PDF</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="equipment-format-csv" name="format" value="csv">
+                                    <label for="equipment-format-csv">CSV</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-generate-report">Generate Report</button>
+                    </form>
+                </div>
+                
+                <div id="report-options-borrowings" class="report-options">
+                    <form id="borrowings-report-form" method="post" action="generate_report.php" target="_blank">
+                        <input type="hidden" name="report_type" value="borrowings">
+                        
+                        <div class="form-group">
+                            <label for="borrowings-status">Borrowing Status</label>
+                            <select id="borrowings-status" name="status">
+                                <option value="">All Statuses</option>
+                                <option value="active">Active</option>
+                                <option value="returned">Returned</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="borrowings-approval">Approval Status</label>
+                            <select id="borrowings-approval" name="approval_status">
+                                <option value="">All</option>
+                                <option value="pending">Pending</option>
+                                <option value="approved">Approved</option>
+                                <option value="denied">Denied</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="borrowings-date-from">Date Range</label>
+                            <div class="date-range-inputs">
+                                <input type="date" id="borrowings-date-from" name="date_from" placeholder="From">
+                                <span>to</span>
+                                <input type="date" id="borrowings-date-to" name="date_to" placeholder="To">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="borrowings-user">Borrower</label>
+                            <select id="borrowings-user" name="user_id">
+                                <option value="">All Borrowers</option>
+                                <?php 
+                                    $users = $conn->query("SELECT * FROM users ORDER BY last_name, first_name");
+                                    while ($user = $users->fetch_assoc()): 
+                                ?>
+                                <option value="<?php echo $user['user_id']; ?>"><?php echo $user['first_name'] . ' ' . $user['last_name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Group By</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-group-none" name="group_by" value="none" checked>
+                                    <label for="borrowings-group-none">None</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-group-user" name="group_by" value="user_id">
+                                    <label for="borrowings-group-user">Borrower</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-group-status" name="group_by" value="status">
+                                    <label for="borrowings-group-status">Status</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-group-month" name="group_by" value="month">
+                                    <label for="borrowings-group-month">Month</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Format</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-format-html" name="format" value="html" checked>
+                                    <label for="borrowings-format-html">HTML</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-format-pdf" name="format" value="pdf">
+                                    <label for="borrowings-format-pdf">PDF</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="borrowings-format-csv" name="format" value="csv">
+                                    <label for="borrowings-format-csv">CSV</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-generate-report">Generate Report</button>
+                    </form>
+                </div>
+                
+                <div id="report-options-maintenance" class="report-options">
+                    <form id="maintenance-report-form" method="post" action="generate_report.php" target="_blank">
+                        <input type="hidden" name="report_type" value="maintenance">
+                        
+                        <div class="form-group">
+                            <label for="maintenance-status">Maintenance Status</label>
+                            <select id="maintenance-status" name="status">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="maintenance-date-from">Date Range</label>
+                            <div class="date-range-inputs">
+                                <input type="date" id="maintenance-date-from" name="date_from" placeholder="From">
+                                <span>to</span>
+                                <input type="date" id="maintenance-date-to" name="date_to" placeholder="To">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Cost Analysis</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="maintenance-cost-show" name="show_cost" value="1" checked>
+                                    <label for="maintenance-cost-show">Show Cost Details</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="maintenance-cost-sum" name="sum_cost" value="1">
+                                    <label for="maintenance-cost-sum">Include Cost Summary</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Group By</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-group-none" name="group_by" value="none" checked>
+                                    <label for="maintenance-group-none">None</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-group-equipment" name="group_by" value="equipment_id">
+                                    <label for="maintenance-group-equipment">Equipment</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-group-status" name="group_by" value="status">
+                                    <label for="maintenance-group-status">Status</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-group-month" name="group_by" value="month">
+                                    <label for="maintenance-group-month">Month</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Format</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-format-html" name="format" value="html" checked>
+                                    <label for="maintenance-format-html">HTML</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-format-pdf" name="format" value="pdf">
+                                    <label for="maintenance-format-pdf">PDF</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="maintenance-format-csv" name="format" value="csv">
+                                    <label for="maintenance-format-csv">CSV</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-generate-report">Generate Report</button>
+                    </form>
+                </div>
+                
+                <div id="report-options-usage" class="report-options">
+                    <form id="usage-report-form" method="post" action="generate_report.php" target="_blank">
+                        <input type="hidden" name="report_type" value="usage">
+                        
+                        <div class="form-group">
+                            <label for="usage-period">Time Period</label>
+                            <select id="usage-period" name="period">
+                                <option value="week">Last Week</option>
+                                <option value="month" selected>Last Month</option>
+                                <option value="quarter">Last Quarter</option>
+                                <option value="year">Last Year</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group custom-date-range" style="display:none;">
+                            <label for="usage-date-from">Custom Date Range</label>
+                            <div class="date-range-inputs">
+                                <input type="date" id="usage-date-from" name="date_from" placeholder="From">
+                                <span>to</span>
+                                <input type="date" id="usage-date-to" name="date_to" placeholder="To">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="usage-category">Category</label>
+                            <select id="usage-category" name="category">
+                                <option value="">All Categories</option>
+                                <?php 
+                                    // Reset the result pointer
+                                    $categories->data_seek(0);
+                                    while ($cat = $categories->fetch_assoc()): 
+                                ?>
+                                <option value="<?php echo $cat['category_id']; ?>"><?php echo $cat['name']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="usage-department">Department</label>
+                            <select id="usage-department" name="department">
+                                <option value="">All Departments</option>
+                                <?php 
+                                    $departments = $conn->query("SELECT DISTINCT department FROM users WHERE department IS NOT NULL ORDER BY department");
+                                    while ($dept = $departments->fetch_assoc()): 
+                                ?>
+                                <option value="<?php echo $dept['department']; ?>"><?php echo $dept['department']; ?></option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Analysis Type</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="usage-frequency" name="show_frequency" value="1" checked>
+                                    <label for="usage-frequency">Borrowing Frequency</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="usage-duration" name="show_duration" value="1" checked>
+                                    <label for="usage-duration">Average Duration</label>
+                                </div>
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="usage-popular" name="show_popular" value="1" checked>
+                                    <label for="usage-popular">Popular Equipment</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Visualization</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-option">
+                                    <input type="checkbox" id="usage-charts" name="include_charts" value="1" checked>
+                                    <label for="usage-charts">Include Charts</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Format</label>
+                            <div class="radio-group">
+                                <div class="radio-option">
+                                    <input type="radio" id="usage-format-html" name="format" value="html" checked>
+                                    <label for="usage-format-html">HTML</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="usage-format-pdf" name="format" value="pdf">
+                                    <label for="usage-format-pdf">PDF</label>
+                                </div>
+                                <div class="radio-option">
+                                    <input type="radio" id="usage-format-csv" name="format" value="csv">
+                                    <label for="usage-format-csv">CSV</label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-generate-report">Generate Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <?php include '../components/footer.php'; ?>
+    
+    <script src="../assets/js/reports.js"></script>
+    <script src="../../assets/js/sidebar.js"></script>
+</body>
+</html>
