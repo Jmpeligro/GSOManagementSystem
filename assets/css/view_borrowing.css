@@ -72,49 +72,6 @@
     color: var(--danger);
   }
   
-  /* Status badges with improved styling */
-  .status-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .status-badge.status-active {
-    background-color: rgba(52, 152, 219, 0.15);
-    color: #2980b9;
-  }
-  
-  .status-badge.status-overdue {
-    background-color: rgba(231, 76, 60, 0.15);
-    color: #c0392b;
-  }
-  
-  .status-badge.status-returned {
-    background-color: rgba(46, 204, 113, 0.15);
-    color: #27ae60;
-  }
-  
-  .status-badge.status-pending {
-    background-color: rgba(243, 156, 18, 0.15);
-    color: #d35400;
-  }
-  
-  .status-badge.status-approved {
-    background-color: rgba(46, 204, 113, 0.15);
-    color: #27ae60;
-  }
-  
-  .status-badge.status-rejected {
-    background-color: rgba(231, 76, 60, 0.15);
-    color: #c0392b;
-  }
-  
   /* Better form styling for returns */
   .return-form {
     background-color: white;

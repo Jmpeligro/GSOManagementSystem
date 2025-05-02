@@ -272,12 +272,13 @@
   
   /* Button styling */
   .btn-back-equipment {
-    background-color: var(--gray-light);
+    background-color: darkgray;
     color: var(--dark);
   }
   
   .btn-back-equipment:hover {
-    background-color: var(--gray);
+    background-color: dimgray;
+    color: black;
   }
   
   .btn-editequip-view {
@@ -287,15 +288,18 @@
   
   .btn-editequip-view:hover {
     background-color: var(--secondary);
+    color:white;
   }
   
   .btn-danger-viewequip {
+    padding-top: 18px;  
     background-color: var(--danger);
     color: white;
   }
   
   .btn-danger-viewequip:hover {
-    background-color: var(--danger-dark);
+    background-color: darkred;
+    color:white;  
   }
   
   .btn-mark-avail {
@@ -308,6 +312,7 @@
   }
   
   .btn-send-maint {
+    padding-top: 18px; 
     background-color: #f39c12;
     color: white;
   }
@@ -322,7 +327,8 @@
   }
   
   .btn-borrow-view:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--secondary);
+    color: white;
   }
   
   /* Responsive improvements */

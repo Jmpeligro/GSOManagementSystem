@@ -582,18 +582,50 @@ a:hover {
   color: var(--primary);
 }
 
-/* Status Badges */
+
+  /* Status badges with improved styling */
 .status-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.75rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+  
+.status-badge.status-active {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+  
+.status-badge.status-overdue {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+  
+.status-badge.status-returned {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+  
+.status-badge.status-pending {
+  background-color: rgba(243, 156, 18, 0.15);
+  color: #d35400;
+}
+  
+.status-badge.status-approved {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+  
+.status-badge.status-denied {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+  
 
 /* Buttons */
 .btn {
@@ -626,7 +658,7 @@ a:hover {
 
 .btn-pending-request {
   font-family: var(--font-main);
-  background-color: var(--primary);
+  background-color: orange;
   color: white;
   gap: 8px; 
   padding-top: 15px;
@@ -635,7 +667,7 @@ a:hover {
 }
 
 .btn-pending-request:hover {
-  background-color: var(--warning);
+  background-color: darkorange;
   color: white;
 }
 
@@ -726,6 +758,7 @@ a:hover {
   color: white;
 }
 
+.btn-cancel-category,
 .btn-filter-user,
 .btn-filter-equipment {
   display: inline-flex;
@@ -738,7 +771,7 @@ a:hover {
   margin-bottom: 20px;
 }
 
-
+.btn-cancel-category:hover,
 .btn-filter-user:hover,
 .btn-filter-equipment:hover {
   background-color: var(--gray);
@@ -785,6 +818,7 @@ a:hover {
     text-decoration: none;
 }
 
+.btn-borrow-req,
 .btn-generate-report {
   display: inline-flex;
   align-items: center;
@@ -800,12 +834,14 @@ a:hover {
   line-height: 1.5;
 }
 
+.btn-borrow-req:hover,
 .btn-generate-report:hover { 
   background-color: var(--gray);
   color: white;
   text-decoration: none;
 }
 
+.btn-cancel-borreq,
 .btn-borrow-equipment {
   display: inline-flex;
   align-items: center;
@@ -821,6 +857,7 @@ a:hover {
   line-height: 1.5;
 }
 
+.btn-cancel-borreq:hover,
 .btn-borrow-equipment:hover {
   background-color: var(--secondary);
   color: white;
@@ -871,6 +908,7 @@ a:hover {
   text-decoration: none;
 }
 
+.btn-save-category,
 .btn-back-borrowing,
 .btn-back-myborrowing,
 .btn-back-equipment,
@@ -890,6 +928,7 @@ a:hover {
   margin-bottom: 15px;
 }
 
+.btn-save-category:hover,
 .btn-back-borrowing:hover,
 .btn-back-myborrowing:hover,
 .btn-back-equipment:hover,
@@ -1178,7 +1217,8 @@ td.actions {
     text-align: center;
     color: var(--gray);
     width: 100%;
-    margin-top: auto;
+    margin-bottom: 0;
+    position: relative;
   }
   
   /* Additional Components */
