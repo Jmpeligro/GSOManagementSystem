@@ -26,7 +26,7 @@
             <h2>Equipment Management</h2>
             <?php if (isAdmin()): ?>
             <a href="../../php/equipment/equipment_management.php" class="btn btn-add-equipment">Add New Equipment</a>
-            <a href="../../php/equipment/maintenance.php" class="btn btn-maintenance">Equipment Maintenance</a>
+            <a href="../../php/equipment/maintenance.php" class="btn-maintenance">Equipment Maintenance</a>
             <?php endif; ?>
         </div>
         
@@ -125,11 +125,11 @@
                                         <button type="submit" class="btn btn-small">Update</button>
                                     </form>
                                     <?php endif; ?>
-                                    
+        
                                     <?php if ($row['display_status'] == 'maintenance'): ?>
                                     <a href="../../php/equipment/maintenance.php" class="btn btn-small btn-maintenance">View Maintenance</a>
                                     <?php elseif ($row['display_status'] != 'borrowed' && $row['display_status'] != 'retired'): ?>
-                                    <a href="../../php/equipment/maintenance.php?quick_add=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-maintenance">Send to Maintenance</a>
+                                    <a href="../../php/equipment/maintenance.php?quick_add=<?php echo $row['equipment_id']; ?>" class=" btn-small-maintenance">Send to Maintenance</a>
                                     <?php endif; ?>
                             
                                     <a href="../equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>

@@ -109,21 +109,39 @@ if (isset($_GET['return']) && isLoggedIn()) {
                     $equipment_id = $equipment_row['equipment_id'];
 
                     $update_borrowing_sql = "UPDATE borrowings SET 
-                        status = 'returned', 
-                        return_date = NOW(), 
-                        return_notes = 'Returned via system', 
+                        status = 'returned',
+                        return_date = NOW(),
+                        return_notes = 'Returned via system',
                         returned_by = ?,
-                        condition_on_return = 'good'  // Add condition check
+                        condition_on_return = 'good'
                         WHERE borrowing_id = ?";
 
                     $update_stmt = $conn->prepare($update_borrowing_sql);
-                    $update_stmt->bind_param("ii", $_SESSION['user_id'], $borrowing_id);
-                    $update_stmt->execute();
+                    if ($update_stmt === false) {
+                        throw new Exception("Failed to prepare update statement: " . $conn->error);
+                    }
+
+                    if (!$update_stmt->bind_param("ii", $_SESSION['user_id'], $borrowing_id)) {
+                        throw new Exception("Failed to bind parameters: " . $update_stmt->error);
+                    }
+
+                    if (!$update_stmt->execute()) {
+                        throw new Exception("Failed to execute update: " . $update_stmt->error);
+                    }
 
                     $update_equipment_sql = "UPDATE equipment SET status = 'available' WHERE equipment_id = ?";
                     $update_equipment_stmt = $conn->prepare($update_equipment_sql);
-                    $update_equipment_stmt->bind_param("i", $equipment_id);
-                    $update_equipment_stmt->execute();
+                    if ($update_equipment_stmt === false) {
+                        throw new Exception("Failed to prepare equipment update: " . $conn->error);
+                    }
+
+                    if (!$update_equipment_stmt->bind_param("i", $equipment_id)) {
+                        throw new Exception("Failed to bind equipment parameters: " . $update_equipment_stmt->error);
+                    }
+
+                    if (!$update_equipment_stmt->execute()) {
+                        throw new Exception("Failed to update equipment status: " . $update_equipment_stmt->error);
+                    }
 
                     $conn->commit();
                     $_SESSION['success'] = "Equipment returned successfully.";

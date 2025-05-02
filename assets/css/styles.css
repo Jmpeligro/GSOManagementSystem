@@ -24,7 +24,7 @@
 }
 
 /* Base Styles */
-* {
+* { 
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -595,41 +595,6 @@ a:hover {
   letter-spacing: 0.5px;
 }
 
-.status-available {
-  background-color: rgba(46, 204, 113, 0.15);
-  color: #27ae60;
-}
-
-.status-borrowed {
-  background-color: rgba(52, 152, 219, 0.15);
-  color: #2980b9;
-}
-
-.status-maintenance {
-  background-color: rgba(243, 156, 18, 0.15);
-  color: #d35400;
-}
-
-.status-retired {
-  background-color: rgba(231, 76, 60, 0.15);
-  color: #c0392b;
-}
-
-.status-overdue {
-  background-color: rgba(231, 76, 60, 0.15);
-  color: #c0392b;
-}
-
-.status-returned {
-  background-color: rgba(46, 204, 113, 0.15);
-  color: #27ae60;
-}
-
-.status-active {
-  background-color: rgba(52, 152, 219, 0.15);
-  color: #2980b9;
-}
-
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -674,18 +639,6 @@ a:hover {
   color: white;
 }
 
-.btn-danger-viewequip {
-  font-family: var(--font-main);
-  background-color: var(--warning);
-  color: black;
-}
-
-.btn-danger-viewequip:hover {
-  background-color: var(--danger);
-  color: white;
-  text-decoration: none;
-}
-
 .btn-reset-equipment {
   background-color: var(--gray-light);
   color: var(--dark);
@@ -702,7 +655,7 @@ a:hover {
   font-family: var(--font-main);
   padding: 6px 12px;
   font-size: 0.85rem;
-  border-radius: 4px;
+  border-radius: 4px; 
 }
 
 .btn-small-primary {
@@ -946,7 +899,6 @@ a:hover {
   text-decoration: none;
 }
 
-.btn-editequip-view,
 .btn-update-equipment,
 .btn-update-category,
 .btn-update-users {
@@ -966,7 +918,6 @@ a:hover {
   margin-top: 5px;
 }
 
-.btn-editequip-view:hover,
 .btn-update-equipment:hover,
 .btn-update-category:hover,
 .btn-update-users:hover {
@@ -975,9 +926,6 @@ a:hover {
   text-decoration: none;
 }
 
-.btn-mark-avail,
-.btn-send-maint,
-.btn-return-equipment,
 .btn-cancel-equipment,
 .btn-cancel-category,
 .btn-cancel-users {
@@ -996,9 +944,6 @@ a:hover {
   margin-bottom: 15px;
 }
 
-.btn-mark-avail:hover,
-.btn-send-maint:hover,
-.btn-return-equipment:hover,
 .btn-cancel-equipment:hover,
 .btn-cancel-category:hover,
 .btn-cancel-users:hover {
@@ -1051,32 +996,50 @@ a:hover {
   color: white;
 }
 
-.btn-small.btn-primary {
+.btn.btn-approve {
+  font-family: var(--font-main);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding-bottom: 15px;
   background-color: var(--primary);
   color: white;
 }
 
-.btn-small.btn-primary:hover {
+.btn.btn-approve:hover {
   background-color: var(--secondary);
   color: white;
 }
 
-.btn-small.btn-secondary {
-  background-color: var(--secondary);
+.btn.btn-view {
+  font-family: var(--font-main);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding-bottom: 10px;
+  background-color: var(--primary);
   color: white;
 }
 
-.btn-small.btn-secondary:hover {
+.btn.btn-view:hover {
   background-color: var(--primary-light);
   color: white;
 }
 
-.btn-small.btn-danger {
+.btn.btn-deny {
+  font-family: var(--font-main);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding-bottom: 10px;
   background-color: var(--danger);
   color: white;
 }
 
-.btn-small.btn-danger:hover {
+.btn.btn-deny:hover {
   background-color: #c0392b; /* Darker red */
   color: white;
 }

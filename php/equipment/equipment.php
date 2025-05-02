@@ -7,6 +7,7 @@ if (!isLoggedIn()) {
     exit();
 }
 
+
 if (isset($_POST['delete_equipment']) && isAdmin()) {
     $equipment_id = (int)$_POST['equipment_id'];
    

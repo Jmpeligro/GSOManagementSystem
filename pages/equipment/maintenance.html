@@ -137,7 +137,7 @@
                             <?php echo $row['resolved_date'] ? date('M d, Y', strtotime($row['resolved_date'])) : 'Not resolved'; ?>
                         </td>
                         <td>
-                            <?php echo $row['cost'] ? '$' . number_format($row['cost'], 2) : '-'; ?>
+                            <?php echo $row['cost'] ? '₱' . number_format($row['cost'], 2) : '-'; ?>
                         </td>
                         <td class="actions">
                             <button class="btn btn-small btn-secondary" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)">Update</button>
@@ -176,7 +176,7 @@
                                             
                                             <div class="form-group">
                                                 <label for="status<?php echo $row['maintenance_id']; ?>">Status</label>
-                                                <select id="status<?php echo $row['maintenance_id']; ?>" name="status" required>
+                                                <select id="status<?php echo $row['maintenance_id']; ?>" class="maint-listbox" name="status" required>
                                                     <option value="pending" <?php echo $row['status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
                                                     <option value="in_progress" <?php echo $row['status'] == 'in_progress' ? 'selected' : ''; ?>>In Progress</option>
                                                     <option value="completed" <?php echo $row['status'] == 'completed' ? 'selected' : ''; ?>>Completed</option>

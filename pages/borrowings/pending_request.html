@@ -51,10 +51,10 @@
                                 <form method="post" action="../../php/borrowings/pending_request.php" style="display:inline-block;">
                                     <input type="hidden" name="borrowing_id" value="<?php echo $row['borrowing_id']; ?>">
                                     <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
-                                    <button type="submit" name="approve_request" class="btn btn-small btn-primary">Approve</button>
+                                    <button type="submit" name="approve_request" class="btn btn-approve">Approve</button>
                                 </form>
                                 
-                                <button class="btn btn-small btn-danger deny-button" data-form-id="<?php echo $row['borrowing_id']; ?>">
+                                <button class="btn btn-deny" data-form-id="<?php echo $row['borrowing_id']; ?>">
                                     Deny
                                 </button>
                                 
@@ -62,11 +62,11 @@
                                     <form method="post" action="../../php/borrowings/pending_request.php">
                                         <input type="hidden" name="borrowing_id" value="<?php echo $row['borrowing_id']; ?>">
                                         <textarea name="denial_reason" placeholder="Reason for denial" required></textarea>
-                                        <button type="submit" name="deny_request" class="btn btn-small btn-danger">Confirm Denial</button>
+                                        <button type="submit" name="deny_request" class="btn btn-danger">Confirm Denial</button>
                                     </form>
                                 </div>
                                 
-                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
+                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-view">View</a>
                             </td>
                         </tr>
                         <?php endwhile; ?>
@@ -83,5 +83,6 @@
     <?php include '../../components/footer.php'; ?>
     
     <script src="../../assets/js/borrowings.js"></script>
+    <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>

@@ -1,4 +1,9 @@
 /* Modal styles */
+
+:root {
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
 .modal {
   display: none;
   position: fixed;
@@ -71,7 +76,8 @@
   }
   
   .status-select {
-    padding: 6px 8px !important;
+    height: 10px;
+    padding: 6px 20px !important;
     border-radius: 4px;
     border: 1px solid var(--gray-light);
     min-width: 120px;
@@ -93,17 +99,30 @@
   }
   
   /* Maintenance button specific styling */
-  .btn-small.btn-maintenance {
+  .btn-small-maintenance {
+    font-family: var(--font-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.2s ease;
     background-color: #ff9800;
     color: white;
   }
   
-  .btn-small.btn-maintenance:hover {
+  .btn-small-maintenance:hover {
+    color: white;
     background-color: #f57c00;
   }
   
   /* Primary button styling */
   .btn-small.btn-primary {
+    font-family: var(--font-main);
     background-color: var(--primary);
     color: white;
   }
@@ -132,20 +151,32 @@
     background-color: #c0392b;
   }
   
+  .btn-maintenance {
+    font-family: var(--font-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--warning);
+    color: white;
+    gap: 8px; 
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+
+  .btn-maintenance:hover{
+    color: white;
+    background-color:  #f57c00;
+  }
+
   /* Ensure consistent height for buttons and select */
   .actions .btn-small,
   .actions select,
   .actions form button {
     height: 32px;
-  }
-
-  .btn-maintenance {
-    background-color: #ff9800;
-    color: white;
-  }
-
-  .btn-maintenance:hover {
-    background-color: #f57c00;
   }
   
   /* For smaller screens, stack buttons vertically */
@@ -172,3 +203,45 @@
       flex: 1;
     }
   }
+  
+  /* Fix for status dropdown and other form controls */
+.modal select,
+.modal-body select,
+.maint-listbox {
+  display: block;
+  width: 100%;
+  height: 38px;  /* Increased from 10px to make it visible */
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  appearance: auto; /* Ensure native dropdown arrow is visible */
+}
+
+/* Make cost input match other form elements */
+.modal input[type="text"] {
+  display: block;
+  width: 100%;
+  height: 38px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+/* Ensure consistent textareas */
+.modal textarea {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  resize: vertical;
+}
