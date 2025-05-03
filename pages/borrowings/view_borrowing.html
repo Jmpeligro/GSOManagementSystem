@@ -57,6 +57,11 @@
                 </div>
                 
                 <div class="info-row">
+                    <span class="label">Quantity Borrowed:</span>
+                    <span class="value"><?php echo $borrowed_quantity; ?></span>
+                </div>
+                
+                <div class="info-row">
                     <span class="label">Borrow Date:</span>
                     <span class="value"><?php echo date('F d, Y h:i A', strtotime($borrowing['borrow_date'])); ?></span>
                 </div>
@@ -155,6 +160,12 @@
             <?php if ($borrowing['status'] == 'active' && $borrowing['approval_status'] == 'approved'): ?>
             <div class="section-title">Return Equipment</div>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $borrowing_id); ?>" class="return-form">
+                <div class="form-group">
+                    <label for="return_quantity">Return Quantity</label>
+                    <input type="number" id="return_quantity" name="return_quantity" min="1" max="<?php echo $borrowed_quantity; ?>" value="<?php echo $borrowed_quantity; ?>" required>
+                    <span class="help-text">Out of <?php echo $borrowed_quantity; ?> borrowed</span>
+                </div>
+                
                 <div class="form-group">
                     <label for="return_notes">Return Notes (Optional)</label>
                     <textarea id="return_notes" name="return_notes" rows="2" placeholder="Add any notes about the condition of the equipment or return process"></textarea>

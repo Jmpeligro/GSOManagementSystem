@@ -7,8 +7,9 @@ if (!isLoggedIn() || !isAdmin()) {
     exit();
 }
 
-$sql_equipment = "SELECT equipment_id, name, equipment_code FROM equipment 
-                 WHERE status = 'available'
+// Get available equipment (quantity > 0)
+$sql_equipment = "SELECT equipment_id, name, equipment_code, quantity FROM equipment 
+                 WHERE status = 'available' AND quantity > 0
                  ORDER BY name";
 $result_equipment = $conn->query($sql_equipment);
 
@@ -21,6 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $borrow_date = sanitize($_POST['borrow_date']);
     $due_date = sanitize($_POST['due_date']);
     $notes = sanitize($_POST['notes']);
+    $quantity = isset($_POST['quantity']) ? (int)$_POST['quantity'] : 1;
 
     $errors = [];
     
@@ -32,6 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Please select a valid user.";
     }
     
+    if ($quantity <= 0) {
+        $errors[] = "Please enter a valid quantity.";
+    }
+    
     $borrow_datetime = new DateTime($borrow_date);
     $due_datetime = new DateTime($due_date);
     
@@ -39,7 +45,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Due date must be after the borrow date.";
     }
 
-    $check_equipment = "SELECT status FROM equipment WHERE equipment_id = ?";
+    // Check equipment availability and quantity
+    $check_equipment = "SELECT status, quantity FROM equipment WHERE equipment_id = ?";
     $stmt = $conn->prepare($check_equipment);
     $stmt->bind_param("i", $equipment_id);
     $stmt->execute();
@@ -48,9 +55,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($equipment_result->num_rows == 0) {
         $errors[] = "Equipment not found.";
     } else {
-        $equipment_status = $equipment_result->fetch_assoc()['status'];
-        if ($equipment_status !== 'available') {
+        $equipment_data = $equipment_result->fetch_assoc();
+        if ($equipment_data['status'] !== 'available') {
             $errors[] = "Selected equipment is not available for borrowing.";
+        }
+        
+        if ($equipment_data['quantity'] < $quantity) {
+            $errors[] = "Requested quantity ({$quantity}) exceeds available quantity ({$equipment_data['quantity']}).";
         }
     }
 
@@ -70,7 +81,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 created_at,
                 updated_at,
                 approval_date,
-                admin_notes
+                admin_notes,
+                quantity
             ) VALUES (
                 ?, ?, ?, ?, 
                 'active', 
@@ -80,27 +92,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 NOW(),
                 NOW(),
                 NOW(),
-                'Approved at creation'
+                'Approved at creation',
+                ?
             )";
             
             $stmt = $conn->prepare($insert_borrowing);
-            $stmt->bind_param("iisssi", 
+            $stmt->bind_param("iisssii", 
                 $equipment_id, 
                 $user_id, 
                 $borrow_date, 
                 $due_date, 
                 $notes, 
-                $_SESSION['user_id']
+                $_SESSION['user_id'],
+                $quantity
             );
             
             $stmt->execute();
             
+            $new_quantity = $equipment_data['quantity'] - $quantity;
+            $equipment_status = $new_quantity > 0 ? 'available' : 'borrowed';
+            
             $update_equipment = "UPDATE equipment 
-                                SET status = 'borrowed', 
+                                SET quantity = ?, 
+                                    status = ?,
                                     updated_at = NOW() 
                                 WHERE equipment_id = ?";
             $stmt = $conn->prepare($update_equipment);
-            $stmt->bind_param("i", $equipment_id);
+            $stmt->bind_param("isi", $new_quantity, $equipment_status, $equipment_id);
             $stmt->execute();
             
             $conn->commit();

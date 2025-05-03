@@ -91,23 +91,31 @@
             <?php if ($result && $result->num_rows > 0): ?>
                 <table class="data-table">
                     <thead>
-                        <tr>
-                            <th>Code</th>   
+                        <tr>  
                             <th>Name</th>
                             <th>Category</th>
                             <th>Status</th>
                             <th>Condition</th>
+                            <th>Quantity</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php while ($row = $result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($row['equipment_code']); ?></td>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
                             <td><?php echo htmlspecialchars($row['category_name']); ?></td>
                             <td><span class="status-badge status-<?php echo $row['display_status']; ?>"><?php echo ucfirst($row['display_status']); ?></span></td>
                             <td><?php echo ucfirst($row['condition_status']); ?></td>
+                            <td>
+                                <?php if ($row['display_status'] == 'borrowed'): ?>
+                                    <?php echo ($row['available_quantity'] > 0) ? 
+                                        htmlspecialchars($row['available_quantity']) . ' / ' . htmlspecialchars($row['quantity']) : 
+                                        '0 / ' . htmlspecialchars($row['quantity']); ?>
+                                <?php else: ?>
+                                    <?php echo htmlspecialchars($row['quantity']); ?>
+                                <?php endif; ?>
+                            </td>
                             <td class="actions">
                                 <a href="../equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary">View</a>
                                 

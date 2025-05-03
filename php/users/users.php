@@ -2,20 +2,24 @@
 session_start();
 require_once '../db_connection.php';
 
-// Check if user is logged in and is admin
 if (!isLoggedIn() || !isAdmin()) {
     header("Location: php/login.php");
     exit();
 }
 
-// Get filter parameters
 $role_filter = isset($_GET['role']) ? sanitize($_GET['role']) : '';
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
+$show_archived = isset($_GET['show_archived']) ? sanitize($_GET['show_archived']) : '0';
 
-// Build the SQL query with filters using prepared statements
 $sql = "SELECT * FROM users WHERE 1=1";
 $params = [];
 $types = "";
+
+if ($show_archived === '0') {
+    $sql .= " AND archived = FALSE";
+} elseif ($show_archived === '1') {
+    $sql .= " AND archived = TRUE";
+}
 
 if (!empty($role_filter)) {
     $sql .= " AND role = ?";
@@ -34,15 +38,71 @@ if (!empty($search_query)) {
     $types .= "sssss";
 }
 
-$sql .= " ORDER BY last_name ASC, first_name ASC";
+$sql .= " ORDER BY archived ASC, last_name ASC, first_name ASC";
 
-// Prepare and execute the query
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("SQL prepare failed: " . $conn->error . " | Query: " . $sql);
+}
+
 if (!empty($params)) {
     $stmt->bind_param($types, ...$params);
 }
+
 $stmt->execute();
 $result = $stmt->get_result();
+if (!$result) {
+    die("SQL execution failed: " . $stmt->error);
+}
+
+if (isset($_GET['archive']) && isAdmin()) {
+    $archive_id = (int)$_GET['archive'];
+    
+    if ($archive_id != $_SESSION['user_id']) {
+        $check_sql = "SELECT COUNT(*) as count FROM borrowings WHERE user_id = ? AND status = 'active'";
+        $check_stmt = $conn->prepare($check_sql);
+        $check_stmt->bind_param("i", $archive_id);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+        $active_count = $check_result->fetch_assoc()['count'];
+        
+        if ($active_count == 0) {
+            $archive_sql = "UPDATE users SET archived = TRUE, archived_at = NOW() WHERE user_id = ?";
+            $archive_stmt = $conn->prepare($archive_sql);
+            $archive_stmt->bind_param("i", $archive_id);
+            
+            if ($archive_stmt->execute()) {
+                $_SESSION['success'] = "User archived successfully.";
+            } else {
+                $_SESSION['error'] = "Error archiving user.";
+            }
+        } else {
+            $_SESSION['error'] = "Cannot archive user with active borrowings.";
+        }
+    } else {
+        $_SESSION['error'] = "You cannot archive your own account.";
+    }
+
+    header("Location: users.php");
+    exit();
+}
+
+if (isset($_GET['restore']) && isAdmin()) {
+    $restore_id = (int)$_GET['restore'];
+    
+    $restore_sql = "UPDATE users SET archived = FALSE, archived_at = NULL WHERE user_id = ?";
+    $restore_stmt = $conn->prepare($restore_sql);
+    $restore_stmt->bind_param("i", $restore_id);
+    
+    if ($restore_stmt->execute()) {
+        $_SESSION['success'] = "User restored successfully.";
+    } else {
+        $_SESSION['error'] = "Error restoring user.";
+    }
+
+    header("Location: users.php");
+    exit();
+}
 
 if (isset($_GET['delete']) && isAdmin()) {
     $delete_id = (int)$_GET['delete'];

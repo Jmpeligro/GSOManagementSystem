@@ -9,6 +9,7 @@ if (!isLoggedIn() || !isAdmin()) {
 
 $name = $description = $equipment_code = $acquisition_date = '';
 $category_id = $condition_status = $status = '';
+$quantity = 1; // Default quantity value
 $errors = [];
 $success_message = '';
 
@@ -23,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $condition_status = sanitize($_POST['condition_status']);
     $status = sanitize($_POST['status']);
     $acquisition_date = sanitize($_POST['acquisition_date']);
+    $quantity = (int)$_POST['quantity']; // Get quantity from form
 
     if (empty($name)) {
         $errors[] = "Equipment name is required";
@@ -63,6 +65,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Validate quantity
+    if (!isset($quantity) || !is_numeric($quantity) || $quantity < 1) {
+        $errors[] = "Quantity must be a positive number";
+        $quantity = 1; // Reset to default if invalid
+    }
+
     if (empty($errors)) {
         $sql = "INSERT INTO equipment (
             name, 
@@ -72,31 +80,35 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             condition_status, 
             status, 
             acquisition_date,
+            quantity,
             notes,
             created_at,
             updated_at
         ) VALUES (
             ?, ?, ?, ?, ?, ?, ?, 
+            ?,
             '', 
             NOW(), 
             NOW()
         )";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssss", 
+        $stmt->bind_param("ssssssis", 
             $name, 
             $description, 
             $equipment_code, 
             $category_id, 
             $condition_status, 
             $status, 
-            $acquisition_date
+            $acquisition_date,
+            $quantity
         );
 
         if ($stmt->execute()) {
             $success_message = "Equipment added successfully!";
             $name = $description = $equipment_code = $acquisition_date = '';
             $category_id = $condition_status = $status = '';
+            $quantity = 1;
         } else {
             $errors[] = "Error: " . $stmt->error;
         }

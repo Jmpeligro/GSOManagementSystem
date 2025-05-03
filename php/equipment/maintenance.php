@@ -7,11 +7,9 @@ if (!isLoggedIn() || !isAdmin()) {
     exit();
 }
 
-// Handle quick add from equipment page
 if (isset($_GET['quick_add']) && is_numeric($_GET['quick_add'])) {
     $equipment_id = (int)$_GET['quick_add'];
-    
-    // Check if the equipment exists and is not already in maintenance
+
     $check_sql = "SELECT name, status FROM equipment WHERE equipment_id = ?";
     $check_stmt = $conn->prepare($check_sql);
     $check_stmt->bind_param("i", $equipment_id);
@@ -28,7 +26,7 @@ if (isset($_GET['quick_add']) && is_numeric($_GET['quick_add'])) {
         } elseif ($equipment['status'] === 'retired') {
             $_SESSION['error'] = "Cannot send retired equipment to maintenance!";
         } else {
-            // Show a pre-filled modal form for the selected equipment
+
             $quick_add = true;
             $quick_add_equipment_id = $equipment_id;
             $quick_add_equipment_name = $equipment['name'];
@@ -37,7 +35,7 @@ if (isset($_GET['quick_add']) && is_numeric($_GET['quick_add'])) {
         $_SESSION['error'] = "Equipment not found!";
     }
 }
-// Get all maintenance records with equipment info
+
 $sql = "SELECT 
     m.maintenance_id,
     m.equipment_id,
@@ -64,7 +62,6 @@ $sql = "SELECT
 
 $result = $conn->query($sql);
 
-// Handle form submissions for updating maintenance records
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['update_maintenance'])) {
         $maintenance_id = (int)$_POST['maintenance_id'];
@@ -74,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $resolved_by = null;
         $cost = null;
         
-        // If status is completed, update resolved fields
         if ($status === 'completed') {
             $resolved_date = date('Y-m-d');
             $resolved_by = $_SESSION['first_name'] . ' ' . $_SESSION['last_name'];
@@ -94,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt->bind_param("ssssdi", $status, $notes, $resolved_date, $resolved_by, $cost, $maintenance_id);
         
         if ($update_stmt->execute()) {
-            // If maintenance is completed, update equipment status to available
             if ($status === 'completed') {
                 $equipment_id = (int)$_POST['equipment_id'];
                 $equipment_update = "UPDATE equipment SET status = 'available', updated_at = NOW() WHERE equipment_id = ?";
@@ -112,7 +107,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     
-    // Handle adding new maintenance record
     if (isset($_POST['add_maintenance'])) {
         $equipment_id = (int)$_POST['equipment_id'];
         $issue_description = sanitize($_POST['issue_description']);
@@ -120,7 +114,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $notes = sanitize($_POST['notes']);
         $status = 'pending';
         
-        // Check if the equipment exists and is not already in maintenance
         $check_sql = "SELECT status FROM equipment WHERE equipment_id = ?";
         $check_stmt = $conn->prepare($check_sql);
         $check_stmt->bind_param("i", $equipment_id);
@@ -140,7 +133,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         
-        // Add maintenance record
         $insert_sql = "INSERT INTO maintenance 
                       (equipment_id, issue_description, maintenance_date, notes, status, created_at, updated_at) 
                       VALUES (?, ?, ?, ?, ?, NOW(), NOW())";
@@ -148,7 +140,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert_stmt->bind_param("issss", $equipment_id, $issue_description, $maintenance_date, $notes, $status);
         
         if ($insert_stmt->execute()) {
-            // Update equipment status to maintenance
             $update_sql = "UPDATE equipment SET status = 'maintenance', updated_at = NOW() WHERE equipment_id = ?";
             $update_stmt = $conn->prepare($update_sql);
             $update_stmt->bind_param("i", $equipment_id);
@@ -163,12 +154,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     
-    // Handle deleting maintenance record
     if (isset($_POST['delete_maintenance'])) {
         $maintenance_id = (int)$_POST['maintenance_id'];
         $equipment_id = (int)$_POST['equipment_id'];
-        
-        // Get the current status of the maintenance record
+
         $status_sql = "SELECT status FROM maintenance WHERE maintenance_id = ?";
         $status_stmt = $conn->prepare($status_sql);
         $status_stmt->bind_param("i", $maintenance_id);
@@ -181,7 +170,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $delete_stmt->bind_param("i", $maintenance_id);
         
         if ($delete_stmt->execute()) {
-            // Only update equipment status if maintenance wasn't completed
             if ($maintenance_status !== 'completed') {
                 $update_sql = "UPDATE equipment SET status = 'available', updated_at = NOW() WHERE equipment_id = ?";
                 $update_stmt = $conn->prepare($update_sql);
@@ -199,7 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get available equipment for the add maintenance form
 $equipment_sql = "SELECT equipment_id, name, equipment_code FROM equipment WHERE status != 'maintenance' AND status != 'retired' ORDER BY name";
 $equipment_result = $conn->query($equipment_sql);
 

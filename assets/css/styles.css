@@ -229,7 +229,7 @@ body {
   }
   
   .sidebar.collapsed .sidebar-link span {
-    display: inline; /* Keep text visible in collapsed sidebar on mobile */
+    display: inline; 
   }
   
   .sidebar.mobile-open .sidebar-header .logo {
@@ -237,15 +237,9 @@ body {
   }
 }
 
-/* Fix for z-index stacking context */
-.sidebar, .top-bar {
-  will-change: transform; /* Creates a stacking context */
-}
 
-/* Fix dropdown clicking issues */
-.user-profile {
-  cursor: pointer;
-  position: relative;
+.sidebar, .top-bar {
+  will-change: transform; 
 }
 
 .user-menu-button {
@@ -253,6 +247,8 @@ body {
 }
 
 .user-profile {
+  cursor: pointer;
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -455,8 +451,9 @@ a:hover {
 }
 
 .stat-box:hover {
+  -webkit-transform: translateY(-5px);
+  -ms-transform: translateY(-5px);
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
 }
 
 .stat-box h3 {
@@ -739,7 +736,7 @@ a:hover {
 }
 
 .btn-category:hover {
-  background-color: var (--secondary);
+  background-color: var(--secondary);
   color: white;
 }
 
@@ -855,6 +852,7 @@ a:hover {
   text-align: center;
   white-space: nowrap;
   line-height: 1.5;
+  margin-bottom: 15px;
 }
 
 .btn-cancel-borreq:hover,
@@ -944,7 +942,7 @@ a:hover {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-family: var (--font-main);
+  font-family: var(--font-main);
   background-color: var(--primary);
   color: white;
   padding: 10px 16px; 
@@ -1217,8 +1215,6 @@ td.actions {
     text-align: center;
     color: var(--gray);
     width: 100%;
-    margin-bottom: 0;
-    position: relative;
   }
   
   /* Additional Components */
@@ -1325,3 +1321,45 @@ td.actions {
     color: #27ae60;
     border-left: 4px solid #2ecc71;
   }
+
+  /* Add this to your styles.css file */
+
+/* Style for archived users */
+.archived-row {
+  background-color: #f8f8f8;
+  color: #777;
+}
+
+.archived-row td {
+  opacity: 0.8;
+}
+
+/* Button styles */
+.btn-warning {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.btn-success {
+  background-color: #28a745;
+  color: #fff;
+}
+
+/* Status pill styling */
+.status-pill {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.85em;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-archived {
+  background-color: #f8d7da;
+  color: #721c24;
+}

@@ -53,6 +53,7 @@ if ($is_borrowed) {
 }
 $acquisition_date = $equipment['acquisition_date'];
 $notes = $equipment['notes'] ?? '';
+$quantity = isset($equipment['quantity']) ? $equipment['quantity'] : 1; // Get quantity with fallback
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = sanitize($_POST['name']);
@@ -63,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $status = sanitize($_POST['status']);
     $acquisition_date = sanitize($_POST['acquisition_date']);
     $notes = sanitize($_POST['notes'] ?? '');
+    $quantity = (int)$_POST['quantity']; // Get quantity from form
 
     if (empty($name)) {
         $errors[] = "Equipment name is required";
@@ -113,6 +115,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
 
+    // Validate quantity
+    if (!isset($quantity) || !is_numeric($quantity) || $quantity < 1) {
+        $errors[] = "Quantity must be a positive number";
+        $quantity = isset($equipment['quantity']) ? $equipment['quantity'] : 1; // Reset to original value
+    }
+
     if (empty($errors)) {
         $sql = "UPDATE equipment 
                 SET name = ?, 
@@ -122,12 +130,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     condition_status = ?, 
                     status = ?, 
                     acquisition_date = ?,
+                    quantity = ?,
                     notes = ?,
                     updated_at = NOW()
                 WHERE equipment_id = ?";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssssssssi", 
+            $stmt->bind_param("sssssssisi", 
             $name, 
             $description, 
             $equipment_code, 
@@ -135,6 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $condition_status, 
             $status, 
             $acquisition_date,
+            $quantity,
             $notes,
             $equipment_id
         );

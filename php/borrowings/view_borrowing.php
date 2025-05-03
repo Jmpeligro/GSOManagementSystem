@@ -2,7 +2,7 @@
 session_start();
 require_once '../db_connection.php';
 
-    if (!isLoggedIn()) {
+if (!isLoggedIn()) {
     header("Location: php/login.php");
     exit();
 }
@@ -15,6 +15,7 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 $borrowing_id = (int)$_GET['id'];
 
 $sql = "SELECT b.*, e.name as equipment_name, e.equipment_code, e.description as equipment_description,
+        e.quantity as current_equipment_quantity, e.status as equipment_status,
         u.first_name, u.last_name, u.email,
         c.name as category_name,
         admin_issued.first_name as admin_issued_first_name, admin_issued.last_name as admin_issued_last_name,
@@ -51,30 +52,65 @@ if ($borrowing['user_id'] != $_SESSION['user_id'] && !isAdmin()) {
 $is_overdue = ($borrowing['status'] == 'active' && strtotime($borrowing['due_date']) < time());
 $status_class = $is_overdue ? 'overdue' : $borrowing['status'];
 
+// Get borrowed quantity (default to 1 for older records)
+$borrowed_quantity = isset($borrowing['quantity']) ? $borrowing['quantity'] : 1;
+
 if (isset($_POST['return']) && ($borrowing['status'] == 'active' && $borrowing['approval_status'] == 'approved') && 
     (isAdmin() || $borrowing['user_id'] == $_SESSION['user_id'])) {
+    
+    // Get return quantity - default to borrowed quantity if not specified
+    $return_quantity = isset($_POST['return_quantity']) && (int)$_POST['return_quantity'] > 0 
+                      ? min((int)$_POST['return_quantity'], $borrowed_quantity) 
+                      : $borrowed_quantity;
+                      
     $conn->begin_transaction();
     try {
-        $update_borrowing_sql = "UPDATE borrowings SET 
-            status = 'returned', 
-            return_date = NOW(), 
-            return_notes = ?, 
-            returned_by = ?
-            WHERE borrowing_id = ?";
+        // If returning all items
+        if ($return_quantity >= $borrowed_quantity) {
+            $update_borrowing_sql = "UPDATE borrowings SET 
+                status = 'returned', 
+                return_date = NOW(), 
+                return_notes = ?, 
+                returned_by = ?
+                WHERE borrowing_id = ?";
+            
+            $return_notes = isset($_POST['return_notes']) ? sanitize($_POST['return_notes']) : 'Returned via system';
+            
+            $update_stmt = $conn->prepare($update_borrowing_sql);
+            $update_stmt->bind_param("sii", $return_notes, $_SESSION['user_id'], $borrowing_id);
+            $update_stmt->execute();
+        } else {
+            // If returning only part of the borrowed quantity
+            $update_borrowing_sql = "UPDATE borrowings SET 
+                quantity = quantity - ?,
+                return_notes = CONCAT(return_notes, ' | Partially returned: ', ?, ' items on ', NOW()),
+                updated_at = NOW()
+                WHERE borrowing_id = ?";
+                
+            $return_notes = isset($_POST['return_notes']) ? sanitize($_POST['return_notes']) : 'Partial return';
+            
+            $update_stmt = $conn->prepare($update_borrowing_sql);
+            $update_stmt->bind_param("isi", $return_quantity, $return_quantity, $borrowing_id);
+            $update_stmt->execute();
+        }
         
-        $return_notes = isset($_POST['return_notes']) ? sanitize($_POST['return_notes']) : 'Returned via system';
+
+        $new_equipment_quantity = $borrowing['current_equipment_quantity'] + $return_quantity;
+        $equipment_status = $new_equipment_quantity > 0 ? 'available' : $borrowing['equipment_status'];
         
-        $update_stmt = $conn->prepare($update_borrowing_sql);
-        $update_stmt->bind_param("sii", $return_notes, $_SESSION['user_id'], $borrowing_id);
-        $update_stmt->execute();
-        
-        $update_equipment_sql = "UPDATE equipment SET status = 'available' WHERE equipment_id = ?";
+        $update_equipment_sql = "UPDATE equipment 
+                                SET quantity = ?, 
+                                    status = ?,
+                                    updated_at = NOW() 
+                                WHERE equipment_id = ?";
         $update_equipment_stmt = $conn->prepare($update_equipment_sql);
-        $update_equipment_stmt->bind_param("i", $borrowing['equipment_id']);
+        $update_equipment_stmt->bind_param("isi", $new_equipment_quantity, $equipment_status, $borrowing['equipment_id']);
         $update_equipment_stmt->execute();
         
         $conn->commit();
-        $_SESSION['success'] = "Equipment returned successfully.";
+        $_SESSION['success'] = $return_quantity >= $borrowed_quantity 
+                             ? "Equipment returned successfully." 
+                             : "Partially returned {$return_quantity} item(s) successfully.";
         
         header("Location: view_borrowing.php?id=$borrowing_id");
         exit();

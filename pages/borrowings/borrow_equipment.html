@@ -34,6 +34,10 @@
                 <span class="label">Condition:</span>
                 <span class="value"><?php echo ucfirst($equipment['condition_status']); ?></span>
             </div>
+            <div class="details-row">
+                <span class="label">Available Quantity:</span>
+                <span class="value"><?php echo $equipment['quantity']; ?></span>
+            </div>
             <?php if (!empty($equipment['description'])): ?>
                 <div class="details-row">
                     <span class="label">Description:</span>
@@ -43,6 +47,11 @@
         </div>
         
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $equipment_id); ?>" class="borrow-form">
+            <div class="form-group">
+                <label for="quantity">Quantity to Borrow</label>
+                <input type="number" id="quantity" name="quantity" min="1" max="<?php echo $equipment['quantity']; ?>" value="1" required>
+            </div>
+            
             <div class="form-group">
                 <label for="borrow_date">Borrow Date</label>
                 <input type="datetime-local" id="borrow_date" name="borrow_date" required
@@ -66,8 +75,8 @@
             </div>
             
             <div class="form-buttons">
-                <button type="submit" class="btn btn-primary">Submit Borrowing Request</button>
-                <a href="../equipment/equipment.php" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-borrow-req">Submit Borrowing Request</button>
+                <a href="../equipment/equipment.php" class="btn btn-cancel-borreq">Cancel</a>
             </div>
         </form>
     </div>

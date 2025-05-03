@@ -1,7 +1,6 @@
 <?php
 require_once 'database.php';
 
-// Ensure user is logged in and authorized
 checkLogin();
 if (!isAdmin()) {
     $_SESSION['error'] = "You don't have permission to access this page.";
@@ -9,11 +8,9 @@ if (!isAdmin()) {
     exit;
 }
 
-// Initialize filters
 $status_filter = isset($_GET['status']) ? $_GET['status'] : '';
 $search_query = isset($_GET['search']) ? $_GET['search'] : '';
 
-// Build SQL query with filters
 $sql = "SELECT m.*, e.name as equipment_name, e.equipment_code 
         FROM maintenance m 
         JOIN equipment e ON m.equipment_id = e.equipment_id 
@@ -29,7 +26,6 @@ if (!empty($search_query)) {
 
 $sql .= " ORDER BY m.created_at DESC";
 
-// Prepare and execute statement
 $stmt = $conn->prepare($sql);
 
 $param_index = 1;
@@ -46,7 +42,6 @@ if (!empty($search_query)) {
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Include HTML header
 include '../../components/header.php';
 ?>
 
