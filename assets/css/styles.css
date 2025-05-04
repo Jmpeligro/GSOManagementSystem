@@ -1,5 +1,11 @@
 /* General Styles*/
 :root {
+  --first-child:#8ecae6;
+  --first-child-hover:#6f9fb6;
+  --second-child:#219ebc;
+  --second-child-hover:#1b7c95;
+  --third-child:#036393;
+  --third-child-hover:#02486e;
   --primary: #4361ee;
   --primary-light: #4895ef;
   --secondary: #3f37c9;
@@ -235,8 +241,8 @@ body {
   .sidebar.mobile-open .sidebar-header .logo {
     display: flex;
   }
-}
 
+}
 
 .sidebar, .top-bar {
   will-change: transform; 
@@ -459,7 +465,7 @@ a:hover {
 .stat-box h3 {
   color: var(--gray);
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin-bottom: 8px;
 }
 
@@ -470,9 +476,9 @@ a:hover {
   line-height: 1;
 }
 
-.stat-box:nth-child(1) .stat-number { color: var(--success); }
-.stat-box:nth-child(2) .stat-number { color: var(--info); }
-.stat-box:nth-child(3) .stat-number { color: var(--warning); }
+.stat-box:nth-child(1) .stat-number { color: var(--first-child); }
+.stat-box:nth-child(2) .stat-number { color: var(--second-child); }
+.stat-box:nth-child(3) .stat-number { color: var(--third-child); }
 .stat-box:nth-child(4) .stat-number { color: var(--primary); }
 
 .stat-link {
@@ -540,7 +546,7 @@ a:hover {
 .data-table th,
 .data-table td {
   padding: 14px 16px;
-  text-align: left;
+  text-align: center;
 }
 
 .data-table th {
@@ -640,6 +646,75 @@ a:hover {
   gap: 8px;
 }
 
+td.actions > a.btn,
+td.actions > a.btn-small,
+td.actions > .btn {
+  width: 100%;
+  max-width: 100px;
+  text-align: center;
+  margin: 0;
+  box-sizing: border-box;
+}
+td.actions > form {
+  width: 100%;
+  max-width: 100px;
+  margin: 0;
+}
+td.actions > form.status-change-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 100px;
+}
+td.actions > form.status-change-form select.status-select {
+  width: 100%;
+}
+
+td.actions > form.status-change-form button[type="submit"] {
+  width: 100%;
+}
+
+/* For maintenance link */
+td.actions > a.btn-small-maintenance {
+  width: 100%;
+  max-width: 100px;
+  text-align: center;
+}
+
+/* For delete form */
+td.actions > form.delete-form button {
+  width: 100%;
+  max-width: 100px;
+}
+
+a.btn.btn-small.btn-danger{
+  max-width: 100px;
+  width: 100%;
+}
+a.btn.btn-secondary {
+  background-color: var(--gray-light);
+  color: black;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+a.btn.btn-secondary:hover {
+  background-color: var(--gray);
+  color: white;
+  text-decoration: none;
+}
+.btn.btn-primary{
+  margin-top: 10px;
+  background-color: var(--primary);
+  color: white;
+}
+.btn.btn-primary:hover {
+  background-color: var(--secondary);
+  color: white;
+}
 .btn-new-borrow {
   background-color: var(--primary);
   color: white;
@@ -655,7 +730,7 @@ a:hover {
 
 .btn-pending-request {
   font-family: var(--font-main);
-  background-color: orange;
+  background-color: var(--second-child);
   color: white;
   gap: 8px; 
   padding-top: 15px;
@@ -664,7 +739,7 @@ a:hover {
 }
 
 .btn-pending-request:hover {
-  background-color: darkorange;
+  background-color: var(--second-child-hover);
   color: white;
 }
 
@@ -685,6 +760,9 @@ a:hover {
   padding: 6px 12px;
   font-size: 0.85rem;
   border-radius: 4px; 
+  max-width: 100px;
+  width: 100%;
+  transition: all 0.2s ease;
 }
 
 .btn-small-primary {
@@ -829,6 +907,7 @@ a:hover {
   text-align: center;
   white-space: nowrap;
   line-height: 1.5;
+  margin-bottom: 15px;
 }
 
 .btn-borrow-req:hover,
@@ -1011,16 +1090,6 @@ a:hover {
   text-decoration: none;
 }
 
-/* Add these updated button styles to your styles.css file */
-
-/* Small Button Base Style */
-.btn-small {
-  font-family: var(--font-main);
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
 
 /* Small Button Variants */
 .btn-small {
@@ -1082,10 +1151,134 @@ a:hover {
 }
 
 /* Fix for action container spacing */
+/* Action icons styling */
 td.actions {
   display: flex;
-  gap: 6px;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
+  padding:10px;
+}
+
+td.actions .btn{
+  min-width: 80px;
+  padding: 8px 12px;
+  margin: 0;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.action-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 0;
+  padding: 0;
+  text-decoration:none;
+}
+.action-icon i {
+  font-size: 14px;
+}
+
+.action-icon:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.action-icon.view {
+  background-color: #007bff; /* Blue */
+}
+
+.action-icon.edit {
+  background-color: #6c757d; /* Gray */
+}
+
+.action-icon.delete {
+  background-color: #dc3545; /* Red */
+}
+
+.action-icon.maintenance {
+  background-color: var(--third-child); /* Yellow */
+  color: white;
+}
+
+.action-icon.change-status {
+  background-color: #17a2b8; /* Teal */
+}
+
+.action-icon.borrow {
+  background-color: var(--second-child); /* Green */
+}
+
+/* Status Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: center;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.close-modal {
+  color: #aaa;
+  float: right;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-modal:hover,
+.close-modal:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-body {
+  margin-bottom: 15px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #dee2e6;
 }
 
 @media (max-width: 768px) {
@@ -1097,11 +1290,6 @@ td.actions {
     text-align: center;
   }
 }
-
-  /* Forms */
-  .form-group {
-    margin-bottom: 20px;
-  }
   
   label {
     display: block;
@@ -1140,7 +1328,10 @@ td.actions {
     display: flex;
     gap: 12px;
     margin-top: 24px;
+    justify-content: flex-end;
   }
+
+  .form-buttons .btn
   
   /* Responsive Design */
   @media (max-width: 992px) {
@@ -1252,10 +1443,29 @@ td.actions {
   }
   
   .filter-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 16px;
-    align-items: end;
+    display: flex;
+  align-items: flex-end; /* Aligns items at the bottom */
+  gap: 16px; /* Adds spacing between form groups */
+  flex-wrap: wrap;
+  }
+
+  .form-group {
+    flex: 1; /* Allows equal growing */
+    min-width: 200px; /* Prevents form groups from becoming too narrow */
+  }
+ 
+  .btn-filter-equipment {
+    height: 42px; /* Match input field height */
+    margin-bottom: 1px; /* Fine-tune alignment */
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+  
+  .btn-reset-equipment {
+    height: 42px; /* Match other elements */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1px;
   }
   
   .search-container {
@@ -1336,8 +1546,11 @@ td.actions {
 
 /* Button styles */
 .btn-warning {
-  background-color: #ffc107;
-  color: #000;
+  background-color: var(--gray);
+}
+.btn-warning:hover {
+  background-color: var(--gray-light);
+  color:black;
 }
 
 .btn-success {

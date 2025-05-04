@@ -95,6 +95,22 @@
     cursor: pointer;
     transition: all 0.2s ease;
   }
+
+  .btn.btn-secondary {
+    background-color: var(--gray-light);
+    color: black;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Add these to ensure smooth transition */
+    padding: 10px 20px; /* Example padding - adjust as needed */
+    border: none; /* Remove default border if exists */
+    border-radius: 4px; /* Match your design */
+}
+
+.btn.btn-secondary:hover {
+    background-color: var(--gray);
+    color: white; /* Optional: change text color on hover */
+}
   
   /* Maintenance button specific styling */
   .btn-small-maintenance {
@@ -109,13 +125,13 @@
     white-space: nowrap;
     cursor: pointer;
     transition: all 0.2s ease;
-    background-color: #ff9800;
+    background-color: var(--first-child);
     color: white;
   }
   
   .btn-small-maintenance:hover {
     color: white;
-    background-color: #f57c00;
+    background-color: var(--first-child-hover);
   }
   
   /* Primary button styling */
@@ -154,7 +170,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--warning);
+    background-color: var(--third-child);
     color: white;
     gap: 8px; 
     padding-left: 10px;
@@ -163,11 +179,12 @@
     padding-bottom: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
+    font-weight: 500;
   }
 
   .btn-maintenance:hover{
     color: white;
-    background-color:  #f57c00;
+    background-color:  var(--third-child-hover);
   }
 
   /* Ensure consistent height for buttons and select */

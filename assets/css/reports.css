@@ -262,7 +262,7 @@
 }
 
 .summary-box.maintenance .value {
-    color: var(--warning);
+    color: var(--third-child);
 }
 
 .summary-box.costs .value {

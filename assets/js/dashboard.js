@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: ['Available', 'Borrowed', 'Maintenance'],
                 datasets: [{
                     data: [available, borrowed, maintenance],
-                    backgroundColor: ['#4CAF50', '#2196F3', '#FF9800'],
+                    backgroundColor: ['#8ecae6', '#219ebc', '#036393'],
                     borderWidth: 1
                 }]
             },
