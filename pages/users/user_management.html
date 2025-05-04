@@ -13,100 +13,113 @@
         <div class="page-header">
             <h1><?php echo $title; ?></h1>
             <div class="actions">
-                <a href="../../php/users/users.php" class="btn btn-back-users">Back to Users</a>
+                <a href="../../php/users/users.php" class="btn btn-secondary">Back to Users</a>
             </div>
         </div>
         
-        <?php if (!empty($errors)): ?>
+        <?php if (isset($_SESSION['error'])): ?>
             <div class="alert alert-danger">
-                <ul>
-                    <?php foreach ($errors as $error): ?>
-                        <li><?php echo $error; ?></li>
-                    <?php endforeach; ?>
-                </ul>
+                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
         
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'] . ($mode === 'edit' ? '?id=' . $user_id : '')); ?>">
+                <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'] . ($mode === 'edit' ? '?id=' . $user_id : '')); ?>" class="user-form">
                     <div class="form-group">
-                        <label for="university_id">University ID</label>
-                        <input type="text" id="university_id" name="university_id" class="form-control" value="<?php echo htmlspecialchars($university_id); ?>" required>
+                        <label for="university_id">University ID*</label>
+                        <input type="text" id="university_id" name="university_id" value="<?php echo htmlspecialchars($university_id); ?>" required>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="first_name">First Name</label>
-                                <input type="text" id="first_name" name="first_name" class="form-control" value="<?php echo htmlspecialchars($first_name); ?>" required>
-                            </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="first_name">First Name*</label>
+                            <input type="text" id="first_name" name="first_name" value="<?php echo htmlspecialchars($first_name); ?>" required>
                         </div>
                         
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="last_name">Last Name</label>
-                                <input type="text" id="last_name" name="last_name" class="form-control" value="<?php echo htmlspecialchars($last_name); ?>" required>
-                            </div>
+                        <div class="form-group">
+                            <label for="last_name">Last Name*</label>
+                            <input type="text" id="last_name" name="last_name" value="<?php echo htmlspecialchars($last_name); ?>" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" value="<?php echo htmlspecialchars($email); ?>" required>
+                        <label for="email">Email Address*</label>
+                        <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
                     </div>
                     
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="department">Department</label>
-                                <input type="text" id="department" name="department" class="form-control" value="<?php echo htmlspecialchars($department); ?>" required>
-                            </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="role">Role*</label>
+                            <select id="role" name="role" required>
+                                <option value="">Select Role</option>
+                                <option value="student" <?php echo ($role === 'student') ? 'selected' : ''; ?>>Student</option>
+                                <option value="faculty" <?php echo ($role === 'faculty') ? 'selected' : ''; ?>>Faculty</option>
+                                <option value="staff" <?php echo ($role === 'staff') ? 'selected' : ''; ?>>Staff</option>
+                                <option value="admin" <?php echo ($role === 'admin') ? 'selected' : ''; ?>>Admin</option>
+                            </select>
                         </div>
                         
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="phone">Phone</label>
-                                <input type="tel" id="phone" name="phone" class="form-control" value="<?php echo htmlspecialchars($phone); ?>">
-                            </div>
+                        <div class="form-group">
+                            <label for="department">Department/Course*</label>
+                            <input type="text" id="department" name="department" value="<?php echo htmlspecialchars($department); ?>" required>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="role">Role</label>
-                        <select id="role" name="role" class="form-control" required>
-                            <option value="">Select Role</option>
-                            <option value="admin" <?php echo ($role === 'admin') ? 'selected' : ''; ?>>Administrator</option>
-                            <option value="faculty" <?php echo ($role === 'faculty') ? 'selected' : ''; ?>>Faculty</option>
-                            <option value="staff" <?php echo ($role === 'staff') ? 'selected' : ''; ?>>Staff</option>
-                            <option value="student" <?php echo ($role === 'student') ? 'selected' : ''; ?>>Student</option>
-                        </select>
+                        <label for="phone">Phone Number</label>
+                        <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($phone); ?>">
                     </div>
                     
                     <div class="form-group">
-                        <label for="password"><?php echo ($mode === 'edit') ? 'Password (leave blank to keep current)' : 'Password'; ?></label>
-                        <input type="password" id="password" name="password" class="form-control" <?php echo ($mode === 'add') ? 'required' : ''; ?>>
-                        <div class="form-text text-muted">Must be at least 8 characters</div>
+                        <label for="password"><?php echo ($mode === 'edit') ? 'Password (leave blank to keep current)' : 'Password*'; ?></label>
+                        <input type="password" id="password" name="password" <?php echo ($mode === 'add') ? 'required' : ''; ?>>
+                        <div class="form-text">Must be at least 8 characters</div>
                     </div>
                     
-                    <?php if ($mode === 'add'): ?>
                     <div class="form-group">
-                        <label for="confirm_password">Confirm Password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" class="form-control" <?php echo ($mode === 'add') ? 'required' : ''; ?>>
+                        <label for="confirm_password"><?php echo ($mode === 'edit') ? 'Confirm Password (if changing)' : 'Confirm Password*'; ?></label>
+                        <input type="password" id="confirm_password" name="confirm_password" <?php echo ($mode === 'add') ? 'required' : ''; ?>>
                     </div>
-                    <?php endif; ?>
                     
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-update-users"><?php echo ($mode === 'edit') ? 'Update User' : 'Add User'; ?></button>
-                        <a href="../../php/users/users.php" class="btn btn-cancel-users">Cancel</a>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-primary"><?php echo ($mode === 'edit') ? 'Update User' : 'Add User'; ?></button>
+                        <a href="../../php/users/users.php" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
         </div>
+        
+        <?php if ($mode === 'edit' && !empty($borrowing_history)): ?>
+        <div class="section mt-4">
+            <h3>Borrowing History</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Return Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($borrowing_history as $item): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($item['equipment_name']); ?> (<?php echo htmlspecialchars($item['equipment_code']); ?>)</td>
+                        <td><?php echo htmlspecialchars($item['borrow_date']); ?></td>
+                        <td><?php echo htmlspecialchars($item['due_date']); ?></td>
+                        <td><?php echo htmlspecialchars($item['return_date'] ?? 'N/A'); ?></td>
+                        <td><?php echo ucfirst(htmlspecialchars($item['status'])); ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php endif; ?>
     </div>
     
-<script src="../../assets/js/user.js"></script>
-<script src="../../assets/js/sidebar.js"></script>
-
+    <script src="../../assets/js/user.js"></script>
+    <script src="../../assets/js/sidebar.js"></script>
 </body>
-</html>
+</html> 

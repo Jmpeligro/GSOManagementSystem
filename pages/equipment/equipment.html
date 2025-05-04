@@ -6,17 +6,7 @@
     <title>Equipment Management - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
-    <script>
-        function confirmDelete(id, name) {
-            return confirm('Are you sure you want to delete "' + name + '"? This action cannot be undone.');
-        }
-        function validateStatusChange(selectElement) {
-            if (selectElement.value === "") {
-                return false; 
-            }
-            return true; 
-        }
-    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -88,7 +78,7 @@
         </div>
         
         <div class="equipment-list">
-            <?php if ($result && $result->num_rows > 0): ?>
+            <?php if (!empty($result)): ?>
                 <table class="data-table">
                     <thead>
                         <tr>  
@@ -101,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php foreach ($result as $row): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
                             <td><?php echo htmlspecialchars($row['category_name']); ?></td>
@@ -159,7 +149,7 @@
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>
@@ -169,9 +159,10 @@
             <?php endif; ?>
         </div>
     </div>
-    
-    
+
+      
     <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
+    <script src="../../assets/js/equipment.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 03, 2025 at 06:07 PM
+-- Generation Time: May 04, 2025 at 03:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -57,7 +57,6 @@ INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_dat
 (3, 3, 3, '2025-04-23 12:38:00', '2026-04-23 05:38:00', NULL, NULL, NULL, '', NULL, 'For educational purposes', '2025-04-23 05:39:07', '2025-04-23 05:39:38', 'denied', NULL, NULL, NULL, 'malibog ka masyado', NULL),
 (5, 3, 3, '2025-04-24 12:42:00', '2025-05-01 08:42:00', '2025-04-30 09:10:42', NULL, NULL, 'returned', 'good', 'I need it.', '2025-04-24 08:42:19', '2025-04-30 01:10:42', 'approved', 5, '2025-04-24 20:45:58', 'Approved by administrator', 'Returned via system', 3),
 (6, 3, 3, '2025-04-30 12:06:00', '2025-05-01 13:08:00', '2025-05-01 15:17:30', NULL, NULL, 'returned', 'good', 'paglilinisin ko', '2025-04-30 04:12:55', '2025-05-01 07:17:30', 'approved', 5, '2025-05-01 14:58:08', 'Approved by administrator', 'Returned via system', 3),
-(7, 3, 3, '2025-05-01 15:17:00', '2025-05-01 15:17:00', NULL, NULL, NULL, '', NULL, 'peramm', '2025-05-01 07:18:07', '2025-05-01 07:18:07', 'pending', NULL, NULL, NULL, NULL, NULL),
 (8, 2, 3, '2025-05-02 13:01:00', '2025-05-03 14:02:00', '2025-05-02 12:04:36', NULL, NULL, 'returned', 'good', 'Event at facade', '2025-05-02 04:02:15', '2025-05-02 04:04:36', 'approved', 5, '2025-05-02 12:02:40', 'Approved by administrator', 'Returned via system', 3),
 (9, 4, 3, '2025-05-02 16:02:00', '2025-05-03 14:02:00', NULL, NULL, NULL, '', NULL, 'Need to move heavy equipments', '2025-05-02 06:02:30', '2025-05-02 06:02:30', 'pending', NULL, NULL, NULL, NULL, NULL);
 
@@ -79,10 +78,10 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`category_id`, `name`, `description`, `created_at`) VALUES
-(1, 'Power Tools', 'Electric and battery-powered tools for construction and maintenance', '2025-04-19 10:34:38'),
-(2, 'Sound Systems', 'Audio equipment including speakers, mixers, and microphones', '2025-04-19 10:34:38'),
+(1, 'Power Tools', 'Electric and battery-powered tools for construction and maintenance.', '2025-04-19 10:34:38'),
 (3, 'Electronics', 'Electronic devices like projectors, cameras, and computers', '2025-04-19 10:34:38'),
-(4, 'Transport Equipment', 'Used for transporting heavy duty equipment or items.', '2025-05-02 03:33:15');
+(4, 'Transport Equipment', 'Used for transporting heavy duty equipment or items.', '2025-05-02 03:33:15'),
+(5, 'Sound System', 'Use for event\\\'s music', '2025-05-04 08:09:06');
 
 -- --------------------------------------------------------
 
@@ -102,17 +101,18 @@ CREATE TABLE `equipment` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `quantity` int(11) NOT NULL DEFAULT 1
+  `quantity` int(11) NOT NULL DEFAULT 1,
+  `available_quantity` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `equipment`
 --
 
-INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`) VALUES
-(2, '001', 'Microphone', 3, '', '2025-04-20', 'available', 'new', NULL, '2025-04-20 06:41:36', '2025-05-02 04:04:36', 1),
-(3, '002', 'John Mel', 1, 'Man Power', '2025-04-14', 'available', 'fair', '', '2025-04-23 03:41:57', '2025-05-03 16:04:48', 10),
-(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-02 06:01:33', 1);
+INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
+(2, '001', 'Microphone', 3, '', '2025-04-20', 'available', 'new', NULL, '2025-04-20 06:41:36', '2025-05-04 07:43:42', 1, 1),
+(3, '002', 'John Mel', 1, 'Man Power', '2025-04-14', 'available', 'fair', '', '2025-04-23 03:41:57', '2025-05-04 07:43:42', 10, 10),
+(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-04 07:43:42', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -169,9 +169,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `created_at`, `updated_at`, `archived`, `archived_at`) VALUES
-(3, '23-00001', 'Bryan', 'Bermudez', 'bry@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'staff', 'General Service Office', '1234567890', '2025-04-19 10:54:45', '2025-05-03 13:30:23', 0, NULL),
+(3, '23-00001', 'Bryan', 'Bermudez', 'bry@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', '2025-04-19 10:54:45', '2025-05-04 09:53:27', 0, NULL),
 (5, '000', 'Jm', 'Peligro', 'jm@plpasig.edu', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', '2025-04-19 11:20:26', '2025-04-24 02:48:42', 0, NULL),
-(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', '2025-04-25 01:47:29', '2025-04-25 01:47:29', 0, NULL);
+(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', '2025-04-25 01:47:29', '2025-05-04 09:53:38', 0, NULL);
 
 --
 -- Indexes for dumped tables
@@ -229,13 +229,13 @@ ALTER TABLE `borrowings`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `maintenance`

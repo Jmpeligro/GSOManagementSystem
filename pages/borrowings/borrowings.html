@@ -1,3 +1,7 @@
+<?php
+// This is the content for borrowings.html - note that it should not have an HTML extension
+// if it contains PHP code, but I'm keeping the original filename pattern
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +111,7 @@
                     <label for="search">Search</label>
                     <input type="text" id="search" name="search" value="<?php echo $search_query; ?>" placeholder="Search equipment name, code...">
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group half">
                         <label for="date_from">From Date</label>
@@ -128,16 +132,15 @@
         </div>
         
         <div class="borrowings-list">
-            <?php if (isset($result) && $result !== false && $result->num_rows > 0): ?>
+            <?php if (!empty($result)): ?>
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>Equipment</th>
-                            <th>Code</th>
                             <th>Quantity</th>
                             <?php if (isAdmin()): ?>
                             <th>Borrower</th>
-                            <?php endif; ?>
+                            <?php endif; ?> 
                             <th>Borrow Date</th>
                             <th>Due Date</th>
                             <th>Status</th>
@@ -147,14 +150,14 @@
                     </thead>
                     <tbody>
                         <?php 
-                        while ($row = $result->fetch_assoc()): 
+                        // Fixed: $result is already an array of rows, no need to call fetch_assoc()
+                        foreach ($result as $row): 
                             $is_overdue = ($row['status'] == 'active' && strtotime($row['due_date']) < time());
                             $status_class = $is_overdue ? 'overdue' : $row['status'];
                             $quantity = isset($row['quantity']) ? $row['quantity'] : 1; // Default to 1 for older records
                         ?>
                         <tr>
                             <td><?php echo $row['equipment_name']; ?></td>
-                            <td><?php echo $row['equipment_code']; ?></td>
                             <td><?php echo $quantity; ?></td>
                             <?php if (isAdmin()): ?>
                             <td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
@@ -191,7 +194,7 @@
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>

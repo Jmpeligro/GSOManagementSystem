@@ -1,35 +1,26 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "general_service_office";
+require_once __DIR__ . '/classes/Database.php';
+require_once __DIR__ . '/classes/Auth.php';
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$db = Database::getInstance();
+$conn = $db->getConnection();
 
 if (!function_exists('sanitize')) {
     function sanitize($data) {
-        global $conn;
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        $data = $conn->real_escape_string($data);
-        return $data;
+        global $db;
+        return $db->sanitize($data);
     }
 }
 
 if (!function_exists('isLoggedIn')) {
     function isLoggedIn() {
-        return isset($_SESSION['user_id']);
+        return Auth::isLoggedIn();
     }
 }
 
 if (!function_exists('isAdmin')) {
     function isAdmin() {
-        return isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+        return Auth::isAdmin();
     }
 }
 ?>

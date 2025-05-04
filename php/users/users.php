@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../db_connection.php';
+require_once '../classes/User.php';
 
 if (!isLoggedIn() || !isAdmin()) {
     header("Location: php/login.php");
@@ -11,73 +12,30 @@ $role_filter = isset($_GET['role']) ? sanitize($_GET['role']) : '';
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
 $show_archived = isset($_GET['show_archived']) ? sanitize($_GET['show_archived']) : '0';
 
-$sql = "SELECT * FROM users WHERE 1=1";
-$params = [];
-$types = "";
+$filters = [
+    'role' => $role_filter,
+    'search' => $search_query,
+    'archived' => $show_archived === '1'
+];
 
-if ($show_archived === '0') {
-    $sql .= " AND archived = FALSE";
-} elseif ($show_archived === '1') {
-    $sql .= " AND archived = TRUE";
-}
+$users = User::getAll($conn, $filters);
 
-if (!empty($role_filter)) {
-    $sql .= " AND role = ?";
-    $params[] = $role_filter;
-    $types .= "s";
-}
-
-if (!empty($search_query)) {
-    $sql .= " AND (first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR department LIKE ? OR university_id LIKE ?)";
-    $search_param = "%" . $search_query . "%";
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $params[] = $search_param;
-    $types .= "sssss";
-}
-
-$sql .= " ORDER BY archived ASC, last_name ASC, first_name ASC";
-
-$stmt = $conn->prepare($sql);
-if (!$stmt) {
-    die("SQL prepare failed: " . $conn->error . " | Query: " . $sql);
-}
-
-if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
-}
-
-$stmt->execute();
-$result = $stmt->get_result();
-if (!$result) {
-    die("SQL execution failed: " . $stmt->error);
-}
-
+// Handle archive action
 if (isset($_GET['archive']) && isAdmin()) {
     $archive_id = (int)$_GET['archive'];
     
     if ($archive_id != $_SESSION['user_id']) {
-        $check_sql = "SELECT COUNT(*) as count FROM borrowings WHERE user_id = ? AND status = 'active'";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("i", $archive_id);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
-        $active_count = $check_result->fetch_assoc()['count'];
-        
-        if ($active_count == 0) {
-            $archive_sql = "UPDATE users SET archived = TRUE, archived_at = NOW() WHERE user_id = ?";
-            $archive_stmt = $conn->prepare($archive_sql);
-            $archive_stmt->bind_param("i", $archive_id);
+        $user = new User($conn);
+        if ($user->load($archive_id)) {
+            $result = $user->archive();
             
-            if ($archive_stmt->execute()) {
-                $_SESSION['success'] = "User archived successfully.";
+            if ($result['success']) {
+                $_SESSION['success'] = $result['message'];
             } else {
-                $_SESSION['error'] = "Error archiving user.";
+                $_SESSION['error'] = $result['message'];
             }
         } else {
-            $_SESSION['error'] = "Cannot archive user with active borrowings.";
+            $_SESSION['error'] = "User not found.";
         }
     } else {
         $_SESSION['error'] = "You cannot archive your own account.";
@@ -87,46 +45,43 @@ if (isset($_GET['archive']) && isAdmin()) {
     exit();
 }
 
+// Handle restore action
 if (isset($_GET['restore']) && isAdmin()) {
     $restore_id = (int)$_GET['restore'];
     
-    $restore_sql = "UPDATE users SET archived = FALSE, archived_at = NULL WHERE user_id = ?";
-    $restore_stmt = $conn->prepare($restore_sql);
-    $restore_stmt->bind_param("i", $restore_id);
-    
-    if ($restore_stmt->execute()) {
-        $_SESSION['success'] = "User restored successfully.";
+    $user = new User($conn);
+    if ($user->load($restore_id)) {
+        $result = $user->restore();
+        
+        if ($result['success']) {
+            $_SESSION['success'] = $result['message'];
+        } else {
+            $_SESSION['error'] = $result['message'];
+        }
     } else {
-        $_SESSION['error'] = "Error restoring user.";
+        $_SESSION['error'] = "User not found.";
     }
 
     header("Location: users.php");
     exit();
 }
 
+// Handle delete action
 if (isset($_GET['delete']) && isAdmin()) {
     $delete_id = (int)$_GET['delete'];
     
     if ($delete_id != $_SESSION['user_id']) {
-        $check_sql = "SELECT COUNT(*) as count FROM borrowings WHERE user_id = ? AND status = 'active'";
-        $check_stmt = $conn->prepare($check_sql);
-        $check_stmt->bind_param("i", $delete_id);
-        $check_stmt->execute();
-        $check_result = $check_stmt->get_result();
-        $active_count = $check_result->fetch_assoc()['count'];
-        
-        if ($active_count == 0) {
-            $delete_sql = "DELETE FROM users WHERE user_id = ?";
-            $delete_stmt = $conn->prepare($delete_sql);
-            $delete_stmt->bind_param("i", $delete_id);
+        $user = new User($conn);
+        if ($user->load($delete_id)) {
+            $result = $user->delete();
             
-            if ($delete_stmt->execute()) {
-                $_SESSION['success'] = "User deleted successfully.";
+            if ($result['success']) {
+                $_SESSION['success'] = $result['message'];
             } else {
-                $_SESSION['error'] = "Error deleting user.";
+                $_SESSION['error'] = $result['message'];
             }
         } else {
-            $_SESSION['error'] = "Cannot delete user with active borrowings.";
+            $_SESSION['error'] = "User not found.";
         }
     } else {
         $_SESSION['error'] = "You cannot delete your own account.";

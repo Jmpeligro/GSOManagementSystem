@@ -36,48 +36,48 @@
         
         <div class="equipment-details">
             <div class="equipment-header">
-                <h3><?php echo htmlspecialchars($equipment['name']); ?></h3>
-                <span class="equipment-code"><?php echo htmlspecialchars($equipment['equipment_code']); ?></span>
-                <span class="status-badge status-<?php echo $equipment['status']; ?>"><?php echo ucfirst($equipment['status']); ?></span>
+                <h3><?php echo htmlspecialchars($equipment_data['name']); ?></h3>
+                <span class="equipment-code"><?php echo htmlspecialchars($equipment_data['equipment_code']); ?></span>
+                <span class="status-badge status-<?php echo $equipment_data['status']; ?>"><?php echo ucfirst($equipment_data['status']); ?></span>
             </div>
             
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="label">Category:</span>
-                    <span class="value"><?php echo htmlspecialchars($equipment['category_name']); ?></span>
+                    <span class="value"><?php echo htmlspecialchars($equipment_data['category_name']); ?></span>
                 </div>
                 
                 <div class="detail-item">
                     <span class="label">Condition:</span>
-                    <span class="value"><?php echo ucfirst($equipment['condition_status']); ?></span>
+                    <span class="value"><?php echo ucfirst($equipment_data['condition_status']); ?></span>
                 </div>
                 
                 <div class="detail-item">
                     <span class="label">Quantity:</span>
-                    <span class="value"><?php echo isset($equipment['quantity']) ? htmlspecialchars($equipment['quantity']) : '1'; ?></span>
+                    <span class="value"><?php echo isset($equipment_data['quantity']) ? htmlspecialchars($equipment_data['quantity']) : '1'; ?></span>
                 </div>
                 
                 <div class="detail-item">
                     <span class="label">Acquisition Date:</span>
-                    <span class="value"><?php echo date('F d, Y', strtotime($equipment['acquisition_date'])); ?></span>
+                    <span class="value"><?php echo date('F d, Y', strtotime($equipment_data['acquisition_date'])); ?></span>
                 </div>
                 
-                <?php if (!empty($equipment['description'])): ?>
+                <?php if (!empty($equipment_data['description'])): ?>
                 <div class="detail-item full-width">
                     <span class="label">Description:</span>
-                    <div class="value description"><?php echo nl2br(htmlspecialchars($equipment['description'])); ?></div>
+                    <div class="value description"><?php echo nl2br(htmlspecialchars($equipment_data['description'])); ?></div>
                 </div>
                 <?php endif; ?>
                 
-                <?php if (!empty($equipment['notes'])): ?>
+                <?php if (!empty($equipment_data['notes'])): ?>
                 <div class="detail-item full-width">
                     <span class="label">Notes:</span>
-                    <div class="value notes"><?php echo nl2br(htmlspecialchars($equipment['notes'])); ?></div>
+                    <div class="value notes"><?php echo nl2br(htmlspecialchars($equipment_data['notes'])); ?></div>
                 </div>
                 <?php endif; ?>
             </div>
             
-            <?php if ($equipment['status'] == 'borrowed' && $current_borrower): ?>
+            <?php if ($equipment_data['status'] == 'borrowed' && $current_borrower): ?>
             <div class="current-borrower">
                 <h4>Currently Borrowed By</h4>
                 <div class="borrower-details">
@@ -121,7 +121,7 @@
                             <input type="hidden" name="borrowing_id" value="<?php echo $current_borrower['borrowing_id']; ?>">
                             <input type="hidden" name="equipment_id" value="<?php echo $equipment_id; ?>">
                             
-                            <?php if ($equipment['quantity'] > 1): ?>
+                            <?php if ($equipment_data['quantity'] > 1): ?>
                             <div class="return-quantity">
                                 <label for="return_quantity">Return Quantity:</label>
                                 <input type="number" id="return_quantity" name="return_quantity" min="1" max="<?php echo $current_borrower['borrowed_quantity']; ?>" value="<?php echo $current_borrower['borrowed_quantity']; ?>">
@@ -178,7 +178,7 @@
                             <?php foreach ($borrowing_history as $history): ?>
                             <tr class="<?php echo (!$history['return_date'] && strtotime($history['due_date']) < time()) ? 'overdue-row' : ''; ?>">
                                 <td><?php echo htmlspecialchars($history['first_name'] . ' ' . $history['last_name']); ?></td>
-                                <td><?php echo htmlspecialchars($history['borrowed_quantity']); ?></td>
+                                <td><?php echo isset($history['borrowed_quantity']) ? htmlspecialchars($history['borrowed_quantity']) : '1'; ?></td>
                                 <td><?php echo date('M d, Y', strtotime($history['borrow_date'])); ?></td>
                                 <td><?php echo date('M d, Y', strtotime($history['due_date'])); ?></td>
                                 <td>

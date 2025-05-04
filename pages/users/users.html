@@ -57,7 +57,7 @@
         </div>
         
         <div class="user-list">
-            <?php if ($result->num_rows > 0): ?>
+            <?php if (!empty($users)): ?>
             <table class="data-table">
                 <thead>
                     <tr>
@@ -71,13 +71,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php foreach ($users as $row): ?>
                     <tr <?php echo $row['archived'] ? 'class="archived-row"' : ''; ?>>
-                        <td><?php echo $row['university_id']; ?></td>
-                        <td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
-                        <td><?php echo $row['email']; ?></td>
-                        <td><?php echo ucfirst($row['role']); ?></td>
-                        <td><?php echo $row['department']; ?></td>
+                        <td><?php echo htmlspecialchars($row['university_id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?></td>
+                        <td><?php echo htmlspecialchars($row['email']); ?></td>
+                        <td><?php echo ucfirst(htmlspecialchars($row['role'])); ?></td>
+                        <td><?php echo htmlspecialchars($row['department']); ?></td>
                         <td><?php echo $row['archived'] ? 'Archived' : 'Active'; ?></td>
                         <td class="actions">
                             <a href="../../php/users/user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
@@ -94,7 +94,7 @@
                             <?php endif; ?>
                         </td>
                     </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
             <?php else: ?>

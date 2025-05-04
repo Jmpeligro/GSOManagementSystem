@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../db_connection.php';
+require_once '../classes/Equipment.php';
 
 if (!isLoggedIn()) {
     header("Location: php/login.php");
@@ -14,57 +15,58 @@ if (!isset($_GET['id']) || empty($_GET['id'])) {
 }
 
 $equipment_id = (int)$_GET['id'];
+$equipment = new Equipment($conn);
 
-$sql = "SELECT e.*, c.name as category_name 
-        FROM equipment e
-        JOIN categories c ON e.category_id = c.category_id
-        WHERE e.equipment_id = ?";
-
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $equipment_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows === 0) {
+if (!$equipment->load($equipment_id)) {
     $_SESSION['error'] = "Equipment not found.";
     header("Location: ../equipment/equipment.php");
     exit();
 }
 
-$equipment = $result->fetch_assoc();
+// Get category name
+$category_id = $equipment->getCategoryId();
+$category_name = '';
 
-$sql_history = "SELECT b.borrowing_id, u.first_name, u.last_name, 
-                b.borrow_date, b.due_date, b.return_date, b.status
-                FROM borrowings b
-                JOIN users u ON b.user_id = u.user_id
-                WHERE b.equipment_id = ?
-                ORDER BY b.borrow_date DESC
-                LIMIT 10";
-
-$stmt_history = $conn->prepare($sql_history);
-$stmt_history->bind_param("i", $equipment_id);
-$stmt_history->execute();
-$history_result = $stmt_history->get_result();
-
-$current_borrower = null;
-if ($equipment['status'] == 'borrowed') {
-    $sql_current = "SELECT b.borrowing_id, u.first_name, u.last_name, u.email,
-                    b.borrow_date, b.due_date, b.purpose
-                    FROM borrowings b
-                    JOIN users u ON b.user_id = u.user_id
-                    WHERE b.equipment_id = ? AND b.status = 'borrowed'
-                    ORDER BY b.borrow_date DESC
-                    LIMIT 1";
+if ($category_id) {
+    $category_sql = "SELECT name FROM categories WHERE category_id = ?";
+    $stmt = $conn->prepare($category_sql);
     
-    $stmt_current = $conn->prepare($sql_current);
-    $stmt_current->bind_param("i", $equipment_id);
-    $stmt_current->execute();
-    $current_result = $stmt_current->get_result();
-    
-    if ($current_result->num_rows > 0) {
-        $current_borrower = $current_result->fetch_assoc();
+    if ($stmt) {
+        $stmt->bind_param("i", $category_id);
+        $stmt->execute();
+        $category_result = $stmt->get_result();
+        
+        if ($category_result && $category_result->num_rows > 0) {
+            $category_row = $category_result->fetch_assoc();
+            $category_name = $category_row['name'];
+        }
     }
 }
+
+// Get borrowing history - use a variable for the parameter
+$history_limit = 10;
+$borrowing_history = $equipment->getBorrowingHistory($history_limit);
+
+// Get current borrower if equipment is borrowed
+$current_borrower = $equipment->getStatus() == 'borrowed' ? $equipment->getCurrentBorrower() : null;
+
+// Create an equipment data array for the view
+$equipment_data = [
+    'equipment_id' => $equipment->getId(),
+    'name' => $equipment->getName(),
+    'description' => $equipment->getDescription(),
+    'equipment_code' => $equipment->getEquipmentCode(),
+    'category_id' => $equipment->getCategoryId(),
+    'category_name' => $category_name,
+    'condition_status' => $equipment->getConditionStatus(),
+    'status' => $equipment->getStatus(),
+    'acquisition_date' => $equipment->getAcquisitionDate(),
+    'notes' => $equipment->getNotes(),
+    'quantity' => $equipment->getQuantity(),
+    'available_quantity' => $equipment->getAvailableQuantity(),
+    'created_at' => $equipment->getCreatedAt(),
+    'updated_at' => $equipment->getUpdatedAt()
+];
 
 include '../../pages/equipment/view_equipment.html';
 ?>

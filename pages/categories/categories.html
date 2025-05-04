@@ -11,24 +11,7 @@
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
-    require_once '../../php/db_connection.php';
     include '../../components/sidebar.php';
-
-    // Initialize search query
-    $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
-
-    // Build the query with search filter
-    $query = "SELECT c.*, COUNT(e.equipment_id) as equipment_count 
-              FROM categories c
-              LEFT JOIN equipment e ON c.category_id = e.category_id";
-    
-    // Add search condition if search query exists
-    if (!empty($search_query)) {
-        $query .= " WHERE c.name LIKE '%$search_query%' OR c.description LIKE '%$search_query%'";
-    }
-    
-    $query .= " GROUP BY c.category_id";
-    $result = $conn->query($query);
     ?>
     
     <div class="container">
@@ -65,7 +48,7 @@
         </div>
         
         <div class="filter-section">
-            <form method="get" action="../../php/categoriescategories.php" class="filter-form">
+            <form method="get" action="../../php/categories/categories.php" class="filter-form">
                 <div class="form-group search-group">
                     <label for="search">Search Categories</label>
                     <div class="search-container">
@@ -80,11 +63,10 @@
         </div>
         
         <div class="categories-list">
-            <?php if ($result->num_rows > 0): ?>
+            <?php if (isset($categories) && count($categories) > 0): ?>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Category Name</th>
                             <th>Description</th>
                             <th>Equipment Count</th>
@@ -92,9 +74,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php foreach ($categories as $row): ?>
                         <tr>
-                            <td><?php echo $row['category_id']; ?></td>
                             <td><?php echo $row['name']; ?></td>
                             <td><?php echo $row['description'] ? $row['description'] : '-'; ?></td>
                             <td><?php echo $row['equipment_count']; ?></td>
@@ -108,7 +89,7 @@
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>

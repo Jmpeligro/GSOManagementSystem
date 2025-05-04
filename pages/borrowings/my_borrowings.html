@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,8 +21,15 @@
             <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
         <?php endif; ?>
         
+        <!-- Display overdue warning if applicable -->
+        <?php if (!empty($overdue_items)): ?>
+        <div class="warning-message">
+            <p><strong>Warning:</strong> You have <?php echo count($overdue_items); ?> overdue item(s). Please return them as soon as possible.</p>
+        </div>
+        <?php endif; ?>
+        
         <div class="borrowings-list">
-            <?php if ($result->num_rows > 0): ?>
+            <?php if (!empty($borrowings)): ?>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -35,7 +43,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): 
+                        <?php foreach ($borrowings as $row): 
                             $is_overdue = ($row['status'] == 'active' && strtotime($row['due_date']) < time());
                             $status_class = $is_overdue ? 'overdue' : $row['status'];
                         ?>
@@ -70,13 +78,13 @@
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>    
             <?php else: ?>
                 <div class="no-results">
                     <p>You have no borrowing records at this time.</p>
-                    <a href="../../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Borrowing</a>
+                    <a href="../../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Equipment</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -95,3 +103,4 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
+```
