@@ -171,8 +171,7 @@ body {
 }
 
 .sidebar-footer {
-  padding: 15px 20px;
-  border-top: 1px solid var(--gray-light);
+  position: relative;
 }
 
 .user-menu-dropdown {
@@ -212,8 +211,23 @@ body {
   z-index: 1100;
 }
 
-/* Ensure content stays below sidebar on small screens */
 @media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+    position: fixed;
+    z-index: 1500;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width) !important;
+    transition: transform var(--transition-speed) ease;
+  }
+  
+  .sidebar.mobile-open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-lg);
+  }
+  
   .content-wrapper {
     margin-left: 0 !important;
     width: 100%;
@@ -221,19 +235,6 @@ body {
   
   .top-bar {
     left: 0 !important;
-    z-index: 900;
-  }
-  
-  .sidebar {
-    transition: transform var(--transition-speed) ease;
-  }
-  
-  .sidebar.collapsed .sidebar-link span {
-    display: inline; 
-  }
-  
-  .sidebar.mobile-open .sidebar-header .logo {
-    display: flex;
   }
 }
 
@@ -248,10 +249,11 @@ body {
 
 .user-profile {
   cursor: pointer;
-  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 10px 0;
+  position: relative;
 }
 
 .user-avatar {
@@ -293,6 +295,24 @@ body {
   align-items: center;
   padding: 0;
   color: var(--gray);
+}
+
+.user-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 180px;
+  z-index: 2000;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(43, 45, 66, 0.1), 0 4px 6px -2px rgba(43, 45, 66, 0.05);
+  display: none;
+  border: 1px solid var(--gray-light);
+}
+
+
+.user-menu-dropdown.active {
+  display: block !important;
 }
 
 .user-menu-dropdown a {
@@ -360,33 +380,6 @@ body {
   margin-right: 15px;
 }
 
-/* Mobile Responsive */
-@media (max-width: 992px) {
-  .sidebar {
-      transform: translateX(-100%); 
-      width: var(--sidebar-width) !important;
-  }
-  
-  .sidebar.mobile-open {
-      transform: translateX(0);
-  }
-  
-  .content-wrapper {
-      margin-left: 0 !important;
-  }
-  
-  .top-bar {
-      left: 0 !important;
-  }
-  
-  #mobileToggle {
-      display: block;
-  }
-  
-  .sidebar-header .sidebar-toggle {
-      display: none;
-  }
-}
 
 @media (max-width: 576px) {
   .container {
@@ -402,6 +395,27 @@ body {
   }
 }
 
+@media (min-width: 993px) {
+  .sidebar {
+    transform: translateX(0) !important;
+  }
+  
+  .sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+  }
+  
+  .content-wrapper.expanded {
+    margin-left: var(--sidebar-collapsed-width);
+  }
+  
+  .content-wrapper.expanded .top-bar {
+    left: var(--sidebar-collapsed-width);
+  }
+  
+  #mobileToggle {
+    display: none;
+  }
+}
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 1rem;
@@ -906,6 +920,7 @@ a:hover {
   text-decoration: none;
 }
 
+.btn.btn-add-user,
 .btn-save-category,
 .btn-back-borrowing,
 .btn-back-myborrowing,
@@ -926,6 +941,7 @@ a:hover {
   margin-bottom: 15px;
 }
 
+.btn.btn-add-user:hover,
 .btn-save-category:hover,
 .btn-back-borrowing:hover,
 .btn-back-myborrowing:hover,
@@ -963,6 +979,7 @@ a:hover {
   text-decoration: none;
 }
 
+.btn-cancel-user,
 .btn-cancel-equipment,
 .btn-cancel-category,
 .btn-cancel-users {
@@ -981,6 +998,7 @@ a:hover {
   margin-bottom: 15px;
 }
 
+.btn-cancel-user:hover,
 .btn-cancel-equipment:hover,
 .btn-cancel-category:hover,
 .btn-cancel-users:hover {
@@ -1011,9 +1029,6 @@ a:hover {
   text-decoration: none;
 }
 
-/* Add these updated button styles to your styles.css file */
-
-/* Small Button Base Style */
 .btn-small {
   font-family: var(--font-main);
   padding: 6px 12px;
@@ -1022,7 +1037,6 @@ a:hover {
   transition: all 0.2s ease;
 }
 
-/* Small Button Variants */
 .btn-small {
   background-color: var(--primary);
   color: white;

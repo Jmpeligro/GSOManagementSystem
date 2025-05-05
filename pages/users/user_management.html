@@ -13,7 +13,7 @@
         <div class="page-header">
             <h1><?php echo $title; ?></h1>
             <div class="actions">
-                <a href="../../php/users/users.php" class="btn btn-secondary">Back to Users</a>
+                <a href="../../php/users/users.php" class="btn btn-back-users">Back to Users</a>
             </div>
         </div>
         
@@ -83,8 +83,8 @@
                     </div>
                     
                     <div class="form-buttons">
-                        <button type="submit" class="btn btn-primary"><?php echo ($mode === 'edit') ? 'Update User' : 'Add User'; ?></button>
-                        <a href="../../php/users/users.php" class="btn btn-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-add-user"><?php echo ($mode === 'edit') ? 'Update User' : 'Add User'; ?></button>
+                        <a href="../../php/users/users.php" class="btn btn-cancel-user">Cancel</a>
                     </div>
                 </form>
             </div>

@@ -7,6 +7,11 @@ if (!isLoggedIn()) {
     exit();
 }
 
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../php/equipment/equipment.php");
+    exit();
+}
+
 $sql_available = "SELECT COUNT(*) as count FROM equipment WHERE status = 'available'";
 $sql_maintenance = "SELECT COUNT(*) as count FROM equipment WHERE status = 'maintenance'";
 $sql_retired = "SELECT COUNT(*) as count FROM equipment WHERE status = 'retired'";
