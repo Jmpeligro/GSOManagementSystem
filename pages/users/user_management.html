@@ -66,6 +66,12 @@
                         </div>
                     </div>
                     
+                    <div class="form-group" id="program_year_section_container" style="display:<?php echo ($role === 'student') ? 'block' : 'none'; ?>">
+                        <label for="program_year_section">Program/Year/Section*</label>
+                        <input type="text" id="program_year_section" name="program_year_section" value="<?php echo htmlspecialchars($program_year_section ?? ''); ?>" <?php echo ($role === 'student') ? 'required' : ''; ?>>
+                        <div class="form-text">Required for student users (e.g., BSIT 2A)</div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="text" id="phone" name="phone" value="<?php echo htmlspecialchars($phone); ?>">
@@ -121,5 +127,25 @@
     
     <script src="../../assets/js/user.js"></script>
     <script src="../../assets/js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const programYearSectionContainer = document.getElementById('program_year_section_container');
+            const programYearSectionInput = document.getElementById('program_year_section');
+            
+            function toggleProgramYearSection() {
+                if (roleSelect.value === 'student') {
+                    programYearSectionContainer.style.display = 'block';
+                    programYearSectionInput.setAttribute('required', 'required');
+                } else {
+                    programYearSectionContainer.style.display = 'none';
+                    programYearSectionInput.removeAttribute('required');
+                    programYearSectionInput.value = ''; // Clear the field when not needed
+                }
+            }
+            
+            roleSelect.addEventListener('change', toggleProgramYearSection);
+        });
+    </script>
 </body>
-</html> 
+</html>

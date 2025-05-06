@@ -1,0 +1,51 @@
+   /* Add status indicator styles */
+   .status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+.status-active {
+    background-color: #28a745; /* Green */
+}
+.status-inactive {
+    background-color: #ffc107; /* Yellow */
+}
+.status-archived {
+    background-color: #dc3545; /* Red */
+}
+
+/* Style status cells */
+.status-cell {
+    display: flex;
+    align-items: center;
+}
+
+/* Add row styles based on status */
+tr.inactive-row {
+    background-color: #fff8e1;
+}
+tr.archived-row {
+    background-color: #ffebee;
+}
+
+/* Add status badge styles */
+.status-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+.badge-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+.badge-inactive {
+    background-color: #fff3cd;
+    color: #856404;
+}
+.badge-archived {
+    background-color: #f8d7da;
+    color: #721c24;
+}

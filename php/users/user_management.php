@@ -20,6 +20,7 @@ $email = '';
 $department = '';
 $phone = '';
 $role = '';
+$program_year_section = '';
 $errors = [];
 
 if ($mode === 'edit') {
@@ -36,6 +37,7 @@ if ($mode === 'edit') {
     $department = $user->getDepartment();
     $phone = $user->getPhone();
     $role = $user->getRole();
+    $program_year_section = $user->getProgramYearSection();
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -49,7 +51,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'role' => sanitize($_POST['role'])
     ];
     
-    // Handle password fields
+    // Add program_year_section if role is student
+    if ($data['role'] === 'student') {
+        $data['program_year_section'] = sanitize($_POST['program_year_section'] ?? '');
+    } else {
+        $data['program_year_section'] = '';
+    }
+    
     if ($mode === 'add' || !empty($_POST['password'])) {
         $data['password'] = $_POST['password'];
         $data['confirm_password'] = $_POST['confirm_password'];
@@ -67,8 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     } else {
         $_SESSION['error'] = $result['message'];
-        
-        // Keep form data for re-display
+ 
         $university_id = $data['university_id'];
         $first_name = $data['first_name'];
         $last_name = $data['last_name'];
@@ -76,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $department = $data['department'];
         $phone = $data['phone'];
         $role = $data['role'];
+        $program_year_section = $data['program_year_section'];
     }
 }
 

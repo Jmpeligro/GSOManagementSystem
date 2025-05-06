@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 04, 2025 at 03:12 PM
+-- Generation Time: May 06, 2025 at 03:50 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -111,7 +111,7 @@ CREATE TABLE `equipment` (
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
 (2, '001', 'Microphone', 3, '', '2025-04-20', 'available', 'new', NULL, '2025-04-20 06:41:36', '2025-05-04 07:43:42', 1, 1),
-(3, '002', 'John Mel', 1, 'Man Power', '2025-04-14', 'available', 'fair', '', '2025-04-23 03:41:57', '2025-05-04 07:43:42', 10, 10),
+(3, '002', 'John Mel', 1, 'Man Power', '0000-00-00', 'available', 'fair', '', '2025-04-23 03:41:57', '2025-05-05 00:27:41', 9, 9),
 (4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-04 07:43:42', 1, 1);
 
 -- --------------------------------------------------------
@@ -158,20 +158,21 @@ CREATE TABLE `users` (
   `role` enum('student','faculty','staff','admin') NOT NULL,
   `department` varchar(100) DEFAULT NULL,
   `phone` varchar(15) DEFAULT NULL,
+  `program_year_section` varchar(100) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `archived` tinyint(1) DEFAULT 0,
-  `archived_at` timestamp NULL DEFAULT NULL
+  `status` enum('active','inactive','archived') NOT NULL DEFAULT 'active',
+  `status_changed_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `created_at`, `updated_at`, `archived`, `archived_at`) VALUES
-(3, '23-00001', 'Bryan', 'Bermudez', 'bry@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', '2025-04-19 10:54:45', '2025-05-04 09:53:27', 0, NULL),
-(5, '000', 'Jm', 'Peligro', 'jm@plpasig.edu', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', '2025-04-19 11:20:26', '2025-04-24 02:48:42', 0, NULL),
-(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', '2025-04-25 01:47:29', '2025-05-04 09:53:38', 0, NULL);
+INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `program_year_section`, `created_at`, `updated_at`, `status`, `status_changed_at`) VALUES
+(3, '23-00001', 'Bryan', 'Bermudez', 'bry@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', NULL, '2025-04-19 10:54:45', '2025-05-04 09:53:27', 'active', NULL),
+(5, '000', 'Jm', 'Peligro', 'jm@plpasig.edu', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', NULL, '2025-04-19 11:20:26', '2025-04-24 02:48:42', 'active', NULL),
+(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL);
 
 --
 -- Indexes for dumped tables
@@ -213,7 +214,8 @@ ALTER TABLE `maintenance`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
-  ADD UNIQUE KEY `email` (`email`);
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_user_status` (`status`);
 
 --
 -- AUTO_INCREMENT for dumped tables

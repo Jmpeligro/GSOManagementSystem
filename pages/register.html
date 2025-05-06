@@ -97,12 +97,17 @@
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Program/Year/Section field (only visible for students) -->
+                            <div class="form-floating mb-3" id="program_year_section_container" style="display: none;">
+                                <input type="text" class="form-control" id="program_year_section" name="program_year_section" placeholder="Program/Year/Section">
+                                <label for="program_year_section">Program/Year/Section *</label>
+                            </div>
 
                             <div class="form-floating mb-4">
                                 <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number">
                                 <label for="phone">Phone Number</label>
                             </div>
-                            
                             
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary btn-lg">Register</button>
@@ -122,6 +127,8 @@
     <script>
         (function () {
             'use strict'
+            
+            // Form validation
             var forms = document.querySelectorAll('.needs-validation')
             Array.prototype.slice.call(forms)
                 .forEach(function (form) {
@@ -134,6 +141,21 @@
                         form.classList.add('was-validated')
                     }, false)
                 })
+                
+            // Dynamic field visibility based on role
+            const roleSelect = document.getElementById('role');
+            const programYearSectionContainer = document.getElementById('program_year_section_container');
+            const programYearSectionInput = document.getElementById('program_year_section');
+            
+            roleSelect.addEventListener('change', function() {
+                if (this.value === 'student') {
+                    programYearSectionContainer.style.display = 'block';
+                    programYearSectionInput.required = true;
+                } else {
+                    programYearSectionContainer.style.display = 'none';
+                    programYearSectionInput.required = false;
+                }
+            });
         })()
     </script>
 </body>

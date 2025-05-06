@@ -73,6 +73,12 @@
                         </div>
                     </div>
                     
+                    <div class="form-group" id="program_year_section_container" style="display:none;">
+                        <label for="program_year_section">Program/Year/Section*</label>
+                        <input type="text" id="program_year_section" name="program_year_section">
+                        <div class="form-text">Required for student users (e.g., BSIT 2A)</div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="phone">Phone Number</label>
                         <input type="text" id="phone" name="phone">
@@ -89,5 +95,29 @@
     
     <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roleSelect = document.getElementById('role');
+            const programYearSectionContainer = document.getElementById('program_year_section_container');
+            const programYearSectionInput = document.getElementById('program_year_section');
+            
+            // Function to toggle program_year_section visibility
+            function toggleProgramYearSection() {
+                if (roleSelect.value === 'student') {
+                    programYearSectionContainer.style.display = 'block';
+                    programYearSectionInput.setAttribute('required', 'required');
+                } else {
+                    programYearSectionContainer.style.display = 'none';
+                    programYearSectionInput.removeAttribute('required');
+                }
+            }
+            
+            // Initial check
+            toggleProgramYearSection();
+            
+            // Add event listener for role changes
+            roleSelect.addEventListener('change', toggleProgramYearSection);
+        });
+    </script>
 </body>
 </html>

@@ -10,56 +10,51 @@ if (!isLoggedIn() || !isAdmin()) {
 
 $role_filter = isset($_GET['role']) ? sanitize($_GET['role']) : '';
 $search_query = isset($_GET['search']) ? sanitize($_GET['search']) : '';
-$show_archived = isset($_GET['show_archived']) ? sanitize($_GET['show_archived']) : '0';
+$status_filter = isset($_GET['status']) ? sanitize($_GET['status']) : 'active';
 
 $filters = [
     'role' => $role_filter,
     'search' => $search_query,
-    'archived' => $show_archived === '1'
+    'status' => $status_filter === 'all' ? null : $status_filter
 ];
 
 $users = User::getAll($conn, $filters);
 
-// Handle archive action
-if (isset($_GET['archive']) && isAdmin()) {
-    $archive_id = (int)$_GET['archive'];
+// Handle change status actions
+if (isset($_GET['action']) && isset($_GET['id']) && isAdmin()) {
+    $user_id = (int)$_GET['id'];
+    $action = sanitize($_GET['action']);
     
-    if ($archive_id != $_SESSION['user_id']) {
+    if ($user_id != $_SESSION['user_id'] || $action === 'activate') {
         $user = new User($conn);
-        if ($user->load($archive_id)) {
-            $result = $user->archive();
+        if ($user->load($user_id)) {
+            $result = null;
             
-            if ($result['success']) {
+            switch ($action) {
+                case 'activate':
+                    $result = $user->activate();
+                    break;
+                case 'deactivate':
+                    $result = $user->deactivate();
+                    break;
+                case 'archive':
+                    $result = $user->archive();
+                    break;
+                default:
+                    $_SESSION['error'] = "Invalid action.";
+                    break;
+            }
+            
+            if ($result && $result['success']) {
                 $_SESSION['success'] = $result['message'];
-            } else {
+            } else if ($result) {
                 $_SESSION['error'] = $result['message'];
             }
         } else {
             $_SESSION['error'] = "User not found.";
         }
     } else {
-        $_SESSION['error'] = "You cannot archive your own account.";
-    }
-
-    header("Location: users.php");
-    exit();
-}
-
-// Handle restore action
-if (isset($_GET['restore']) && isAdmin()) {
-    $restore_id = (int)$_GET['restore'];
-    
-    $user = new User($conn);
-    if ($user->load($restore_id)) {
-        $result = $user->restore();
-        
-        if ($result['success']) {
-            $_SESSION['success'] = $result['message'];
-        } else {
-            $_SESSION['error'] = $result['message'];
-        }
-    } else {
-        $_SESSION['error'] = "User not found.";
+        $_SESSION['error'] = "You cannot change the status of your own account.";
     }
 
     header("Location: users.php");

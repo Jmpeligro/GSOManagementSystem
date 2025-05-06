@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/users.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
-    
     
     <div class="container">
         <div class="page-header">
@@ -43,11 +43,12 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="show_archived">Status</label>
-                    <select id="show_archived" name="show_archived">
-                        <option value="0" <?php echo $show_archived == '0' ? 'selected' : ''; ?>>Active Users</option>
-                        <option value="1" <?php echo $show_archived == '1' ? 'selected' : ''; ?>>Archived Users</option>
-                        <option value="all" <?php echo $show_archived == 'all' ? 'selected' : ''; ?>>All Users</option>
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        <option value="active" <?php echo $status_filter == 'active' ? 'selected' : ''; ?>>Active Users</option>
+                        <option value="inactive" <?php echo $status_filter == 'inactive' ? 'selected' : ''; ?>>Inactive Users</option>
+                        <option value="archived" <?php echo $status_filter == 'archived' ? 'selected' : ''; ?>>Archived Users</option>
+                        <option value="all" <?php echo $status_filter == 'all' ? 'selected' : ''; ?>>All Users</option>
                     </select>
                 </div>
                 
@@ -72,25 +73,37 @@
                 </thead>
                 <tbody>
                     <?php foreach ($users as $row): ?>
-                    <tr <?php echo $row['archived'] ? 'class="archived-row"' : ''; ?>>
+                    <tr class="<?php echo $row['status'] !== 'active' ? $row['status'] . '-row' : ''; ?>">
                         <td><?php echo htmlspecialchars($row['university_id']); ?></td>
                         <td><?php echo htmlspecialchars($row['first_name'] . ' ' . $row['last_name']); ?></td>
                         <td><?php echo htmlspecialchars($row['email']); ?></td>
                         <td><?php echo ucfirst(htmlspecialchars($row['role'])); ?></td>
                         <td><?php echo htmlspecialchars($row['department']); ?></td>
-                        <td><?php echo $row['archived'] ? 'Archived' : 'Active'; ?></td>
+                        <td class="status-cell">
+                            <span class="status-indicator status-<?php echo $row['status']; ?>"></span>
+                            <span class="status-badge badge-<?php echo $row['status']; ?>">
+                                <?php echo ucfirst($row['status']); ?>
+                            </span>
+                        </td>
                         <td class="actions">
                             <a href="../../php/users/user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
                             <?php if ($row['user_id'] != $_SESSION['user_id']): ?>
-                                <?php if ($row['archived'] == 0): ?>
-                                    <a href="../../php/users/users.php?archive=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
+                                <?php if ($row['status'] === 'active'): ?>
+                                    <a href="../../php/users/users.php?action=deactivate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
+                                       onclick="return confirm('Are you sure you want to deactivate this user?')">Deactivate</a>
+                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
                                        onclick="return confirm('Are you sure you want to archive this user?')">Archive</a>
-                                <?php else: ?>
-                                    <a href="../../php/users/users.php?restore=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" 
-                                       onclick="return confirm('Are you sure you want to restore this user?')">Restore</a>
+                                <?php elseif ($row['status'] === 'inactive'): ?>
+                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" 
+                                       onclick="return confirm('Are you sure you want to activate this user?')">Activate</a>
+                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
+                                       onclick="return confirm('Are you sure you want to archive this user?')">Archive</a>
+                                <?php elseif ($row['status'] === 'archived'): ?>
+                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" 
+                                       onclick="return confirm('Are you sure you want to activate this user?')">Activate</a>
                                 <?php endif; ?>
                                 <a href="../../php/users/users.php?delete=<?php echo $row['user_id']; ?>" class="btn btn-small btn-danger" 
-                                   onclick="return confirm('Are you sure you want to permanently delete this user?')">Delete</a>
+                                   onclick="return confirm('Are you sure you want to permanently delete this user? This cannot be undone!')">Delete</a>
                             <?php endif; ?>
                         </td>
                     </tr>
