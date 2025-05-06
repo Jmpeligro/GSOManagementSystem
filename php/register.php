@@ -29,6 +29,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $error = "Please fill in all required fields.";
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = "Please enter a valid email address.";
+    } else if (!preg_match('/@plpasig\.edu\.ph$/i', $email)) {
+        $error = "Email must be from the plpasig.edu.ph domain.";
     } else if ($password != $confirm_password) {
         $error = "Passwords do not match.";
     } else if (strlen($password) < 8) {

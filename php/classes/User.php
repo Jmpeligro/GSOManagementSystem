@@ -235,6 +235,8 @@ class User {
             $errors[] = "Email is required";
         } elseif (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $errors[] = "Invalid email format";
+        } elseif (!preg_match('/@plpasig\.edu\.ph$/i', $data['email'])) {
+            $errors[] = "Email must be from the plpasig.edu.ph domain";
         }
         
         if (empty($data['role'])) {
