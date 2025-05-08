@@ -192,6 +192,11 @@
                                 <?php if (isAdmin() && $row['approval_status'] == 'pending'): ?>
                                 <a href="../../php/borrowings/pending_request.php" class="btn btn-small btn-secondary">Review</a>
                                 <?php endif; ?>
+
+                                <!--Remind via Email button-->                            
+                                <?php if (isAdmin() && ($is_overdue == true)): ?>
+                                <a href="../../php/borrowings/RemindDue.php?id=<?php echo $row['equipment_id'] . '&user_id=' . $row['user_id'];?>" class="btn btn-small btn-secondary">Remind</a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
