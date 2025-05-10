@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,11 +33,11 @@
             </div>
             <div class="details-row">
                 <span class="label">Condition:</span>
-                <span class="value"><?php echo ucfirst($equipment['condition_status']); ?></span>
+                <span class="value"><?php echo ucfirst($equipment['condition_status'] ?? 'good'); ?></span>
             </div>
             <div class="details-row">
                 <span class="label">Available Quantity:</span>
-                <span class="value"><?php echo $equipment['quantity']; ?></span>
+                <span class="value"><?php echo $equipment['available_quantity'] ?? $equipment['quantity']; ?></span>
             </div>
             <?php if (!empty($equipment['description'])): ?>
                 <div class="details-row">
@@ -47,11 +48,6 @@
         </div>
         
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $equipment_id); ?>" class="borrow-form">
-            <div class="form-group">
-                <label for="quantity">Quantity to Borrow</label>
-                <input type="number" id="quantity" name="quantity" min="1" max="<?php echo $equipment['quantity']; ?>" value="1" required>
-            </div>
-            
             <div class="form-group">
                 <label for="borrow_date">Borrow Date</label>
                 <input type="datetime-local" id="borrow_date" name="borrow_date" required
@@ -87,3 +83,4 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
+```

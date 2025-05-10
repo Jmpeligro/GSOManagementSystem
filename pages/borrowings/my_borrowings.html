@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Borrowings - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -20,8 +21,15 @@
             <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
         <?php endif; ?>
         
+        <!-- Display overdue warning if applicable -->
+        <?php if (!empty($overdue_items)): ?>
+        <div class="warning-message">
+            <p><strong>Warning:</strong> You have <?php echo count($overdue_items); ?> overdue item(s). Please return them as soon as possible.</p>
+        </div>
+        <?php endif; ?>
+        
         <div class="borrowings-list">
-            <?php if ($result->num_rows > 0): ?>
+            <?php if (!empty($borrowings)): ?>
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -35,7 +43,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): 
+                        <?php foreach ($borrowings as $row): 
                             $is_overdue = ($row['status'] == 'active' && strtotime($row['due_date']) < time());
                             $status_class = $is_overdue ? 'overdue' : $row['status'];
                         ?>
@@ -55,28 +63,34 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
+                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
                                 
                                 <?php if ($row['approval_status'] == 'pending'): ?>
                                 <a href="../borrowings/my_borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" 
                                    class="btn btn-small btn-danger"
-                                   onclick="return confirm('Are you sure you want to cancel this request?')">Cancel</a>
+                                   title="Cancel"
+                                   onclick="return confirm('Are you sure you want to cancel this request?')">
+                                    <i class="fa fa-times"></i>
+                                </a>
                                 <?php endif; ?>
                                 
                                 <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved'): ?>
                                 <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>&return=true" 
                                    class="btn btn-small btn-primary"
-                                   onclick="return confirm('Are you sure you want to mark this equipment as returned?')">Return</a>
+                                   title="Return"
+                                   onclick="return confirm('Are you sure you want to mark this equipment as returned?')">
+                                    <i class="fa fa-undo"></i>
+                                </a>
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>    
             <?php else: ?>
                 <div class="no-results">
                     <p>You have no borrowing records at this time.</p>
-                    <a href="../../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Borrowing</a>
+                    <a href="../../php/equipment/equipment.php" class="btn btn-browse-equip">Browse Equipment</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -95,3 +109,4 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
+```

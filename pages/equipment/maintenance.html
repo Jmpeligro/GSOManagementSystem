@@ -6,6 +6,7 @@
     <title>Equipment Maintenance - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         function confirmDelete(id, name) {
             return confirm('Are you sure you want to delete the maintenance record for "' + name + '"? This action cannot be undone.');
@@ -140,16 +141,13 @@
                             <?php echo $row['cost'] ? '₱' . number_format($row['cost'], 2) : '-'; ?>
                         </td>
                         <td class="actions">
-                            <button class="btn btn-small btn-secondary" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)">Update</button>
+                            <button class="btn btn-small btn-secondary" title="Update" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)"><i class="fa fa-edit"></i></button>
                             
                             <form method="post" action="../../php/equipment/maintenance.php" style="display:inline-block;">
                                 <input type="hidden" name="maintenance_id" value="<?php echo $row['maintenance_id']; ?>">
                                 <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
                                 <input type="hidden" name="delete_maintenance" value="1">
-                                <button type="submit" class="btn btn-small btn-danger" 
-                                        onclick="return confirmDelete(<?php echo $row['maintenance_id']; ?>, '<?php echo htmlspecialchars($row['equipment_name'], ENT_QUOTES); ?>')">
-                                    Delete
-                                </button>
+                                <button type="submit" class="btn btn-small btn-danger" title="Delete" onclick="return confirmDelete(<?php echo $row['maintenance_id']; ?>, '<?php echo htmlspecialchars($row['equipment_name'], ENT_QUOTES); ?>')"><i class="fa fa-trash"></i></button>
                             </form>
                             
                             <!-- Update Form (Hidden by default) -->

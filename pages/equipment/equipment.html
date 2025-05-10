@@ -7,17 +7,6 @@
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        function confirmDelete(id, name) {
-            return confirm('Are you sure you want to delete "' + name + '"? This action cannot be undone.');
-        }
-        function validateStatusChange(selectElement) {
-            if (selectElement.value === "") {
-                return false; 
-            }
-            return true; 
-        }
-    </script>
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -78,18 +67,18 @@
                     </select>
                 </div>
                 
+                <button type="submit" class="btn btn-filter-equipment">Apply Filters</button>
+                <a href="../equipment/equipment.php" class="btn btn-reset-equipment">Reset</a>
+
                 <div class="form-group">
                     <label for="search">Search</label>
                     <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search equipment...">
                 </div>
-                
-                <button type="submit" class="btn btn-filter-equipment">Apply Filters</button>
-                <a href="../equipment/equipment.php" class="btn btn-reset-equipment">Reset</a>
             </form>
         </div>
         
         <div class="equipment-list">
-            <?php if ($result && $result->num_rows > 0): ?>
+            <?php if (!empty($result)): ?>
                 <table class="data-table">
                     <thead>
                         <tr>  
@@ -102,7 +91,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <?php foreach ($result as $row): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
                             <td><?php echo htmlspecialchars($row['category_name']); ?></td>
@@ -118,49 +107,42 @@
                                 <?php endif; ?>
                             </td>
                             <td class="actions">
-                                <a href="../equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="action-icon view" title="View">
-                                    <i class="fas fa-eye"></i>
-                                </a>
+                                <a href="../equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-primary" title="View"><i class="fa fa-eye"></i></a>
                                 
                                 <?php if (isAdmin()): ?>
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
-                                    <button type="button" class="action-icon change-status" title="Change Status" 
-                                            onclick="openStatusModal(<?php echo $row['equipment_id']; ?>, '<?php echo $row['status']; ?>')">
-                                        <i class="fas fa-exchange-alt"></i>
+                                    <button type="button" class="btn btn-small btn-update-status" title="Update Status" 
+                                        onclick="openStatusModal('<?php echo $row['equipment_id']; ?>', '<?php echo $row['status']; ?>')">
+                                        <i class="fa fa-check"></i>
                                     </button>
+                                    <?php endif; ?>
+        
+                                    <?php if ($row['display_status'] == 'maintenance'): ?>
+                                    <a href="../../php/equipment/maintenance.php" class="btn btn-small btn-maintenance" title="View Maintenance"><i class="fa fa-tools"></i></a>
+                                    <?php elseif ($row['display_status'] != 'borrowed' && $row['display_status'] != 'retired'): ?>
+                                    <a href="../../php/equipment/maintenance.php?quick_add=<?php echo $row['equipment_id']; ?>" class="btn-small-maintenance" title="Send to Maintenance"><i class="fa fa-screwdriver-wrench"></i></a>
                                     <?php endif; ?>
                             
-                                    <?php if ($row['display_status'] == 'maintenance'): ?>
-                                    <a href="../../php/equipment/maintenance.php" class="action-icon maintenance" title="View Maintenance">
-                                        <i class="fas fa-tools"></i>
-                                    </a>
-                                    <?php elseif ($row['display_status'] != 'borrowed' && $row['display_status'] != 'retired'): ?>
-                                    <a href="../../php/equipment/maintenance.php?quick_add=<?php echo $row['equipment_id']; ?>" 
-                                       class="action-icon maintenance" title="Send to Maintenance">
-                                        <i class="fas fa-tools"></i>
-                                    </a>
-                                    <?php endif; ?>
-                                    
-                                    <a href="../equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="action-icon edit" title="Edit">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
+                                    <a href="../equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary" title="Edit"><i class="fa fa-edit"></i></a>
                                     
                                     <?php if ($row['display_status'] != 'borrowed'): ?>
-                                    <button type="button" class="action-icon delete" title="Delete" 
-                                            onclick="deleteEquipment(<?php echo $row['equipment_id']; ?>, '<?php echo addslashes($row['name']); ?>')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                                    <form method="post" action="../equipment/equipment.php" class="delete-form">
+                                        <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
+                                        <input type="hidden" name="delete_equipment" value="1">
+                                        <button type="submit" class="btn btn-small btn-danger" title="Delete"
+                                                onclick="return confirm('Are you sure you want to delete this equipment? This action cannot be undone.');">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
                                     <?php endif; ?>
                                 <?php endif; ?>
                                 
                                 <?php if ($row['display_status'] == 'available' && $_SESSION['role'] !== 'admin'): ?>
-                                <a href="../borrowings/borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="action-icon borrow" title="Borrow">
-                                    <i class="fas fa-hand-holding"></i>
-                            </a>
-                            <?php endif; ?>
-                        </td>
-                    </tr>
-                        <?php endwhile; ?>
+                                <a href="../borrowings/borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-borrow" title="Borrow"><i class="fa fa-arrow-right-to-bracket"></i></a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             <?php else: ?>
@@ -170,36 +152,50 @@
             <?php endif; ?>
         </div>
     </div>
-    
-    
-    <?php include '../../components/footer.php'; ?>
-    <script src="../../assets/js/sidebar.js"></script>
 
-    <div id="statusModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Change Equipment Status</h3>
-            </div>
-            <div class="modal-body">
-                <form id="statusChangeForm" method="post" action="../equipment/equipment.php">
-                    <input type="hidden" name="equipment_id" id="modal_equipment_id" value="">
-                    <input type="hidden" name="update_status" value="1">
-                    <div class="form-group">
-                        <label for="modal_new_status">New Status:</label>
-                        <select id="modal_new_status" name="new_status" class="form-control">
-                            <option value="available">Available</option>
-                            <option value="maintenance">Maintenance</option>
-                            <option value="retired">Retired</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary close-modal-btn">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="submitStatusChange()">Update Status</button>
-            </div>
-        </div>
+      
+    <?php include '../../components/footer.php'; ?>
+    <script src="/GSO System/assets/js/sidebar.js"></script>
+    <script src="../../assets/js/equipment.js"></script>
+    <!-- Status Update Modal -->
+    <div id="statusModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+      <div class="modal-content" style="background:#fff; padding:2rem; border-radius:8px; max-width:400px; margin:auto; position:relative;">
+        <span class="close" onclick="closeStatusModal()" style="position:absolute; top:10px; right:20px; font-size:1.5rem; cursor:pointer;">&times;</span>
+        <h3>Update Equipment Status</h3>
+        <form id="statusModalForm" method="post" action="../equipment/equipment.php">
+          <input type="hidden" name="equipment_id" id="modal_equipment_id">
+          <div class="form-group">
+            <label for="modal_new_status">Status</label>
+            <select name="new_status" id="modal_new_status" class="status-select" required>
+              <option value="available">Available</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="retired">Retired</option>
+            </select>
+          </div>
+          <input type="hidden" name="update_status" value="1">
+          <div style="margin-top:1rem; display:flex; gap:1rem;">
+            <button type="submit" class="btn btn-small btn-primary">Update</button>
+            <button type="button" class="btn btn-small btn-secondary" onclick="closeStatusModal()">Cancel</button>
+          </div>
+        </form>
+      </div>
     </div>
-<script src="../../assets/js/equipment.js"></script>
+    <script>
+    function openStatusModal(equipmentId, currentStatus) {
+      document.getElementById('statusModal').style.display = 'flex';
+      document.getElementById('modal_equipment_id').value = equipmentId;
+      document.getElementById('modal_new_status').value = currentStatus;
+    }
+    function closeStatusModal() {
+      document.getElementById('statusModal').style.display = 'none';
+    }
+    // Close modal when clicking outside content
+    window.onclick = function(event) {
+      var modal = document.getElementById('statusModal');
+      if (event.target === modal) {
+        closeStatusModal();
+      }
+    }
+    </script>
 </body>
 </html>
