@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 06, 2025 at 03:50 PM
+-- Generation Time: May 10, 2025 at 08:51 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -58,7 +58,8 @@ INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_dat
 (5, 3, 3, '2025-04-24 12:42:00', '2025-05-01 08:42:00', '2025-04-30 09:10:42', NULL, NULL, 'returned', 'good', 'I need it.', '2025-04-24 08:42:19', '2025-04-30 01:10:42', 'approved', 5, '2025-04-24 20:45:58', 'Approved by administrator', 'Returned via system', 3),
 (6, 3, 3, '2025-04-30 12:06:00', '2025-05-01 13:08:00', '2025-05-01 15:17:30', NULL, NULL, 'returned', 'good', 'paglilinisin ko', '2025-04-30 04:12:55', '2025-05-01 07:17:30', 'approved', 5, '2025-05-01 14:58:08', 'Approved by administrator', 'Returned via system', 3),
 (8, 2, 3, '2025-05-02 13:01:00', '2025-05-03 14:02:00', '2025-05-02 12:04:36', NULL, NULL, 'returned', 'good', 'Event at facade', '2025-05-02 04:02:15', '2025-05-02 04:04:36', 'approved', 5, '2025-05-02 12:02:40', 'Approved by administrator', 'Returned via system', 3),
-(9, 4, 3, '2025-05-02 16:02:00', '2025-05-03 14:02:00', NULL, NULL, NULL, '', NULL, 'Need to move heavy equipments', '2025-05-02 06:02:30', '2025-05-02 06:02:30', 'pending', NULL, NULL, NULL, NULL, NULL);
+(9, 4, 3, '2025-05-02 16:02:00', '2025-05-03 14:02:00', NULL, NULL, NULL, '', NULL, 'Need to move heavy equipments', '2025-05-02 06:02:30', '2025-05-09 12:15:53', 'denied', 5, '2025-05-09 20:15:53', 'Ayoko lang', NULL, NULL),
+(10, 3, 6, '2025-05-09 19:11:00', '2025-05-09 20:12:00', NULL, NULL, NULL, 'overdue', NULL, 'Try lang', '2025-05-09 12:11:52', '2025-05-09 13:56:15', 'approved', 5, '2025-05-09 20:12:24', 'Approved by administrator\nOverdue reminder sent on 2025-05-09 15:45:39\nOverdue reminder sent on 2025-05-09 15:56:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -79,7 +80,7 @@ CREATE TABLE `categories` (
 
 INSERT INTO `categories` (`category_id`, `name`, `description`, `created_at`) VALUES
 (1, 'Power Tools', 'Electric and battery-powered tools for construction and maintenance.', '2025-04-19 10:34:38'),
-(3, 'Electronics', 'Electronic devices like projectors, cameras, and computers', '2025-04-19 10:34:38'),
+(3, 'Electronics', 'Electronic devices like projectors, cameras, and computers.', '2025-04-19 10:34:38'),
 (4, 'Transport Equipment', 'Used for transporting heavy duty equipment or items.', '2025-05-02 03:33:15'),
 (5, 'Sound System', 'Use for event\\\'s music', '2025-05-04 08:09:06');
 
@@ -111,8 +112,63 @@ CREATE TABLE `equipment` (
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
 (2, '001', 'Microphone', 3, '', '2025-04-20', 'available', 'new', NULL, '2025-04-20 06:41:36', '2025-05-04 07:43:42', 1, 1),
-(3, '002', 'John Mel', 1, 'Man Power', '0000-00-00', 'available', 'fair', '', '2025-04-23 03:41:57', '2025-05-05 00:27:41', 9, 9),
-(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-04 07:43:42', 1, 1);
+(3, '002', 'JonesMelf', 3, 'Man Power', '0000-00-00', 'available', 'new', '', '2025-04-23 03:41:57', '2025-05-09 16:24:45', 5, 5),
+(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-04 07:43:42', 1, 1),
+(6, '005', 'JonesMelf', 3, 'sdasd', '0000-00-00', 'available', 'new', '', '2025-05-09 16:25:42', '2025-05-09 16:25:42', 5, 5);
+
+--
+-- Triggers `equipment`
+--
+DELIMITER $$
+CREATE TRIGGER `check_equipment_quantity_after_insert` AFTER INSERT ON `equipment` FOR EACH ROW BEGIN
+    -- Check if quantity or available_quantity has fallen to 3 or below
+    IF (NEW.quantity <= 3 OR NEW.available_quantity <= 3) AND NEW.status != 'retired' THEN
+        -- Insert into notifications table
+        INSERT INTO notifications (
+            type, 
+            title, 
+            message,
+            equipment_id,
+            is_read,
+            created_at
+        ) VALUES (
+            'low_quantity',
+            'Low Equipment Quantity',
+            CONCAT('Equipment "', NEW.name, '" (Code: ', NEW.equipment_code, ') has low quantity. ',
+                   'Total: ', NEW.quantity, ', Available: ', NEW.available_quantity),
+            NEW.equipment_id,
+            0,
+            NOW()
+        );
+    END IF;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `check_equipment_quantity_after_update` AFTER UPDATE ON `equipment` FOR EACH ROW BEGIN
+    -- Check if quantity or available_quantity has fallen to 3 or below
+    IF (NEW.quantity <= 3 OR NEW.available_quantity <= 3) AND NEW.status != 'retired' THEN
+        -- Insert into notifications table
+        INSERT INTO notifications (
+            type, 
+            title, 
+            message,
+            equipment_id,
+            is_read,
+            created_at
+        ) VALUES (
+            'low_quantity',
+            'Low Equipment Quantity',
+            CONCAT('Equipment "', NEW.name, '" (Code: ', NEW.equipment_code, ') has low quantity. ',
+                   'Total: ', NEW.quantity, ', Available: ', NEW.available_quantity),
+            NEW.equipment_id,
+            0,
+            NOW()
+        );
+    END IF;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -170,9 +226,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `program_year_section`, `created_at`, `updated_at`, `status`, `status_changed_at`) VALUES
-(3, '23-00001', 'Bryan', 'Bermudez', 'bry@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', NULL, '2025-04-19 10:54:45', '2025-05-04 09:53:27', 'active', NULL),
+(3, '23-00001', 'Bry', 'Bermudez', 'bermudez_bryan@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', 'BSIT - 2E', '2025-04-19 10:54:45', '2025-05-10 06:21:14', 'active', '2025-05-10 06:21:14'),
 (5, '000', 'Jm', 'Peligro', 'jm@plpasig.edu', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', NULL, '2025-04-19 11:20:26', '2025-04-24 02:48:42', 'active', NULL),
-(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL);
+(6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL),
+(7, '23-00185', 'Johnmel', 'Rojay', 'rojas_johnmel@plpasig.edu.ph', '$2y$10$ECJHeICfGGzsMrDPQfcw7eSsgk21mpi93D3VksbLyPqTbnAAxj.ly', 'student', 'College of Computer Studies', '1234567', 'BSIT - 2E', '2025-05-10 06:23:59', '2025-05-10 06:23:59', 'active', NULL);
 
 --
 -- Indexes for dumped tables
@@ -225,19 +282,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowings`
 --
 ALTER TABLE `borrowings`
-  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
@@ -249,7 +306,7 @@ ALTER TABLE `maintenance`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables

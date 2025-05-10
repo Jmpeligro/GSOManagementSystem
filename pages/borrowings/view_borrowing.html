@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -153,7 +152,7 @@
                 <?php endif; ?>
             </div>
             
-            <?php if ($borrowing_data['status'] == 'active' && $borrowing_data['approval_status'] == 'approved'): ?>
+            <?php if ($borrowing_data['status'] == 'active' && $borrowing_data['approval_status'] == 'approved' && $borrower['user_id'] == $_SESSION['user_id']): ?>
             <div class="section-title">Return Equipment</div>
             <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $borrowing_id); ?>" class="return-form">
                 <div class="form-group">
@@ -181,4 +180,3 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
-```

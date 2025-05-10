@@ -13,14 +13,5 @@ document.addEventListener('DOMContentLoaded', function() {
             addCategoryForm.style.display = 'none';
             showFormButton.style.display = 'inline-block';
         });
-    }
-
-    const deleteButtons = document.querySelectorAll('a[href*="delete="]');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this category?')) {
-                e.preventDefault();
-            }
-        });
-    });
+    }   
 });
