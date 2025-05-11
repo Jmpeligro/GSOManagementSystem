@@ -20,3 +20,19 @@ function validateStatusChange(selectElement) {
     }
     return true; 
 }
+
+function openStatusModal(equipmentId, currentStatus) {
+    document.getElementById('statusModal').style.display = 'flex';
+    document.getElementById('modal_equipment_id').value = equipmentId;
+    document.getElementById('modal_new_status').value = currentStatus;
+  }
+
+function closeStatusModal() {
+    document.getElementById('statusModal').style.display = 'none';
+  }
+  window.onclick = function(event) {
+    var modal = document.getElementById('statusModal');
+    if (event.target === modal) {
+      closeStatusModal();
+    }
+}

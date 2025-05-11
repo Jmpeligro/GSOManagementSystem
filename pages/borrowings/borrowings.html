@@ -1,7 +1,3 @@
-<?php
-// This is the content for borrowings.html - note that it should not have an HTML extension
-// if it contains PHP code, but I'm keeping the original filename pattern
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,6 +6,7 @@
     <title>Borrowings - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -175,27 +172,23 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
+                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
                                 
                                 <?php if ($row['approval_status'] == 'pending' && $row['user_id'] == $_SESSION['user_id']): ?>
-                                <a href="../../php/borrowings/borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" 
-                                   class="btn btn-small btn-danger"
-                                   onclick="return confirm('Are you sure you want to cancel this request?')">Cancel</a>
+                                <a href="../../php/borrowings/borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" class="btn btn-small btn-danger" title="Cancel" onclick="return confirm('Are you sure you want to cancel this request?')"><i class="fa fa-times"></i></a>
                                 <?php endif; ?>
                                 
                                 <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved' && $row['user_id'] == $_SESSION['user_id']): ?>
-                                <a href="../../php/borrowings/borrowings.php?return=<?php echo $row['borrowing_id']; ?>" 
-                                   class="btn btn-small btn-primary"
-                                   onclick="return confirm('Are you sure you want to mark this equipment as returned?')">Return</a>
+                                <a href="../../php/borrowings/borrowings.php?return=<?php echo $row['borrowing_id']; ?>" class="btn btn-small btn-primary" title="Return" onclick="return confirm('Are you sure you want to mark this equipment as returned?')"><i class="fa fa-undo"></i></a>
                                 <?php endif; ?>
                                 
                                 <?php if (isAdmin() && $row['approval_status'] == 'pending'): ?>
-                                <a href="../../php/borrowings/pending_request.php" class="btn btn-small btn-secondary">Review</a>
+                                <a href="../../php/borrowings/pending_request.php" class="btn btn-small btn-secondary" title="Review"><i class="fa fa-clipboard-check"></i></a>
                                 <?php endif; ?>
 
                                 <?php if (isAdmin() && ($is_overdue == true || $row['status'] == 'overdue')): ?>
-                                <a href="../../php/borrowings/RemindDue.php?id=<?php echo $row['equipment_id'] . '&user_id=' . $row['user_id'];?>" class="btn btn-small btn-secondary">Remind</a>
-                                <?php endif; ?> 
+                                <a href="../../php/borrowings/RemindDue.php?id=<?php echo $row['equipment_id'] . '&user_id=' . $row['user_id'];?>" class="btn btn-small btn-secondary" title="Remind"><i class="fa fa-bell"></i></a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>

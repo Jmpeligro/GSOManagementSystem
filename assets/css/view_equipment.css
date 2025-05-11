@@ -272,8 +272,8 @@
   
   /* Button styling */
   .btn-back-equipment {
-    background-color: darkgray;
-    color: var(--dark);
+    background-color: var(--gray-light);
+    color: black;
   }
   
   .btn-back-equipment:hover {

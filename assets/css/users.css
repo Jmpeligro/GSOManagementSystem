@@ -18,8 +18,23 @@
 
 /* Style status cells */
 .status-cell {
-    display: flex;
-    align-items: center;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.status-cell .status-indicator {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+.status-cell .status-badge {
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* Add row styles based on status */

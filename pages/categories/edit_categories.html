@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -59,8 +60,8 @@
                             <td><span class="status-badge status-<?php echo $row['status']; ?>"><?php echo ucfirst($row['status']); ?></span></td>
                             <td><?php echo ucfirst($row['condition_status']); ?></td>
                             <td>
-                                <a href="../../php/equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small">View</a>
-                                <a href="../../php/equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
+                                <a href="../../php/equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
+                                <a href="../../php/equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-secondary" title="Edit"><i class="fa fa-edit"></i></a>
                             </td>
                         </tr>
                         <?php endwhile; ?>

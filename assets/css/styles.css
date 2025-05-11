@@ -1,11 +1,18 @@
 /* General Styles*/
 :root {
+  --first-child: #8ecae6;
+  --first-child-hover: #2a8bb8;
+  --second-child: #219ebc;
+  --second-child-hover: #1a7d9b;
+  --third-child: #044261;
+  --third-child-hover: #01263b;
   --primary: #4361ee;
   --primary-light: #4895ef;
   --secondary: #3f37c9;
   --accent: #4cc9f0;
   --success: #2ecc71;
   --warning: #f39c12;
+  --warning-hover: #b68800;
   --danger: #e74c3c;
   --info: #3498db;
   --dark: #2b2d42;
@@ -484,9 +491,9 @@ a:hover {
   line-height: 1;
 }
 
-.stat-box:nth-child(1) .stat-number { color: var(--success); }
-.stat-box:nth-child(2) .stat-number { color: var(--info); }
-.stat-box:nth-child(3) .stat-number { color: var(--warning); }
+.stat-box:nth-child(1) .stat-number { color: var(--first-child); }
+.stat-box:nth-child(2) .stat-number { color: var(--second-child); }
+.stat-box:nth-child(3) .stat-number { color: var(--third-child); }
 .stat-box:nth-child(4) .stat-number { color: var(--primary); }
 
 .stat-link {
@@ -596,15 +603,15 @@ a:hover {
 
   /* Status badges with improved styling */
 .status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   padding: 6px 12px;
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  text-align: center;
+  vertical-align: middle;
 }
   
 .status-badge.status-active {
@@ -669,7 +676,7 @@ a:hover {
 
 .btn-pending-request {
   font-family: var(--font-main);
-  background-color: orange;
+  background-color: var(--second-child);
   color: white;
   gap: 8px; 
   padding-top: 15px;
@@ -678,7 +685,7 @@ a:hover {
 }
 
 .btn-pending-request:hover {
-  background-color: darkorange;
+  background-color: var(--second-child-hover);
   color: white;
 }
 
@@ -692,13 +699,6 @@ a:hover {
   background-color: var(--gray);
   color: white;
   text-decoration: none;
-}
-
-.btn-small {
-  font-family: var(--font-main);
-  padding: 6px 12px;
-  font-size: 0.85rem;
-  border-radius: 4px; 
 }
 
 .btn-small-primary {
@@ -738,6 +738,7 @@ a:hover {
   color: white;
   text-decoration: none;
 }
+
 
 
 .btn-category {
@@ -1032,7 +1033,6 @@ a:hover {
 .btn-small {
   font-family: var(--font-main);
   padding: 6px 12px;
-  font-size: 0.85rem;
   border-radius: 4px;
   transition: all 0.2s ease;
 }
@@ -1096,17 +1096,28 @@ a:hover {
 }
 
 /* Fix for action container spacing */
-td.actions {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
+.data-table td.actions {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.actions .btn-small {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.actions .btn-small:last-child,
+.actions form:last-child .btn-small {
+  margin-right: 0;
+}
+
+.actions form {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
 }
 
 @media (max-width: 768px) {
-  td.actions {
-    flex-direction: column;
-  }
-  
   .btn-small {
     text-align: center;
   }
@@ -1376,4 +1387,146 @@ td.actions {
 .status-archived {
   background-color: #f8d7da;
   color: #721c24;
+}
+
+/* Ensure Actions column is wide enough and status badge has margin */
+.data-table th:last-child, .data-table td.actions {
+  padding-left: 12px;
+  padding-right: 12px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.status-cell .status-badge {
+  margin-right: 16px;
+}
+
+.btn-maintenance, .btn-small-maintenance {
+  background-color: var(--third-child) !important;
+  color: #fff !important;
+}
+.btn-maintenance:hover, .btn-small-maintenance:hover {
+  background-color: var(--third-child-hover) !important;
+  color: #fff !important;
+}
+
+/* Add styles for update status button */
+.btn-update-status {
+  background-color: var(--second-child) !important;
+  color: #fff !important;
+}
+
+.btn-update-status:hover {
+  background-color: var(--second-child-hover) !important;
+  color: #fff !important;
+}
+
+/* Add danger button styling */
+.btn-danger {
+  background-color: var(--danger) !important;
+  color: white !important;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b !important; /* Darker shade of danger color */
+  color: white !important;
+}
+
+/* Add secondary button styling */
+.btn-secondary {
+  background-color: var(--info) !important;
+  color: white !important;
+}
+
+.btn-secondary:hover {
+  background-color: #2980b9 !important; /* Darker shade of info color */
+  color: white !important;
+}
+
+.btn.btn-approve {
+  font-family: var(--font-main);
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  padding-bottom: 15px;
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn.btn-approve:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+/* Status cell and badge styling */
+.status-cell {
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.status-cell .status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+.status-cell .status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.btn.btn-small.btn-warning{
+  background-color: var(--third-child) !important;
+  color: white !important;
+}
+
+.btn.btn-small.btn-warning:hover{
+  background-color: var(--third-child-hover) !important;
+  color: white !important;
+}
+
+/* Add styles for borrow button */
+.btn-borrow {
+  background-color: var(--third-child) !important;
+  color: #fff !important;
+}
+
+.btn-borrow:hover {
+  background-color: var(--third-child-hover) !important;
+  color: #fff !important;
+}
+
+/* Report summary box custom text colors */
+.summary-box-available {
+  background: none !important;
+  color: var(--first-child) !important;
+}
+.summary-box-maintenance {
+  background: none !important;
+  color: var(--third-child) !important;
+}
+.summary-box-active {
+  background: none !important;
+  color: var(--second-child) !important;
+}
+
+.summary-box-available .value {
+  color: var(--first-child) !important;
+}
+.summary-box-maintenance .value {
+  color: var(--third-child) !important;
+}
+.summary-box-active .value {
+  color: var(--second-child) !important;
 }

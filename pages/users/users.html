@@ -6,6 +6,7 @@
     <title>User Management - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/users.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -85,25 +86,19 @@
                                 <?php echo ucfirst($row['status']); ?>
                             </span>
                         </td>
-                        <td class="actions">
-                            <a href="../../php/users/user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-secondary">Edit</a>
+                         <td class="actions">
+                            <a href="../../php/users/user_management.php?id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-secondary" title="Edit"><i class="fa fa-edit"></i></a>
                             <?php if ($row['user_id'] != $_SESSION['user_id']): ?>
                                 <?php if ($row['status'] === 'active'): ?>
-                                    <a href="../../php/users/users.php?action=deactivate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
-                                       onclick="return confirm('Are you sure you want to deactivate this user?')">Deactivate</a>
-                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
-                                       onclick="return confirm('Are you sure you want to archive this user?')">Archive</a>
+                                    <a href="../../php/users/users.php?action=deactivate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" title="Deactivate" onclick="return confirm('Are you sure you want to deactivate this user?')"><i class="fa fa-user-slash"></i></a>
+                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-archive" title="Archive" onclick="return confirm('Are you sure you want to archive this user?')"><i class="fa fa-archive"></i></a>
                                 <?php elseif ($row['status'] === 'inactive'): ?>
-                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" 
-                                       onclick="return confirm('Are you sure you want to activate this user?')">Activate</a>
-                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-warning" 
-                                       onclick="return confirm('Are you sure you want to archive this user?')">Archive</a>
+                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" title="Activate" onclick="return confirm('Are you sure you want to activate this user?')"><i class="fa fa-user-check"></i></a>
+                                    <a href="../../php/users/users.php?action=archive&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-archive" title="Archive" onclick="return confirm('Are you sure you want to archive this user?')"><i class="fa fa-archive"></i></a>
                                 <?php elseif ($row['status'] === 'archived'): ?>
-                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" 
-                                       onclick="return confirm('Are you sure you want to activate this user?')">Activate</a>
+                                    <a href="../../php/users/users.php?action=activate&id=<?php echo $row['user_id']; ?>" class="btn btn-small btn-success" title="Activate" onclick="return confirm('Are you sure you want to activate this user?')"><i class="fa fa-user-check"></i></a>
                                 <?php endif; ?>
-                                <a href="../../php/users/users.php?delete=<?php echo $row['user_id']; ?>" class="btn btn-small btn-danger" 
-                                   onclick="return confirm('Are you sure you want to permanently delete this user? This cannot be undone!')">Delete</a>
+                                <a href="../../php/users/users.php?delete=<?php echo $row['user_id']; ?>" class="btn btn-small btn-danger" title="Delete" onclick="return confirm('Are you sure you want to permanently delete this user? This cannot be undone!')"><i class="fa fa-trash"></i></a>
                             <?php endif; ?>
                         </td>
                     </tr>
