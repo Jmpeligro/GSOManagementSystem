@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2025 at 08:51 AM
+-- Generation Time: May 12, 2025 at 08:51 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -48,18 +48,6 @@ CREATE TABLE `borrowings` (
   `return_notes` text DEFAULT NULL,
   `returned_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `borrowings`
---
-
-INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_date`, `due_date`, `return_date`, `admin_issued_id`, `admin_received_id`, `status`, `condition_on_return`, `notes`, `created_at`, `updated_at`, `approval_status`, `approved_by`, `approval_date`, `admin_notes`, `return_notes`, `returned_by`) VALUES
-(3, 3, 3, '2025-04-23 12:38:00', '2026-04-23 05:38:00', NULL, NULL, NULL, '', NULL, 'For educational purposes', '2025-04-23 05:39:07', '2025-04-23 05:39:38', 'denied', NULL, NULL, NULL, 'malibog ka masyado', NULL),
-(5, 3, 3, '2025-04-24 12:42:00', '2025-05-01 08:42:00', '2025-04-30 09:10:42', NULL, NULL, 'returned', 'good', 'I need it.', '2025-04-24 08:42:19', '2025-04-30 01:10:42', 'approved', 5, '2025-04-24 20:45:58', 'Approved by administrator', 'Returned via system', 3),
-(6, 3, 3, '2025-04-30 12:06:00', '2025-05-01 13:08:00', '2025-05-01 15:17:30', NULL, NULL, 'returned', 'good', 'paglilinisin ko', '2025-04-30 04:12:55', '2025-05-01 07:17:30', 'approved', 5, '2025-05-01 14:58:08', 'Approved by administrator', 'Returned via system', 3),
-(8, 2, 3, '2025-05-02 13:01:00', '2025-05-03 14:02:00', '2025-05-02 12:04:36', NULL, NULL, 'returned', 'good', 'Event at facade', '2025-05-02 04:02:15', '2025-05-02 04:04:36', 'approved', 5, '2025-05-02 12:02:40', 'Approved by administrator', 'Returned via system', 3),
-(9, 4, 3, '2025-05-02 16:02:00', '2025-05-03 14:02:00', NULL, NULL, NULL, '', NULL, 'Need to move heavy equipments', '2025-05-02 06:02:30', '2025-05-09 12:15:53', 'denied', 5, '2025-05-09 20:15:53', 'Ayoko lang', NULL, NULL),
-(10, 3, 6, '2025-05-09 19:11:00', '2025-05-09 20:12:00', NULL, NULL, NULL, 'overdue', NULL, 'Try lang', '2025-05-09 12:11:52', '2025-05-09 13:56:15', 'approved', 5, '2025-05-09 20:12:24', 'Approved by administrator\nOverdue reminder sent on 2025-05-09 15:45:39\nOverdue reminder sent on 2025-05-09 15:56:15', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -111,10 +99,10 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
-(2, '001', 'Microphone', 3, '', '2025-04-20', 'available', 'new', NULL, '2025-04-20 06:41:36', '2025-05-04 07:43:42', 1, 1),
-(3, '002', 'JonesMelf', 3, 'Man Power', '0000-00-00', 'available', 'new', '', '2025-04-23 03:41:57', '2025-05-09 16:24:45', 5, 5),
-(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '2025-05-01', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-04 07:43:42', 1, 1),
-(6, '005', 'JonesMelf', 3, 'sdasd', '0000-00-00', 'available', 'new', '', '2025-05-09 16:25:42', '2025-05-09 16:25:42', 5, 5);
+(2, '001', 'Microphone', 3, '', '0000-00-00', 'available', 'new', '', '2025-04-20 06:41:36', '2025-05-11 18:15:37', 5, 5),
+(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '0000-00-00', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-11 18:26:25', 8, 8),
+(6, '005', 'JonesMelf', 3, 'sdasd', '0000-00-00', 'available', 'new', '', '2025-05-09 16:25:42', '2025-05-12 04:57:03', 5, 5),
+(11, 'E - 001', 'Portable Wielding Machine', 1, 'For wielding.', '2025-05-01', 'available', 'good', '0', '2025-05-12 05:11:34', '2025-05-12 05:18:31', 4, 4);
 
 --
 -- Triggers `equipment`
@@ -190,13 +178,22 @@ CREATE TABLE `maintenance` (
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `maintenance`
+-- Table structure for table `notifications`
 --
 
-INSERT INTO `maintenance` (`maintenance_id`, `equipment_id`, `issue_description`, `maintenance_date`, `resolved_date`, `cost`, `resolved_by`, `status`, `notes`, `created_at`, `updated_at`) VALUES
-(2, 2, 'Mahina', '2025-04-27', '2025-05-01', 10000.00, 'Jm Peligro', 'completed', 'Medyo sira parin', '2025-04-27 03:34:46', '2025-05-01 06:27:02'),
-(3, 3, 'Walang Activity', '2025-05-02', '2025-05-02', 5000.00, 'Jm Peligro', 'completed', '', '2025-05-02 03:58:44', '2025-05-02 05:57:53');
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `message` text NOT NULL,
+  `related_id` int(11) DEFAULT NULL,
+  `related_type` varchar(50) DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT 0,
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -227,7 +224,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `program_year_section`, `created_at`, `updated_at`, `status`, `status_changed_at`) VALUES
 (3, '23-00001', 'Bry', 'Bermudez', 'bermudez_bryan@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', 'BSIT - 2E', '2025-04-19 10:54:45', '2025-05-10 06:21:14', 'active', '2025-05-10 06:21:14'),
-(5, '000', 'Jm', 'Peligro', 'jm@plpasig.edu', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', NULL, '2025-04-19 11:20:26', '2025-04-24 02:48:42', 'active', NULL),
+(5, '000', 'Jm', 'Peligro', 'peligro_johnmichael@plpasig.edu.ph', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', '', '2025-04-19 11:20:26', '2025-05-11 09:26:53', 'active', NULL),
 (6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL),
 (7, '23-00185', 'Johnmel', 'Rojay', 'rojas_johnmel@plpasig.edu.ph', '$2y$10$ECJHeICfGGzsMrDPQfcw7eSsgk21mpi93D3VksbLyPqTbnAAxj.ly', 'student', 'College of Computer Studies', '1234567', 'BSIT - 2E', '2025-05-10 06:23:59', '2025-05-10 06:23:59', 'active', NULL);
 
@@ -267,6 +264,14 @@ ALTER TABLE `maintenance`
   ADD KEY `equipment_id` (`equipment_id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `related_id` (`related_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -282,7 +287,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowings`
 --
 ALTER TABLE `borrowings`
-  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -294,13 +299,19 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
 --
 ALTER TABLE `maintenance`
-  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -332,6 +343,12 @@ ALTER TABLE `equipment`
 --
 ALTER TABLE `maintenance`
   ADD CONSTRAINT `maintenance_ibfk_1` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`equipment_id`);
+
+--
+-- Constraints for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
