@@ -24,13 +24,13 @@
                     </div>
                     <div class="card-body p-4">
                         <?php if (!empty($error)): ?>
-                            <div class="alert alert-danger" role="alert">
+                            <div class="error-message">
                                 <?php echo $error; ?>
                             </div>
                         <?php endif; ?>
                         
                         <?php if (!empty($success)): ?>
-                            <div class="alert alert-success" role="alert">
+                            <div class="success-message">
                                 <?php echo $success; ?>
                             </div>
                         <?php endif; ?>

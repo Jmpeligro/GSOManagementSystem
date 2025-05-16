@@ -29,10 +29,8 @@
         }
         
         function validateCost(input) {
-            // Allow only numbers and decimal point
             input.value = input.value.replace(/[^0-9.]/g, '');
             
-            // Ensure only one decimal point
             const parts = input.value.split('.');
             if (parts.length > 2) {
                 input.value = parts[0] + '.' + parts.slice(1).join('');
@@ -46,11 +44,12 @@
     <div class="container">
         <div class="page-header">
             <h2>Equipment Maintenance Management</h2>
+            <a href="../../php/equipment/equipment.php" class="btn btn-secondary" style="margin-right: 12px;"> Back to Equipment</a>
             <button class="btn btn-add-equipment" onclick="showAddMaintenanceForm()">Add New Maintenance Record</button>
         </div>
         
         <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success">
+        <div class="success-message">
             <?php 
                 echo $_SESSION['success']; 
                 unset($_SESSION['success']);
@@ -59,7 +58,7 @@
         <?php endif; ?>
         
         <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger">
+        <div class="error-message">
             <?php 
                 echo $_SESSION['error']; 
                 unset($_SESSION['error']);
@@ -99,8 +98,8 @@
                         </div>
                         
                         <input type="hidden" name="add_maintenance" value="1">
-                        <button type="submit" class="btn btn-primary">Add Maintenance Record</button>
-                        <button type="button" class="btn btn-secondary" onclick="closeAddMaintenanceForm()">Cancel</button>
+                        <button type="submit" class="btn btn-primary maintenance-btn">Add Maintenance Record</button>
+                        <button type="button" class="btn btn-secondary maintenance-btn" onclick="closeAddMaintenanceForm()">Cancel</button>
                     </form>
                 </div>
             </div>
@@ -193,8 +192,10 @@
                                             </div>
                                             
                                             <input type="hidden" name="update_maintenance" value="1">
-                                            <button type="submit" class="btn btn-primary">Update Record</button>
-                                            <button type="button" class="btn btn-secondary" onclick="closeUpdateForm(<?php echo $row['maintenance_id']; ?>)">Cancel</button>
+                                            <div class="form-buttons">
+                                                <button type="submit" class="btn btn-primary">Update Record</button>
+                                                <button type="button" class="btn btn-secondary" onclick="closeUpdateForm(<?php echo $row['maintenance_id']; ?>)">Cancel</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>

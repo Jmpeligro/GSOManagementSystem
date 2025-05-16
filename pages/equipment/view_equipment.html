@@ -17,7 +17,7 @@
         </div>
         
         <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success">
+        <div class="success-message">
             <?php 
                 echo $_SESSION['success']; 
                 unset($_SESSION['success']);
@@ -26,7 +26,7 @@
         <?php endif; ?>
         
         <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger">
+        <div class="error-message">
             <?php 
                 echo $_SESSION['error']; 
                 unset($_SESSION['error']);
@@ -54,7 +54,12 @@
                 
                 <div class="detail-item">
                     <span class="label">Quantity:</span>
-                    <span class="value"><?php echo isset($equipment_data['quantity']) ? htmlspecialchars($equipment_data['quantity']) : '1'; ?></span>
+                    <span class="value">
+                        <?php echo htmlspecialchars($equipment_data['available_quantity']) . ' / ' . htmlspecialchars($equipment_data['quantity']); ?>
+                        <?php if ($equipment_data['available_quantity'] < $equipment_data['quantity']): ?>
+                            <span class="borrow-note">(<?php echo $equipment_data['quantity'] - $equipment_data['available_quantity']; ?> currently borrowed)</span>
+                        <?php endif; ?>
+                    </span>
                 </div>
                 
                 <div class="detail-item">
@@ -199,7 +204,7 @@
                                 </td>
                                 <?php if (isAdmin()): ?>
                                 <td class="action-column">
-                                    <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $history['borrowing_id']; ?>" class="btn btn-sm btn-view" title="View"><i class="fa fa-eye"></i></a>
+                                    <a href="../../php/equipment/view_borrowing.php?id=<?php echo $history['borrowing_id']; ?>" class="btn btn-sm btn-view">View</a>
                                 </td>
                                 <?php endif; ?>
                             </tr>
@@ -211,6 +216,8 @@
             </div>
         </div>
     </div>
+
+    <?php include '../../components/footer.php'; ?>
     
     <script src="../../assets/js/sidebar.js"></script>
 </body>

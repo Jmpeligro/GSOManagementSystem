@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pending Borrowing Requests - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -55,10 +54,12 @@
                                 <form method="post" action="../../php/borrowings/pending_request.php" style="display:inline-block;">
                                     <input type="hidden" name="borrowing_id" value="<?php echo $row['borrowing_id']; ?>">
                                     <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
-                                    <button type="submit" name="approve_request" class="btn btn-approve" title="Approve"><i class="fa fa-check"></i></button>
+                                    <button type="submit" name="approve_request" class="btn btn-approve">Approve</button>
                                 </form>
                                 
-                                <button class="btn btn-deny" title="Deny" onclick="showDenyForm('<?php echo $row['borrowing_id']; ?>')"><i class="fa fa-times"></i></button>
+                                <button class="btn btn-deny" onclick="showDenyForm('<?php echo $row['borrowing_id']; ?>')">
+                                    Deny
+                                </button>
                                 
                                 <div id="deny-form-<?php echo $row['borrowing_id']; ?>" class="deny-form" style="display:none;">
                                     <form method="post" action="../../php/borrowings/pending_request.php">
@@ -69,7 +70,7 @@
                                     </form>
                                 </div>
                                 
-                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-view" title="View"><i class="fa fa-eye"></i></a>
+                                <a href="../../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-view">View</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>

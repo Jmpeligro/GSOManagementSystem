@@ -1,7 +1,3 @@
-<?php
-// This is the content for borrowings.html - note that it should not have an HTML extension
-// if it contains PHP code, but I'm keeping the original filename pattern
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,86 +44,68 @@
         <?php endif; ?>
         
         <div class="filter-section">
-            <form method="get" action="../../php/borrowings/borrowings.php" class="filter-form">
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="">All Statuses</option>
-                        <option value="pending" <?php echo $status_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                        <option value="active" <?php echo $status_filter == 'active' ? 'selected' : ''; ?>>Active</option>
-                        <option value="returned" <?php echo $status_filter == 'returned' ? 'selected' : ''; ?>>Returned</option>
-                        <option value="overdue" <?php echo $status_filter == 'overdue' ? 'selected' : ''; ?>>Overdue</option>
-                    </select>
+            <form method="get" action="../../php/borrowings/borrowings.php" class="filter-form" id="borrowingsFilterForm">
+                <div class="search-bar-wrapper">
+                    <input 
+                        type="text" 
+                        id="search" 
+                        name="search" 
+                        value="<?php echo htmlspecialchars($search_query); ?>" 
+                        placeholder="Search equipment or borrower..."
+                        autocomplete="off"
+                    >
+                    <button type="button" class="btn btn-advanced-filter" id="toggleAdvancedFilters">
+                        <i class="fa fa-filter"></i> Advanced
+                    </button>
+                    <button type="submit" class="btn btn-filter-equipment">Search</button>
                 </div>
-                
-                <div class="form-group">
-                    <label for="approval_status">Approval Status</label>
-                    <select id="approval_status" name="approval_status">
-                        <option value="">All</option>
-                        <option value="pending" <?php echo $approval_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
-                        <option value="approved" <?php echo $approval_filter == 'approved' ? 'selected' : ''; ?>>Approved</option>
-                        <option value="denied" <?php echo $approval_filter == 'denied' ? 'selected' : ''; ?>>Denied</option>
-                    </select>
-                </div>
-                
-                <?php if (isAdmin()): ?>
-                <div class="form-group">
-                    <label for="user_id">Borrower</label>
-                    <select id="user_id" name="user_id">
-                        <option value="0">All Borrowers</option>
-                        <?php 
-                        if (isset($users_result) && $users_result !== false):
-                            while ($user = $users_result->fetch_assoc()): 
-                        ?>
-                        <option value="<?php echo $user['user_id']; ?>" <?php echo $user_filter == $user['user_id'] ? 'selected' : ''; ?>>
-                            <?php echo $user['first_name'] . ' ' . $user['last_name']; ?>
-                        </option>
-                        <?php 
-                            endwhile; 
-                        endif;
-                        ?>
-                    </select>
-                </div>
-                <?php endif; ?>
-                
-                <div class="form-group">
-                    <label for="equipment_id">Equipment</label>
-                    <select id="equipment_id" name="equipment_id">
-                        <option value="0">All Equipment</option>
-                        <?php 
-                        if (isset($equipment_result) && $equipment_result !== false):
-                            while ($equip = $equipment_result->fetch_assoc()): 
-                        ?>
-                        <option value="<?php echo $equip['equipment_id']; ?>" <?php echo $equipment_filter == $equip['equipment_id'] ? 'selected' : ''; ?>>
-                            <?php echo $equip['name']; ?>
-                        </option>
-                        <?php 
-                            endwhile; 
-                        endif;
-                        ?>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="search">Search</label>
-                    <input type="text" id="search" name="search" value="<?php echo $search_query; ?>" placeholder="Search equipment name, code...">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label for="date_from">From Date</label>
-                        <input type="date" id="date_from" name="date_from" value="<?php echo $date_from; ?>">
+                <div class="advanced-filters" id="advancedFilters" style="display: none;">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            <option value="">All Statuses</option>
+                            <option value="pending" <?php echo $status_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="active" <?php echo $status_filter == 'active' ? 'selected' : ''; ?>>Active</option>
+                            <option value="returned" <?php echo $status_filter == 'returned' ? 'selected' : ''; ?>>Returned</option>
+                            <option value="overdue" <?php echo $status_filter == 'overdue' ? 'selected' : ''; ?>>Overdue</option>
+                        </select>
                     </div>
-                    
-                    <div class="form-group half">
-                        <label for="date_to">To Date</label>
-                        <input type="date" id="date_to" name="date_to" value="<?php echo $date_to; ?>">
+                    <div class="form-group">
+                        <label for="approval_status">Approval Status</label>
+                        <select id="approval_status" name="approval_status">
+                            <option value="">All</option>
+                            <option value="pending" <?php echo $approval_filter == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                            <option value="approved" <?php echo $approval_filter == 'approved' ? 'selected' : ''; ?>>Approved</option>
+                            <option value="denied" <?php echo $approval_filter == 'denied' ? 'selected' : ''; ?>>Denied</option>
+                        </select>
                     </div>
-                </div>
-                
-                <div class="form-buttons">
-                    <button type="submit" class="btn btn-filter-category">Apply Filters</button>
-                    <a href="../../php/borrowings/borrowings.php" class="btn btn-clear-category">Clear Filters</a>
+                    <div class="form-group">
+                        <label for="equipment_id">Equipment</label>
+                        <select id="equipment_id" name="equipment_id">
+                            <option value="0">All Equipment</option>
+                            <?php 
+                            if (isset($equipment_result) && $equipment_result !== false):
+                                while ($equip = $equipment_result->fetch_assoc()): 
+                            ?>
+                            <option value="<?php echo $equip['equipment_id']; ?>" <?php echo $equipment_filter == $equip['equipment_id'] ? 'selected' : ''; ?>>
+                                <?php echo $equip['name']; ?>
+                            </option>
+                            <?php 
+                                endwhile; 
+                            endif;
+                            ?>
+                        </select>
+                    </div>
+                    <div class="form-row" style="display: flex; gap: 10px;">
+                        <div class="form-group half">
+                            <label for="date_from">From Date</label>
+                            <input type="date" id="date_from" name="date_from" value="<?php echo $date_from; ?>">
+                        </div>
+                        <div class="form-group half">
+                            <label for="date_to">To Date</label>
+                            <input type="date" id="date_to" name="date_to" value="<?php echo $date_to; ?>">
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -189,6 +167,10 @@
                                 <?php if (isAdmin() && $row['approval_status'] == 'pending'): ?>
                                 <a href="../../php/borrowings/pending_request.php" class="btn btn-small btn-secondary" title="Review"><i class="fa fa-clipboard-check"></i></a>
                                 <?php endif; ?>
+
+                                <?php if (isAdmin() && ($is_overdue == true || $row['status'] == 'overdue')): ?>
+                                <a href="../../php/borrowings/RemindDue.php?id=<?php echo $row['equipment_id'] . '&user_id=' . $row['user_id'];?>" class="btn btn-small btn-secondary" title="Remind"><i class="fa fa-bell"></i></a>
+                                <?php endif; ?>
                             </td>
                         </tr>
                         <?php endforeach; ?>
@@ -207,6 +189,15 @@
         </div>
     </div>
 
+    <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
+    
+    <script>
+document.getElementById('toggleAdvancedFilters').addEventListener('click', function(e) {
+    e.preventDefault();
+    var adv = document.getElementById('advancedFilters');
+    adv.classList.toggle('show');
+});
+</script>
 </body>
 </html>

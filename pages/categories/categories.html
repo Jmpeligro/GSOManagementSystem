@@ -51,10 +51,9 @@
         <div class="filter-section">
             <form method="get" action="../../php/categories/categories.php" class="filter-form">
                 <div class="form-group search-group">
-                    <label for="search">Search Categories</label>
-                    <div class="search-container">
+                    <div class="search-bar-wrapper">
                         <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search by name or description...">
-                        <button type="submit" class="btn">Search</button>
+                        <button type="submit" class="btn btn-filter-equipment">Search</button>
                         <?php if (!empty($search_query)): ?>
                         <a href="../../php/categories/categories.php" class="btn btn-secondary">Clear</a>
                         <?php endif; ?>

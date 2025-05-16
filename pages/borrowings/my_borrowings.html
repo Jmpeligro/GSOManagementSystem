@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Borrowings - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -63,24 +62,18 @@
                                 </span>
                             </td>
                             <td class="actions">
-                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
+                                <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
                                 
                                 <?php if ($row['approval_status'] == 'pending'): ?>
                                 <a href="../borrowings/my_borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" 
                                    class="btn btn-small btn-danger"
-                                   title="Cancel"
-                                   onclick="return confirm('Are you sure you want to cancel this request?')">
-                                    <i class="fa fa-times"></i>
-                                </a>
+                                   onclick="return confirm('Are you sure you want to cancel this request?')">Cancel</a>
                                 <?php endif; ?>
                                 
                                 <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved'): ?>
                                 <a href="../borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>&return=true" 
                                    class="btn btn-small btn-primary"
-                                   title="Return"
-                                   onclick="return confirm('Are you sure you want to mark this equipment as returned?')">
-                                    <i class="fa fa-undo"></i>
-                                </a>
+                                   onclick="return confirm('Are you sure you want to mark this equipment as returned?')">Return</a>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -109,4 +102,3 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
-```
