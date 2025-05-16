@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 12, 2025 at 08:51 AM
+-- Generation Time: May 16, 2025 at 11:22 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -99,64 +99,12 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
-(2, '001', 'Microphone', 3, '', '0000-00-00', 'available', 'new', '', '2025-04-20 06:41:36', '2025-05-11 18:15:37', 5, 5),
-(4, 'CART - 001', 'Push Car', 4, 'Used to transport equipments', '0000-00-00', 'available', 'good', '', '2025-05-02 06:01:33', '2025-05-11 18:26:25', 8, 8),
-(6, '005', 'JonesMelf', 3, 'sdasd', '0000-00-00', 'available', 'new', '', '2025-05-09 16:25:42', '2025-05-12 04:57:03', 5, 5),
-(11, 'E - 001', 'Portable Wielding Machine', 1, 'For wielding.', '2025-05-01', 'available', 'good', '0', '2025-05-12 05:11:34', '2025-05-12 05:18:31', 4, 4);
-
---
--- Triggers `equipment`
---
-DELIMITER $$
-CREATE TRIGGER `check_equipment_quantity_after_insert` AFTER INSERT ON `equipment` FOR EACH ROW BEGIN
-    -- Check if quantity or available_quantity has fallen to 3 or below
-    IF (NEW.quantity <= 3 OR NEW.available_quantity <= 3) AND NEW.status != 'retired' THEN
-        -- Insert into notifications table
-        INSERT INTO notifications (
-            type, 
-            title, 
-            message,
-            equipment_id,
-            is_read,
-            created_at
-        ) VALUES (
-            'low_quantity',
-            'Low Equipment Quantity',
-            CONCAT('Equipment "', NEW.name, '" (Code: ', NEW.equipment_code, ') has low quantity. ',
-                   'Total: ', NEW.quantity, ', Available: ', NEW.available_quantity),
-            NEW.equipment_id,
-            0,
-            NOW()
-        );
-    END IF;
-END
-$$
-DELIMITER ;
-DELIMITER $$
-CREATE TRIGGER `check_equipment_quantity_after_update` AFTER UPDATE ON `equipment` FOR EACH ROW BEGIN
-    -- Check if quantity or available_quantity has fallen to 3 or below
-    IF (NEW.quantity <= 3 OR NEW.available_quantity <= 3) AND NEW.status != 'retired' THEN
-        -- Insert into notifications table
-        INSERT INTO notifications (
-            type, 
-            title, 
-            message,
-            equipment_id,
-            is_read,
-            created_at
-        ) VALUES (
-            'low_quantity',
-            'Low Equipment Quantity',
-            CONCAT('Equipment "', NEW.name, '" (Code: ', NEW.equipment_code, ') has low quantity. ',
-                   'Total: ', NEW.quantity, ', Available: ', NEW.available_quantity),
-            NEW.equipment_id,
-            0,
-            NOW()
-        );
-    END IF;
-END
-$$
-DELIMITER ;
+(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:16:56', '2025-05-16 09:16:56', 2, 2),
+(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:17:31', '2025-05-16 09:17:31', 11, 11),
+(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:18:07', '2025-05-16 09:18:07', 1, 1),
+(18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:18:40', '2025-05-16 09:18:40', 1, 1),
+(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:19:23', '2025-05-16 09:19:23', 3, 3),
+(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:20:05', '2025-05-16 09:20:05', 4, 4);
 
 -- --------------------------------------------------------
 
@@ -299,7 +247,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
