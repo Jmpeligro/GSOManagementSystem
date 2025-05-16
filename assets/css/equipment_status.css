@@ -1,0 +1,58 @@
+/* Equipment Status Badges Styling */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Status Colors */
+.status-available {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.status-borrowed {
+ background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+.status-partially_borrowed {
+  background-color: rgba(241, 196, 15, 0.15);
+  color: #d68910;
+}
+
+.status-maintenance {
+    background-color: #ffc107;  /* Yellow/Amber */
+    color: #212529;  /* Dark text for better contrast on yellow */
+}
+
+.status-retired {
+    background-color: #6c757d;  /* Gray */
+    border: 1px solid #5a6268;
+}
+
+.status-denied {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+/* Hover effects for better user experience */
+.status-badge:hover {
+    opacity: 0.9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* For smaller screens, ensure the badges wrap properly */
+@media (max-width: 768px) {
+    .status-badge {
+        margin-bottom: 4px;
+        min-width: 80px;
+        font-size: 0.8rem;
+    }
+}

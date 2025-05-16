@@ -11,12 +11,4 @@ put
     document.getElementById('due_date').value = formatDate(nextWeek);
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-    const denyButtons = document.querySelectorAll('.deny-button');
-    denyButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const formId = this.getAttribute('data-form-id');
-            document.getElementById('deny-form-' + formId).style.display = 'block';
-        });
-    });
-});
+

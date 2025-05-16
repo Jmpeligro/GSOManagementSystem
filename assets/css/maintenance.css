@@ -14,15 +14,59 @@
   background-color: rgba(0, 0, 0, 0.4);
 }
 
+/* Center modal content and form elements */
 .modal-content {
   background-color: #fefefe;
   margin: 10% auto;
   padding: 0;
   border: 1px solid #ddd;
   border-radius: 8px;
-  width: 60%;
-  max-width: 700px;
+  width: 30%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+}
+
+.modal-header,
+.modal-body {
+  width: 100%;
+}
+
+.modal-body form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center form elements horizontally */
+  width: 100%;
+}
+
+.modal-body .form-group {
+  width: 100%;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.modal-body .form-group label,
+.modal-body .form-group input,
+.modal-body .form-group textarea,
+.modal-body .form-group select {
+  width: 100%;
+  text-align: left;
+}
+
+.modal-body .maintenance-btn {
+  min-width: 140px;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+  }
+  .modal-body .form-group {
+    width: 100%;
+    max-width: none;
+  }
 }
 
 .modal-header {
@@ -82,12 +126,12 @@
 }
 
 .status-select {
-  height: 10px;
+  height: 50px;
   padding: 6px 20px !important;
   border-radius: 4px;
   border: 1px solid var(--gray-light);
   min-width: 120px;
-  font-size: 0.85rem;
+  font-size: 1rem;
 }
 
 /* Make buttons consistent */
@@ -96,7 +140,6 @@
   align-items: center;
   justify-content: center;
   padding: 6px 12px;
-  font-size: 0.85rem;
   border-radius: 4px;
   text-align: center;
   white-space: nowrap;
@@ -169,6 +212,8 @@
   padding-top: 15px;
   padding-bottom: 15px;
   border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 .btn-maintenance:hover{
@@ -241,4 +286,108 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   resize: vertical;
+}
+
+/* Maintenance Modal Buttons */
+.btn.btn-primary.maintenance-btn {
+  background-color: var(--info) !important;
+  color: #fff !important;
+  border: none;
+  font-weight: 500;
+  width: 100%;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+.btn.btn-primary.maintenance-btn:hover {
+  background-color: var(--info-hover) !important;
+  color: #fff !important;
+}
+
+.btn.btn-secondary.maintenance-btn {
+  background-color: var(--gray-light) !important;
+  color: #222 !important;
+  border: none;
+  font-weight: 500;
+  width: 100%;
+  transition: background 0.2s;
+}
+.btn.btn-secondary.maintenance-btn:hover {
+  background-color: var(--gray) !important;
+  color: #fff !important;
+}
+
+/* Update & Cancel buttons in update modal: column, full width, custom colors */
+.update-form .modal-body form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+.update-form .modal-body .form-group {
+  width: 100%;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.update-form .modal-body .form-buttons,
+.update-form .modal-body form > .form-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.update-form .modal-body button[type="submit"] {
+  background-color: var(--second-child) !important;
+  color: #fff !important;
+  border: none;
+  font-weight: 500;
+  width: 100%;
+  border-radius: 6px;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+
+.update-form .modal-body button[type="submit"]:hover {
+  background-color: var(--second-child-hover) !important;
+}
+
+.update-form .modal-body button[type="button"] {
+  background-color: #ecf0f1 !important;
+  color: #222 !important;
+  border: none;
+  font-weight: 500;
+  width: 100%;
+  border-radius: 6px;
+  padding: 12px 0;
+  margin-bottom: 10px;
+  transition: background 0.2s;
+}
+
+.update-form .modal-body button[type="button"]:hover {
+  background-color: #bdc3c7 !important;
+  color: #222 !important;
+}
+
+.btn.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--gray-light, #ecf0f1);
+  color: #222;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+.btn.btn-secondary:hover {
+  background-color: var(--gray, #bdc3c7);
+  color: #222;
 }

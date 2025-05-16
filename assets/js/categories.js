@@ -13,14 +13,20 @@ document.addEventListener('DOMContentLoaded', function() {
             addCategoryForm.style.display = 'none';
             showFormButton.style.display = 'inline-block';
         });
-    }
-
-    const deleteButtons = document.querySelectorAll('a[href*="delete="]');
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this category?')) {
-                e.preventDefault();
-            }
-        });
-    });
+    }   
 });
+
+ function openStatusModal(equipmentId, currentStatus) {
+      document.getElementById('statusModal').style.display = 'flex';
+      document.getElementById('modal_equipment_id').value = equipmentId;
+      document.getElementById('modal_new_status').value = currentStatus;
+    }
+    function closeStatusModal() {
+      document.getElementById('statusModal').style.display = 'none';
+    }
+    window.onclick = function(event) {
+      var modal = document.getElementById('statusModal');
+      if (event.target === modal) {
+        closeStatusModal();
+      }
+    }
