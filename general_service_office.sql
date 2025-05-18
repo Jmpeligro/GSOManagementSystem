@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2025 at 11:22 AM
+-- Generation Time: May 18, 2025 at 02:54 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,10 +34,8 @@ CREATE TABLE `borrowings` (
   `borrow_date` datetime NOT NULL,
   `due_date` datetime NOT NULL,
   `return_date` datetime DEFAULT NULL,
-  `admin_issued_id` int(11) DEFAULT NULL,
-  `admin_received_id` int(11) DEFAULT NULL,
   `status` enum('active','returned','overdue','lost') DEFAULT 'active',
-  `condition_on_return` enum('excellent','good','fair','poor','damaged') DEFAULT NULL,
+  `condition_on_return` enum('good','fair','damaged') DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
@@ -48,6 +46,14 @@ CREATE TABLE `borrowings` (
   `return_notes` text DEFAULT NULL,
   `returned_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `borrowings`
+--
+
+INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_date`, `due_date`, `return_date`, `status`, `condition_on_return`, `notes`, `created_at`, `updated_at`, `approval_status`, `approved_by`, `approval_date`, `admin_notes`, `return_notes`, `returned_by`) VALUES
+(26, 15, 6, '2025-05-18 16:08:00', '2025-05-18 19:00:00', NULL, 'active', NULL, 'Need to transport broken parts of a air-condition', '2025-05-18 08:09:24', '2025-05-18 08:09:56', 'approved', 5, '2025-05-18 16:09:56', 'Approved by administrator', NULL, NULL),
+(27, 15, 7, '2025-05-18 17:01:00', '2025-05-19 10:00:00', NULL, 'active', NULL, 'Need it to transport equipments.', '2025-05-18 09:01:49', '2025-05-18 09:01:59', 'approved', 5, '2025-05-18 17:01:59', 'Approved by administrator', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -68,7 +74,7 @@ CREATE TABLE `categories` (
 
 INSERT INTO `categories` (`category_id`, `name`, `description`, `created_at`) VALUES
 (1, 'Power Tools', 'Electric and battery-powered tools for construction and maintenance.', '2025-04-19 10:34:38'),
-(3, 'Electronics', 'Electronic devices like projectors, cameras, and computers.', '2025-04-19 10:34:38'),
+(3, 'Electronic', 'Electronic devices like projectors, cameras, and computers.', '2025-04-19 10:34:38'),
 (4, 'Transport Equipment', 'Used for transporting heavy duty equipment or items.', '2025-05-02 03:33:15'),
 (5, 'Sound System', 'Use for event\\\'s music', '2025-05-04 08:09:06');
 
@@ -85,7 +91,7 @@ CREATE TABLE `equipment` (
   `category_id` int(11) NOT NULL,
   `description` text DEFAULT NULL,
   `acquisition_date` date DEFAULT NULL,
-  `status` enum('available','maintenance','retired') NOT NULL,
+  `status` enum('available','maintenance','retired','partially_borrowed') DEFAULT NULL,
   `condition_status` enum('new','good','fair','poor') NOT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -99,12 +105,12 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
-(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:16:56', '2025-05-16 09:16:56', 2, 2),
-(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:17:31', '2025-05-16 09:17:31', 11, 11),
-(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:18:07', '2025-05-16 09:18:07', 1, 1),
-(18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:18:40', '2025-05-16 09:18:40', 1, 1),
-(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:19:23', '2025-05-16 09:19:23', 3, 3),
-(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:20:05', '2025-05-16 09:20:05', 4, 4);
+(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', '', 'new', '', '2025-05-16 09:16:56', '2025-05-18 09:01:59', 2, 0),
+(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:17:31', '2025-05-18 11:56:16', 11, 11),
+(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:07', '2025-05-18 11:55:50', 1, 1),
+(18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:40', '2025-05-18 11:56:08', 1, 1),
+(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:19:23', '2025-05-18 11:56:23', 4, 4),
+(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:20:05', '2025-05-18 11:56:44', 4, 4);
 
 -- --------------------------------------------------------
 
@@ -124,23 +130,6 @@ CREATE TABLE `maintenance` (
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `notifications`
---
-
-CREATE TABLE `notifications` (
-  `notification_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `message` text NOT NULL,
-  `related_id` int(11) DEFAULT NULL,
-  `related_type` varchar(50) DEFAULT NULL,
-  `is_read` tinyint(1) DEFAULT 0,
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -171,8 +160,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `program_year_section`, `created_at`, `updated_at`, `status`, `status_changed_at`) VALUES
-(3, '23-00001', 'Bry', 'Bermudez', 'bermudez_bryan@plpasig.edu.ph', '$2y$10$HUveH9O4JkwOUZFsqCqX3OeB4itZZSsHDdS1CoJe4SR7swahMdPKG', 'student', 'General Service Office', '1234567890', 'BSIT - 2E', '2025-04-19 10:54:45', '2025-05-10 06:21:14', 'active', '2025-05-10 06:21:14'),
-(5, '000', 'Jm', 'Peligro', 'peligro_johnmichael@plpasig.edu.ph', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'College of Computer Studies', '12345678', '', '2025-04-19 11:20:26', '2025-05-11 09:26:53', 'active', NULL),
+(3, '23-00001', 'Bry', 'Bermudez', 'bermudez_bryan@plpasig.edu.ph', '$2y$10$59khyvXXOZe5ykrjKDfSDuTUpyCCPl8l1erA7ysLNiekuK1xKhxXi', 'student', 'General Service Office', '1234567890', 'BSIT - 2E', '2025-04-19 10:54:45', '2025-05-17 02:28:53', 'active', '2025-05-10 06:21:14'),
+(5, '000', 'General Service', 'Office', 'peligro_johnmichael@plpasig.edu.ph', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'General Service Office', '12345678', '', '2025-04-19 11:20:26', '2025-05-17 15:14:18', 'active', NULL),
 (6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL),
 (7, '23-00185', 'Johnmel', 'Rojay', 'rojas_johnmel@plpasig.edu.ph', '$2y$10$ECJHeICfGGzsMrDPQfcw7eSsgk21mpi93D3VksbLyPqTbnAAxj.ly', 'student', 'College of Computer Studies', '1234567', 'BSIT - 2E', '2025-05-10 06:23:59', '2025-05-10 06:23:59', 'active', NULL);
 
@@ -186,9 +175,7 @@ INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `ema
 ALTER TABLE `borrowings`
   ADD PRIMARY KEY (`borrowing_id`),
   ADD KEY `equipment_id` (`equipment_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `admin_issued_id` (`admin_issued_id`),
-  ADD KEY `admin_received_id` (`admin_received_id`);
+  ADD KEY `user_id` (`user_id`);
 
 --
 -- Indexes for table `categories`
@@ -212,14 +199,6 @@ ALTER TABLE `maintenance`
   ADD KEY `equipment_id` (`equipment_id`);
 
 --
--- Indexes for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD PRIMARY KEY (`notification_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `related_id` (`related_id`);
-
---
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -235,31 +214,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowings`
 --
 ALTER TABLE `borrowings`
-  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `equipment`
 --
 ALTER TABLE `equipment`
-  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `equipment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `maintenance`
 --
 ALTER TABLE `maintenance`
-  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `notifications`
---
-ALTER TABLE `notifications`
-  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -276,9 +249,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `borrowings`
   ADD CONSTRAINT `borrowings_ibfk_1` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`equipment_id`),
-  ADD CONSTRAINT `borrowings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `borrowings_ibfk_3` FOREIGN KEY (`admin_issued_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `borrowings_ibfk_4` FOREIGN KEY (`admin_received_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `borrowings_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `equipment`
@@ -291,12 +262,6 @@ ALTER TABLE `equipment`
 --
 ALTER TABLE `maintenance`
   ADD CONSTRAINT `maintenance_ibfk_1` FOREIGN KEY (`equipment_id`) REFERENCES `equipment` (`equipment_id`);
-
---
--- Constraints for table `notifications`
---
-ALTER TABLE `notifications`
-  ADD CONSTRAINT `notifications_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
