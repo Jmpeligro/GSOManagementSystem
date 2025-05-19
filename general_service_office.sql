@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 18, 2025 at 02:54 PM
+-- Generation Time: May 19, 2025 at 07:47 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,7 +34,7 @@ CREATE TABLE `borrowings` (
   `borrow_date` datetime NOT NULL,
   `due_date` datetime NOT NULL,
   `return_date` datetime DEFAULT NULL,
-  `status` enum('active','returned','overdue','lost') DEFAULT 'active',
+  `status` enum('active','returned','overdue') DEFAULT 'active',
   `condition_on_return` enum('good','fair','damaged') DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -52,8 +52,13 @@ CREATE TABLE `borrowings` (
 --
 
 INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_date`, `due_date`, `return_date`, `status`, `condition_on_return`, `notes`, `created_at`, `updated_at`, `approval_status`, `approved_by`, `approval_date`, `admin_notes`, `return_notes`, `returned_by`) VALUES
-(26, 15, 6, '2025-05-18 16:08:00', '2025-05-18 19:00:00', NULL, 'active', NULL, 'Need to transport broken parts of a air-condition', '2025-05-18 08:09:24', '2025-05-18 08:09:56', 'approved', 5, '2025-05-18 16:09:56', 'Approved by administrator', NULL, NULL),
-(27, 15, 7, '2025-05-18 17:01:00', '2025-05-19 10:00:00', NULL, 'active', NULL, 'Need it to transport equipments.', '2025-05-18 09:01:49', '2025-05-18 09:01:59', 'approved', 5, '2025-05-18 17:01:59', 'Approved by administrator', NULL, NULL);
+(26, 15, 6, '2025-05-18 16:08:00', '2025-05-18 19:00:00', '2025-05-19 12:18:38', 'returned', 'good', 'Need to transport broken parts of a air-condition', '2025-05-18 08:09:24', '2025-05-19 04:18:38', 'approved', 5, '2025-05-18 16:09:56', 'Approved by administrator', 'Thanks for lending the Push Cart it was really helpful and did an excellent job.', 6),
+(27, 15, 7, '2025-05-18 17:01:00', '2025-05-19 10:00:00', '2025-05-19 13:35:03', 'returned', 'fair', 'Need it to transport equipments.', '2025-05-18 09:01:49', '2025-05-19 05:35:03', 'approved', 5, '2025-05-18 17:01:59', 'Approved by administrator', 'The equipment is drop and probably broken.', 7),
+(28, 17, 8, '2025-05-19 10:52:00', '2025-05-20 10:30:00', '2025-05-19 13:39:28', 'returned', 'good', 'The Computer Science Society wants to borrow it for preparation for an event.', '2025-05-19 02:53:29', '2025-05-19 05:39:28', 'approved', 5, '2025-05-19 11:58:18', 'Approved by administrator', 'The equipment was really helpful', 8),
+(29, 19, 8, '2025-05-19 12:32:00', '2025-05-20 12:32:00', '2025-05-19 13:39:16', 'returned', 'good', 'ACASD', '2025-05-19 04:32:50', '2025-05-19 05:39:16', 'approved', 5, '2025-05-19 12:34:33', 'Approved by administrator', 'It did an excellent job', 8),
+(30, 15, 8, '2025-05-19 12:37:00', '2025-05-20 12:37:00', NULL, '', NULL, 'scasdaasc', '2025-05-19 04:37:11', '2025-05-19 04:37:33', 'denied', 5, '2025-05-19 12:37:33', 'Ayoko sayo ya', NULL, NULL),
+(31, 16, 7, '2025-05-19 12:43:00', '2025-05-20 12:43:00', '2025-05-19 13:34:24', 'returned', 'good', 'Peram ya', '2025-05-19 04:43:30', '2025-05-19 05:34:24', 'approved', 5, '2025-05-19 12:45:40', 'Approved by administrator', 'Thanks it did a wonderful job.', 7),
+(32, 18, 3, '2025-05-19 12:46:00', '2025-05-21 12:46:00', NULL, '', NULL, 'aasacasca', '2025-05-19 04:46:14', '2025-05-19 04:46:14', 'pending', NULL, NULL, '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -91,7 +96,7 @@ CREATE TABLE `equipment` (
   `category_id` int(11) NOT NULL,
   `description` text DEFAULT NULL,
   `acquisition_date` date DEFAULT NULL,
-  `status` enum('available','maintenance','retired','partially_borrowed') DEFAULT NULL,
+  `status` enum('available','maintenance','retired','partially_borrowed','borrowed') DEFAULT 'available',
   `condition_status` enum('new','good','fair','poor') NOT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -105,12 +110,12 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
-(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', '', 'new', '', '2025-05-16 09:16:56', '2025-05-18 09:01:59', 2, 0),
-(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:17:31', '2025-05-18 11:56:16', 11, 11),
-(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:07', '2025-05-18 11:55:50', 1, 1),
+(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:16:56', '2025-05-19 05:35:03', 2, 2),
+(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:17:31', '2025-05-19 05:34:24', 11, 11),
+(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:07', '2025-05-19 05:39:28', 1, 1),
 (18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:40', '2025-05-18 11:56:08', 1, 1),
-(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:19:23', '2025-05-18 11:56:23', 4, 4),
-(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:20:05', '2025-05-18 11:56:44', 4, 4);
+(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:19:23', '2025-05-19 05:39:16', 4, 4),
+(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:20:05', '2025-05-19 03:57:49', 4, 4);
 
 -- --------------------------------------------------------
 
@@ -161,9 +166,10 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`user_id`, `university_id`, `first_name`, `last_name`, `email`, `password`, `role`, `department`, `phone`, `program_year_section`, `created_at`, `updated_at`, `status`, `status_changed_at`) VALUES
 (3, '23-00001', 'Bry', 'Bermudez', 'bermudez_bryan@plpasig.edu.ph', '$2y$10$59khyvXXOZe5ykrjKDfSDuTUpyCCPl8l1erA7ysLNiekuK1xKhxXi', 'student', 'General Service Office', '1234567890', 'BSIT - 2E', '2025-04-19 10:54:45', '2025-05-17 02:28:53', 'active', '2025-05-10 06:21:14'),
-(5, '000', 'General Service', 'Office', 'peligro_johnmichael@plpasig.edu.ph', '$2y$10$znGJ8Iw7yKxySbCb4pIWm.yxYocjMWewEEtxuRWAstoL57sNSlIHa', 'admin', 'General Service Office', '12345678', '', '2025-04-19 11:20:26', '2025-05-17 15:14:18', 'active', NULL),
+(5, '000', 'General Service', 'Office', 'peligro_johnmichael@plpasig.edu.ph', '$2y$10$lR4u.l8KJXl6ImxmXoiPlu7nXxi2.0MeHS9VXszgiAatHBpJH4jpC', 'admin', 'General Service Office', '12345678', '', '2025-04-19 11:20:26', '2025-05-19 04:31:53', 'active', NULL),
 (6, '23-00184', 'John Michael', 'Peligro', 'johnmichaelpeligro4@gmail.com', '$2y$10$BGYG5c4t7CjwjCY7/Kd1FOOgvkrMOy0/nS1RcLx3AVYvgpqN4KPpi', 'student', 'College of Computer Studies', '09162045215', NULL, '2025-04-25 01:47:29', '2025-05-04 09:53:38', 'active', NULL),
-(7, '23-00185', 'Johnmel', 'Rojay', 'rojas_johnmel@plpasig.edu.ph', '$2y$10$ECJHeICfGGzsMrDPQfcw7eSsgk21mpi93D3VksbLyPqTbnAAxj.ly', 'student', 'College of Computer Studies', '1234567', 'BSIT - 2E', '2025-05-10 06:23:59', '2025-05-10 06:23:59', 'active', NULL);
+(7, '23-00185', 'Johnmel', 'Rojay', 'rojas_johnmel@plpasig.edu.ph', '$2y$10$ECJHeICfGGzsMrDPQfcw7eSsgk21mpi93D3VksbLyPqTbnAAxj.ly', 'student', 'College of Computer Studies', '1234567', 'BSIT - 2E', '2025-05-10 06:23:59', '2025-05-10 06:23:59', 'active', NULL),
+(8, '23-00002', 'Vincent Miguel', 'Soriano', 'soriano_vincentmiguel@plpasig.edu.ph', '$2y$10$qkcGoXWOW4MOVGm10MVUy.xYl5/Vu6fz1S.BiSNLc9PwPBQGGJK/y', 'student', 'College of Computer Studies', '123456789', 'BSIT - 2E', '2025-05-19 02:52:14', '2025-05-19 02:52:14', 'active', NULL);
 
 --
 -- Indexes for dumped tables
@@ -214,7 +220,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowings`
 --
 ALTER TABLE `borrowings`
-  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -232,13 +238,13 @@ ALTER TABLE `equipment`
 -- AUTO_INCREMENT for table `maintenance`
 --
 ALTER TABLE `maintenance`
-  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables
