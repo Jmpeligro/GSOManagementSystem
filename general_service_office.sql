@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2025 at 07:47 AM
+-- Generation Time: May 20, 2025 at 06:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -58,7 +58,11 @@ INSERT INTO `borrowings` (`borrowing_id`, `equipment_id`, `user_id`, `borrow_dat
 (29, 19, 8, '2025-05-19 12:32:00', '2025-05-20 12:32:00', '2025-05-19 13:39:16', 'returned', 'good', 'ACASD', '2025-05-19 04:32:50', '2025-05-19 05:39:16', 'approved', 5, '2025-05-19 12:34:33', 'Approved by administrator', 'It did an excellent job', 8),
 (30, 15, 8, '2025-05-19 12:37:00', '2025-05-20 12:37:00', NULL, '', NULL, 'scasdaasc', '2025-05-19 04:37:11', '2025-05-19 04:37:33', 'denied', 5, '2025-05-19 12:37:33', 'Ayoko sayo ya', NULL, NULL),
 (31, 16, 7, '2025-05-19 12:43:00', '2025-05-20 12:43:00', '2025-05-19 13:34:24', 'returned', 'good', 'Peram ya', '2025-05-19 04:43:30', '2025-05-19 05:34:24', 'approved', 5, '2025-05-19 12:45:40', 'Approved by administrator', 'Thanks it did a wonderful job.', 7),
-(32, 18, 3, '2025-05-19 12:46:00', '2025-05-21 12:46:00', NULL, '', NULL, 'aasacasca', '2025-05-19 04:46:14', '2025-05-19 04:46:14', 'pending', NULL, NULL, '', NULL, NULL);
+(32, 18, 3, '2025-05-19 12:46:00', '2025-05-21 12:46:00', NULL, '', NULL, 'aasacasca', '2025-05-19 04:46:14', '2025-05-20 05:54:51', 'denied', 5, '2025-05-20 13:54:51', 'Ayoko lang ya', NULL, NULL),
+(33, 17, 8, '2025-05-20 13:41:00', '2025-05-21 13:41:00', '2025-05-20 13:54:22', 'returned', 'good', 'scasca', '2025-05-20 05:41:55', '2025-05-20 05:54:22', 'approved', 5, '2025-05-20 13:42:10', 'Approved by administrator', 'Thanks it was excellent', 8),
+(34, 18, 8, '2025-05-20 13:54:00', '2025-05-21 13:54:00', NULL, 'active', NULL, 'asca', '2025-05-20 05:54:36', '2025-05-20 05:54:56', 'approved', 5, '2025-05-20 13:54:56', 'Approved by administrator', NULL, NULL),
+(35, 17, 3, '2025-05-21 09:18:00', '2025-05-22 09:18:00', NULL, 'active', NULL, 'asasc', '2025-05-20 13:19:06', '2025-05-20 13:19:24', 'approved', 5, '2025-05-20 21:19:24', 'Approved by administrator', NULL, NULL),
+(36, 15, 6, '2025-05-21 12:05:00', '2025-05-22 12:05:00', NULL, 'active', NULL, 'bcasia', '2025-05-20 16:06:07', '2025-05-20 16:06:32', 'approved', 5, '2025-05-21 00:06:32', 'Approved by administrator', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -96,7 +100,7 @@ CREATE TABLE `equipment` (
   `category_id` int(11) NOT NULL,
   `description` text DEFAULT NULL,
   `acquisition_date` date DEFAULT NULL,
-  `status` enum('available','maintenance','retired','partially_borrowed','borrowed') DEFAULT 'available',
+  `status` enum('available','maintenance','retired','partially_borrowed','borrowed','partially_maintenance','partially_both') NOT NULL DEFAULT 'available',
   `condition_status` enum('new','good','fair','poor') NOT NULL,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
@@ -110,12 +114,12 @@ CREATE TABLE `equipment` (
 --
 
 INSERT INTO `equipment` (`equipment_id`, `equipment_code`, `name`, `category_id`, `description`, `acquisition_date`, `status`, `condition_status`, `notes`, `created_at`, `updated_at`, `quantity`, `available_quantity`) VALUES
-(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', 'available', 'new', '', '2025-05-16 09:16:56', '2025-05-19 05:35:03', 2, 2),
-(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:17:31', '2025-05-19 05:34:24', 11, 11),
-(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:07', '2025-05-19 05:39:28', 1, 1),
-(18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:18:40', '2025-05-18 11:56:08', 1, 1),
-(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:19:23', '2025-05-19 05:39:16', 4, 4),
-(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:20:05', '2025-05-19 03:57:49', 4, 4);
+(15, 'GSO - 001', 'Push Cart Flat Types', 4, 'Cart with a flat platform used for manually transporting goods or materials over short distances. It typically has handles for pushing and no sides or walls, making it ideal for moving large or bulky items in warehouses, stores, or factories.', '0000-00-00', 'partially_borrowed', 'new', '', '2025-05-16 09:16:56', '2025-05-20 16:07:33', 2, 1),
+(16, 'GSO - 002', 'Planer Heavy Duty', 1, 'Woodworking machine used to smooth, flatten, or reduce the thickness of large wooden boards. It is designed for continuous, high-capacity use and can handle hardwood and large materials, making it ideal for industrial or professional carpentry and furniture making.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:17:31', '2025-05-20 07:33:06', 11, 11),
+(17, 'GSO - 003', 'Electric Drill', 1, 'Used for drilling holes or driving screws into various materials like wood, metal, or plastic. It runs on electric power and typically features adjustable speed and interchangeable drill bits, making it useful for construction, DIY projects, and repair work.', '2025-05-01', 'partially_borrowed', 'new', '0', '2025-05-16 09:18:07', '2025-05-20 16:07:32', 2, 1),
+(18, 'GSO - 004', 'Jigsaw Heavy Duty', 1, 'Cutting tool used to make curved, straight, or intricate cuts in materials like wood, metal, or plastic. It features a reciprocating blade that moves up and down and is designed for tough, continuous use in industrial or professional settings.', '2025-05-01', '', 'new', '0', '2025-05-16 09:18:40', '2025-05-20 13:19:24', 1, 0),
+(19, 'GSO - 005', 'Portable Welding Machine', 1, 'Used to join metal parts together by melting them with heat. It is designed for easy transport and on-site welding tasks, making it ideal for construction, repairs, and maintenance work in various locations.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:19:23', '2025-05-20 13:52:28', 5, 5),
+(20, 'GSO - 006', 'Speakers', 5, 'To hear audio from sources like microphones, music players, or computers. It is commonly used in sound systems, public address setups, and multimedia devices to amplify and project sound.', '2025-05-01', 'available', 'new', '0', '2025-05-16 09:20:05', '2025-05-20 15:49:04', 4, 4);
 
 -- --------------------------------------------------------
 
@@ -130,8 +134,9 @@ CREATE TABLE `maintenance` (
   `maintenance_date` date NOT NULL,
   `resolved_date` date DEFAULT NULL,
   `cost` decimal(10,2) DEFAULT NULL,
-  `resolved_by` varchar(100) DEFAULT NULL,
-  `status` enum('pending','in_progress','completed') DEFAULT 'pending',
+  `resolved_by` varchar(255) DEFAULT NULL,
+  `status` enum('pending','in_progress','completed') NOT NULL DEFAULT 'pending',
+  `units` int(11) DEFAULT 1,
   `notes` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -201,8 +206,7 @@ ALTER TABLE `equipment`
 -- Indexes for table `maintenance`
 --
 ALTER TABLE `maintenance`
-  ADD PRIMARY KEY (`maintenance_id`),
-  ADD KEY `equipment_id` (`equipment_id`);
+  ADD PRIMARY KEY (`maintenance_id`);
 
 --
 -- Indexes for table `users`
@@ -220,7 +224,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowings`
 --
 ALTER TABLE `borrowings`
-  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `borrowing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -238,7 +242,7 @@ ALTER TABLE `equipment`
 -- AUTO_INCREMENT for table `maintenance`
 --
 ALTER TABLE `maintenance`
-  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `maintenance_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=91;
 
 --
 -- AUTO_INCREMENT for table `users`
