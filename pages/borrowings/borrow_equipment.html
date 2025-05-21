@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Borrow Equipment - PLP GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/borrow_equipment.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -60,7 +60,7 @@
                     min="<?php echo date('Y-m-d\TH:i', strtotime('+1 hour')); ?>">
             </div>
             
-            <div class="form-group">
+            <div class="form-group" style="grid-column: span 2;">
                 <label for="purpose">Purpose</label>
                 <textarea id="purpose" name="purpose" rows="3" required placeholder="Please describe why you need this equipment"></textarea>
             </div>
@@ -83,4 +83,3 @@
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>
-```

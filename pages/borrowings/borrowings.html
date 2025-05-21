@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Borrowings - University GSO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Borrowings - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/borrowings.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -109,16 +109,14 @@
                     <input type="text" id="search" name="search" value="<?php echo $search_query; ?>" placeholder="Search equipment name, code...">
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group half">
-                        <label for="date_from">From Date</label>
-                        <input type="date" id="date_from" name="date_from" value="<?php echo $date_from; ?>">
-                    </div>
-                    
-                    <div class="form-group half">
-                        <label for="date_to">To Date</label>
-                        <input type="date" id="date_to" name="date_to" value="<?php echo $date_to; ?>">
-                    </div>
+                <div class="form-group from-date">
+                    <label for="date_from">From Date</label>
+                    <input type="date" id="date_from" name="date_from" value="<?php echo $date_from; ?>">
+                </div>
+                
+                <div class="form-group to-date">
+                    <label for="date_to">To Date</label>
+                    <input type="date" id="date_to" name="date_to" value="<?php echo $date_to; ?>">
                 </div>
                 
                 <div class="form-buttons">
@@ -147,10 +145,15 @@
                     </thead>
                     <tbody>
                         <?php 
-                        // Fixed: $result is already an array of rows, no need to call fetch_assoc()
                         foreach ($result as $row): 
                             $is_overdue = ($row['status'] == 'active' && strtotime($row['due_date']) < time());
-                            $status_class = $is_overdue ? 'overdue' : $row['status'];
+                            if ($row['approval_status'] === 'pending') {
+                                $status_class = 'pending';
+                            } else if ($row['approval_status'] === 'denied') {
+                                $status_class = 'denied';
+                            } else {
+                                $status_class = $is_overdue ? 'overdue' : $row['status'];
+                            }
                             $quantity = isset($row['quantity']) ? $row['quantity'] : 1; // Default to 1 for older records
                         ?>
                         <tr>
@@ -161,9 +164,19 @@
                             <?php endif; ?>
                             <td><?php echo date('M d, Y', strtotime($row['borrow_date'])); ?></td>
                             <td><?php echo date('M d, Y', strtotime($row['due_date'])); ?></td>
-                            <td>
+                            <td>                                
                                 <span class="status-badge status-<?php echo $status_class; ?>">
-                                    <?php echo $is_overdue ? 'Overdue' : ucfirst($row['status']); ?>
+                                    <?php 
+                                    if ($row['status'] === 'returned_overdue') {
+                                        echo 'Returned/Overdue';
+                                    } else if ($row['approval_status'] === 'pending') {
+                                        echo 'Pending Review';
+                                    } else if ($row['approval_status'] === 'denied') {
+                                        echo 'Request Denied';
+                                    } else {
+                                        echo $is_overdue ? 'Overdue' : ucfirst($row['status']);
+                                    }
+                                    ?>
                                 </span>
                             </td>
                             <td>
@@ -177,9 +190,8 @@
                                 <?php if ($row['approval_status'] == 'pending' && $row['user_id'] == $_SESSION['user_id']): ?>
                                 <a href="../../php/borrowings/borrowings.php?cancel=<?php echo $row['borrowing_id']; ?>" class="btn btn-small btn-danger" title="Cancel" onclick="return confirm('Are you sure you want to cancel this request?')"><i class="fa fa-times"></i></a>
                                 <?php endif; ?>
-                                
-                                <?php if ($row['status'] == 'active' && $row['approval_status'] == 'approved' && $row['user_id'] == $_SESSION['user_id']): ?>
-                                <a href="../../php/borrowings/borrowings.php?return=<?php echo $row['borrowing_id']; ?>" class="btn btn-small btn-primary" title="Return" onclick="return confirm('Are you sure you want to mark this equipment as returned?')"><i class="fa fa-undo"></i></a>
+                                  <?php if (($row['status'] == 'active' || $row['status'] == 'overdue') && $row['approval_status'] == 'approved' && $row['user_id'] == $_SESSION['user_id']): ?>
+                                <a href="../../php/borrowings/view_borrowing.php?return=<?php echo $row['borrowing_id']; ?>" class="btn btn-small btn-primary" title="Return"><i class="fa fa-undo"></i></a>
                                 <?php endif; ?>
                                 
                                 <?php if (isAdmin() && $row['approval_status'] == 'pending'): ?>
@@ -207,6 +219,7 @@
         </div>
     </div>
 
+    <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
 </body>
 </html>

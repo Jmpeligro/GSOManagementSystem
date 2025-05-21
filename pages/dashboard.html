@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - PLP GSO Management</title>
     <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/sentiment_analysis.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 </head>
 <body>
@@ -29,7 +31,7 @@
             <div class="stat-box">
                 <h3>Under Maintenance</h3>
                 <div class="stat-number"><?php echo $maintenance_count; ?></div>
-                <a href="../php/equipment/equipment.php?status=maintenance" class="stat-link">View all</a>
+                <a href="../php/equipment/equipment.php?status=maintenance" class="stat-link">View all</a>  
             </div>
             
             <div class="stat-box">
@@ -37,6 +39,14 @@
                 <div class="stat-number"><?php echo $categories_count; ?></div>
                 <a href="../php/categories/categories.php" class="stat-link">View all</a>
             </div>
+            
+            <?php if (isAdmin()): ?>
+            <div class="stat-box critical-box">
+                <h3>Critical Stock Levels</h3>
+                <div class="stat-number critical-number"><?php echo $critical_count; ?></div>
+                <a href="../php/equipment/equipment.php?filter=critical" class="stat-link critical-link">View all</a>
+            </div>
+            <?php endif; ?>
         </div>
         
         <div class="charts-container">
@@ -45,17 +55,83 @@
                 <canvas id="equipmentStatusChart" 
                     data-available="<?php echo $available_count; ?>"
                     data-borrowed="<?php echo $borrowed_count; ?>"
-                    data-maintenance="<?php echo $maintenance_count; ?>">
+                    data-maintenance="<?php echo $maintenance_count; ?>"
+                    data-critical="<?php echo $critical_count; ?>">
                 </canvas>
             </div>
+              <?php if (isAdmin()): ?>
+            <div class="chart-box">
+                <h3>Return Notes Sentiment Analysis</h3>
+                <canvas id="sentimentChart"
+                    data-positive="<?php echo $sentiment_summary['sentiment_counts']['Positive']; ?>"
+                    data-neutral="<?php echo $sentiment_summary['sentiment_counts']['Neutral']; ?>"
+                    data-negative="<?php echo $sentiment_summary['sentiment_counts']['Negative']; ?>">
+                </canvas>
+                <div class="sentiment-summary">
+                    <p>Overall feedback sentiment: 
+                        <span class="sentiment-badge sentiment-<?php echo strtolower($sentiment_summary['overall_sentiment']); ?>">
+                            <?php echo $sentiment_summary['overall_sentiment']; ?>
+                        </span>
+                        <span class="polarity-score">(Polarity: <?php echo number_format($sentiment_summary['average_polarity'], 2); ?>)</span>
+                    </p>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
+        
+        <?php if (isAdmin()): ?>
+        <div class="charts-container">
+            <div class="chart-box wide-chart">
+                <h3>Monthly Sentiment Trends</h3>
+                <canvas id="monthlySentimentChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-box wide-chart">
+                <h3>Equipment Condition & Sentiment Correlation</h3>
+                <canvas id="conditionSentimentChart"></canvas>
+            </div>
+        </div>
+        <?php endif; ?>
+        
+        <?php if ($critical_count > 0): ?>
+        <div class="recent-section critical-section">
+            <h3>Critical Equipment Levels <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i></h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Equipment Name</th>
+                        <th>Total Quantity</th>
+                        <th>Available</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($row = $result_critical_list->fetch_assoc()): ?>
+                    <tr>
+                        <td><?php echo $row['name']; ?></td>
+                        <td><?php echo $row['quantity']; ?></td>
+                        <td><strong class="critical-count"><?php echo $row['available_quantity']; ?></strong></td>
+                        <td><span class="status-badge status-critical">Critical</span></td>
+                        <td>
+                            <a href="../php/equipment/edit_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small" title="Edit"><i class="fa fa-edit"></i></a>
+                            <a href="../php/equipment/view_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                </tbody>
+            </table>
+            <a href="../php/equipment/equipment.php?filter=critical" class="view-all-link">View all critical equipment</a>
+        </div>
+        <?php endif; ?>
         
         <div class="recent-section">
             <h3>Recent Borrowings</h3>
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Equipment</th>
                         <th>Borrower</th>
                         <th>Borrow Date</th>
@@ -67,14 +143,13 @@
                 <tbody>
                     <?php while ($row = $result_recent->fetch_assoc()): ?>
                     <tr>
-                        <td><?php echo $row['borrowing_id']; ?></td>
                         <td><?php echo $row['equipment_name']; ?></td>
                         <td><?php echo $row['first_name'] . ' ' . $row['last_name']; ?></td>
                         <td><?php echo date('M d, Y', strtotime($row['borrow_date'])); ?></td>
                         <td><?php echo date('M d, Y', strtotime($row['due_date'])); ?></td>
                         <td><span class="status-badge status-<?php echo $row['status']; ?>"><?php echo ucfirst($row['status']); ?></span></td>
                         <td>
-                            <a href="../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small">View</a>
+                            <a href="../php/borrowings/view_borrowing.php?id=<?php echo $row['borrowing_id']; ?>" class="btn btn-small" title="View"><i class="fa fa-eye"></i></a>
                         </td>
                     </tr>
                     <?php endwhile; ?>
@@ -82,11 +157,64 @@
             </table>
             <a href="../php/borrowings/borrowings.php" class="view-all-link">View all borrowings</a>
         </div>
+          <?php if (isAdmin()): ?>
+        <!-- Recent Return Notes with Sentiment Analysis -->
+        <div class="recent-section sentiment-section">
+            <h3>Recent Return Feedback <i class="fas fa-comment-dots"></i></h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Equipment</th>
+                        <th>Borrower</th>
+                        <th>Return Date</th>
+                        <th>Condition</th>
+                        <th>Return Notes</th>
+                        <th>Sentiment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recent_sentiments['data'] as $sentiment): ?>
+                    <tr>
+                        <td><?php echo $sentiment['equipment_name']; ?></td>
+                        <td><?php echo $sentiment['user_name']; ?></td>
+                        <td><?php echo date('M d, Y', strtotime($sentiment['return_date'])); ?></td>
+                        <td><span class="condition-badge condition-<?php echo strtolower($sentiment['condition']); ?>"><?php echo ucfirst($sentiment['condition']); ?></span></td>
+                        <td><?php echo htmlspecialchars($sentiment['return_notes']); ?></td>
+                        <td>
+                            <span class="sentiment-badge sentiment-<?php echo strtolower($sentiment['sentiment']); ?>" 
+                                  title="Polarity: <?php echo number_format($sentiment['polarity'], 2); ?>">
+                                <?php echo $sentiment['sentiment']; ?>
+                            </span>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <a href="/GSO System/php/borrowings/sentiment_analysis.php" class="view-all-link">View full sentiment analysis</a>
+        </div>
+        <?php endif; ?>
     </div>
     
     <?php include '../components/footer.php'; ?>
-    
+    <?php if (isAdmin()): ?>
+    <script>
+        window.monthlyData = {
+            labels: <?php echo json_encode($monthly_labels); ?>,
+            positive: <?php echo json_encode($monthly_positive); ?>,
+            neutral: <?php echo json_encode($monthly_neutral); ?>,
+            negative: <?php echo json_encode($monthly_negative); ?>,
+            polarity: <?php echo json_encode($monthly_polarity); ?>
+        };
+        
+        window.conditionData = {
+            labels: <?php echo json_encode($condition_labels); ?>,
+            positive: <?php echo json_encode($condition_positive); ?>,
+            neutral: <?php echo json_encode($condition_neutral); ?>,
+            negative: <?php echo json_encode($condition_negative); ?>
+        };
+    </script>
+    <script src="../assets/js/sentiment_analysis.js"></script>
+    <?php endif; ?>
     <script src="../assets/js/dashboard.js"></script>
 </body>
-
 </html>

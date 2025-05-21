@@ -7,38 +7,6 @@
     <link rel="stylesheet" href="../../assets/css/maintenance.css">
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        function confirmDelete(id, name) {
-            return confirm('Are you sure you want to delete the maintenance record for "' + name + '"? This action cannot be undone.');
-        }
-        
-        function showAddMaintenanceForm() {
-            document.getElementById('addMaintenanceModal').style.display = 'block';
-        }
-        
-        function closeAddMaintenanceForm() {
-            document.getElementById('addMaintenanceModal').style.display = 'none';
-        }
-        
-        function showUpdateForm(id) {
-            document.getElementById('updateForm' + id).style.display = 'block';
-        }
-        
-        function closeUpdateForm(id) {
-            document.getElementById('updateForm' + id).style.display = 'none';
-        }
-        
-        function validateCost(input) {
-            // Allow only numbers and decimal point
-            input.value = input.value.replace(/[^0-9.]/g, '');
-            
-            // Ensure only one decimal point
-            const parts = input.value.split('.');
-            if (parts.length > 2) {
-                input.value = parts[0] + '.' + parts.slice(1).join('');
-            }
-        }
-    </script>
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -50,7 +18,7 @@
         </div>
         
         <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert alert-success">
+        <div class="success-message">
             <?php 
                 echo $_SESSION['success']; 
                 unset($_SESSION['success']);
@@ -59,7 +27,7 @@
         <?php endif; ?>
         
         <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger">
+        <div class="error-message">
             <?php 
                 echo $_SESSION['error']; 
                 unset($_SESSION['error']);
@@ -67,7 +35,6 @@
         </div>
         <?php endif; ?>
         
-        <!-- Add Maintenance Modal -->
         <div id="addMaintenanceModal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -78,14 +45,22 @@
                     <form method="post" action="../../php/equipment/maintenance.php">
                         <div class="form-group">
                             <label for="equipment_id">Equipment</label>
-                            <select id="equipment_id" name="equipment_id" required>
+                            <select id="equipment_id" name="equipment_id" required onchange="updateMaxQuantity(this.value)">
                                 <option value="">Select Equipment</option>
                                 <?php while ($equipment = $equipment_result->fetch_assoc()): ?>
-                                <option value="<?php echo $equipment['equipment_id']; ?>">
+                                <option value="<?php echo $equipment['equipment_id']; ?>" 
+                                        data-available="<?php echo $equipment['available_quantity']; ?>">
                                     <?php echo $equipment['equipment_code'] . ' - ' . $equipment['name']; ?>
+                                    (Available: <?php echo $equipment['available_quantity']; ?>)
                                 </option>
                                 <?php endwhile; ?>
                             </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity">Units for Maintenance</label>
+                            <input type="number" id="quantity" name="quantity" min="1" value="1" required>
+                            <small>Max available units: <span id="max-quantity">-</span></small>
                         </div>
                         
                         <div class="form-group">
@@ -141,16 +116,13 @@
                             <?php echo $row['cost'] ? '₱' . number_format($row['cost'], 2) : '-'; ?>
                         </td>
                         <td class="actions">
-                            <button class="btn btn-small btn-secondary" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)">Update</button>
+                            <button class="btn btn-small btn-secondary" title="Update" onclick="showUpdateForm(<?php echo $row['maintenance_id']; ?>)"><i class="fa fa-edit"></i></button>
                             
                             <form method="post" action="../../php/equipment/maintenance.php" style="display:inline-block;">
                                 <input type="hidden" name="maintenance_id" value="<?php echo $row['maintenance_id']; ?>">
                                 <input type="hidden" name="equipment_id" value="<?php echo $row['equipment_id']; ?>">
                                 <input type="hidden" name="delete_maintenance" value="1">
-                                <button type="submit" class="btn btn-small btn-danger" 
-                                        onclick="return confirmDelete(<?php echo $row['maintenance_id']; ?>, '<?php echo htmlspecialchars($row['equipment_name'], ENT_QUOTES); ?>')">
-                                    Delete
-                                </button>
+                                <button type="submit" class="btn btn-small btn-danger" title="Delete" onclick="return confirmDelete(<?php echo $row['maintenance_id']; ?>, '<?php echo htmlspecialchars($row['equipment_name'], ENT_QUOTES); ?>')"><i class="fa fa-trash"></i></button>
                             </form>
                             
                             <!-- Update Form (Hidden by default) -->
@@ -217,5 +189,6 @@
     
     <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
+    <script src="../../assets/js/maintenance.js"></script>
 </body>
 </html>

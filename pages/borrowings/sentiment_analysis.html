@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis - PLP GSO Management</title>
+    <link rel="stylesheet" href="../../assets/css/styles.css">
+    <link rel="stylesheet" href="../../assets/css/sentiment_analysis.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <?php include '../../components/sidebar.php'; ?>
+    
+    <div class="container">
+        <h2>Return Notes Sentiment Analysis</h2>
+        
+        <div class="filters-section">
+            <form action="sentiment_analysis.php" method="GET" class="filter-form">
+                <div class="filter-group">
+                    <label for="filter">Sentiment:</label>
+                    <select name="filter" id="filter">
+                        <option value="">All Sentiments</option>
+                        <option value="positive" <?php echo $filter === 'positive' ? 'selected' : ''; ?>>Positive</option>
+                        <option value="neutral" <?php echo $filter === 'neutral' ? 'selected' : ''; ?>>Neutral</option>
+                        <option value="negative" <?php echo $filter === 'negative' ? 'selected' : ''; ?>>Negative</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="condition">Equipment Condition:</label>
+                    <select name="condition" id="condition">
+                        <option value="">All Conditions</option>
+                        <option value="good" <?php echo $condition === 'good' ? 'selected' : ''; ?>>Good</option>
+                        <option value="fair" <?php echo $condition === 'fair' ? 'selected' : ''; ?>>Fair</option>
+                        <option value="damaged" <?php echo $condition === 'damaged' ? 'selected' : ''; ?>>Damaged</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="date_range">Date Range:</label>
+                    <select name="date_range" id="date_range">
+                        <option value="">All Time</option>
+                        <option value="30" <?php echo $dateRange === '30' ? 'selected' : ''; ?>>Last 30 Days</option>
+                        <option value="90" <?php echo $dateRange === '90' ? 'selected' : ''; ?>>Last 3 Months</option>
+                        <option value="180" <?php echo $dateRange === '180' ? 'selected' : ''; ?>>Last 6 Months</option>
+                        <option value="365" <?php echo $dateRange === '365' ? 'selected' : ''; ?>>Last Year</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-filter-sent">Apply Filters</button>
+                <a href="sentiment_analysis.php" class="btn btn-reset-sent">Reset</a>
+            </form>
+        </div>
+        
+        <div class="summary-section">
+            <div class="summary-card">
+                <h3>Sentiment Overview</h3>
+                <div class="summary-stats">
+                    <div class="stat-item positive">
+                        <div class="stat-value"><?php echo $sentiment_summary['sentiment_counts']['Positive']; ?></div>
+                        <div class="stat-label">Positive</div>
+                    </div>
+                    <div class="stat-item neutral">
+                        <div class="stat-value"><?php echo $sentiment_summary['sentiment_counts']['Neutral']; ?></div>
+                        <div class="stat-label">Neutral</div>
+                    </div>
+                    <div class="stat-item negative">
+                        <div class="stat-value"><?php echo $sentiment_summary['sentiment_counts']['Negative']; ?></div>
+                        <div class="stat-label">Negative</div>
+                    </div>
+                </div>
+                <div class="overall-sentiment">
+                    <p>Overall sentiment: 
+                        <span class="sentiment-badge sentiment-<?php echo strtolower($sentiment_summary['overall_sentiment']); ?>">
+                            <?php echo $sentiment_summary['overall_sentiment']; ?>
+                        </span>
+                        <span class="polarity-score">(Polarity: <?php echo number_format($sentiment_summary['average_polarity'], 2); ?>)</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sentiment-data-section">
+            <h3>Return Notes Analysis</h3>
+            <p>Total analyzed notes: <?php echo $sentiments['count']; ?></p>
+            
+            <table class="data-table sentiment-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Equipment</th>
+                        <th>Borrower</th>
+                        <th>Return Date</th>
+                        <th>Condition</th>
+                        <th>Return Notes</th>
+                        <th>Sentiment</th>
+                        <th>Polarity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($sentiments['data'] as $item): ?>
+                    <?php 
+                        if (($filter && strtolower($item['sentiment']) !== strtolower($filter)) || 
+                            ($condition && strtolower($item['condition']) !== strtolower($condition))) {
+                            continue;
+                        }
+                    ?>
+                    <tr>
+                        <td><?php echo $item['borrowing_id']; ?></td>
+                        <td><?php echo htmlspecialchars($item['equipment_name']); ?></td>
+                        <td><?php echo htmlspecialchars($item['user_name']); ?></td>
+                        <td><?php echo date('M d, Y', strtotime($item['return_date'])); ?></td>
+                        <td>
+                            <span class="condition-badge condition-<?php echo strtolower($item['condition']); ?>">
+                                <?php echo ucfirst($item['condition']); ?>
+                            </span>
+                        </td>
+                        <td class="return-notes">
+                            <?php echo htmlspecialchars($item['return_notes']); ?>
+                        </td>
+                        <td>
+                            <span class="sentiment-badge sentiment-<?php echo strtolower($item['sentiment']); ?>">
+                                <?php echo $item['sentiment']; ?>
+                            </span>
+                        </td>
+                        <td>
+                            <div class="polarity-indicator" style="background-color: <?php echo $item['color']; ?>">
+                                <?php echo number_format($item['polarity'], 2); ?>
+                            </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <?php include '../../components/footer.php'; ?>
+</body>
+</html>

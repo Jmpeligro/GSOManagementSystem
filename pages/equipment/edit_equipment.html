@@ -91,15 +91,32 @@
                 <?php endif; ?>
             </div>
             
-            <div class="form-group">
+            <div class="form-group">                <label for="available_quantity">Available Quantity <span class="required">*</span></label>                <input type="number" 
+                       id="available_quantity" 
+                       name="available_quantity" 
+                       value="<?php echo isset($available_quantity) ? htmlspecialchars($available_quantity) : $quantity; ?>" 
+                       min="0" 
+                       max="<?php echo htmlspecialchars($quantity); ?>" 
+                       data-borrowed-count="<?php echo $borrowed_count; ?>"
+                       readonly
+                       required>
+                <small>Number of units currently available (max: total quantity, min: <?php echo $borrowed_count; ?> borrowed)</small>
+                <?php if ($borrowed_count > 0): ?>
+                    <small class="warning">Note: <?php echo $borrowed_count; ?> unit(s) are currently borrowed. Available quantity must be at least <?php echo ($quantity - $borrowed_count); ?>.</small>
+                <?php endif; ?>
+            </div>
+
+             <div class="form-group">
                 <label for="quantity">Quantity <span class="required">*</span></label>
                 <input type="number" id="quantity" name="quantity" value="<?php echo isset($quantity) ? htmlspecialchars($quantity) : 1; ?>" min="1" required>
                 <small>Number of units available for this equipment</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="acquisition_date">Acquisition Date <span class="required">*</span></label>
-                <input type="date" id="acquisition_date" name="acquisition_date" value="<?php echo htmlspecialchars($acquisition_date); ?>" required>
+            </div>            <div class="form-group">
+                <label for="acquisition_date">Acquisition Date</label>
+                <input type="date" 
+                       id="acquisition_date" 
+                       name="acquisition_date" 
+                       value="<?php echo htmlspecialchars($acquisition_date); ?>"
+                       class="form-control">
             </div>
             
             <div class="form-group">
@@ -109,12 +126,13 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn btn-update-equipment">Update Equipment</button>
-                <a href="../../php/equipment/view_equipment.php?id=<?php echo $equipment_id; ?>" class="btn btn-cancel-equipment">Cancel</a>
+                <a href="../../php/equipment/equipment.php?id=<?php echo $equipment_id; ?>" class="btn btn-cancel-equipment">Cancel</a>
             </div>
         </form>
     </div>
     
     <?php include '../../components/footer.php'; ?>
     <script src="../../assets/js/sidebar.js"></script>
+    <script src="../../assets/js/edit_equipment.js"></script>
 </body>
 </html>

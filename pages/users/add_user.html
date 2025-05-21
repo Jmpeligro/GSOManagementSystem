@@ -10,13 +10,25 @@
     <?php include '../../components/sidebar.php'; ?>
     
     <div class="container">
-        <div class="page-header">
-            <h2>Add New User</h2>
+        <h1 class="text-blue">Add New User</h1>
+        <div class="back-button">
             <a href="../../php/users/users.php" class="btn btn-back-users">Back to Users</a>
         </div>
         
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
+        <?php if (!empty($errors)): ?>
+            <div class="error-messages">
+                <ul>
+                    <?php foreach ($errors as $error): ?>
+                        <li><?php echo $error; ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+        
+        <?php if (!empty($success_message)): ?>
+            <div class="success-message">
+                <?php echo $success_message; ?>
+            </div>
         <?php endif; ?>
         
         <div class="card">
@@ -100,8 +112,7 @@
             const roleSelect = document.getElementById('role');
             const programYearSectionContainer = document.getElementById('program_year_section_container');
             const programYearSectionInput = document.getElementById('program_year_section');
-            
-            // Function to toggle program_year_section visibility
+
             function toggleProgramYearSection() {
                 if (roleSelect.value === 'student') {
                     programYearSectionContainer.style.display = 'block';
@@ -112,10 +123,8 @@
                 }
             }
             
-            // Initial check
             toggleProgramYearSection();
-            
-            // Add event listener for role changes
+
             roleSelect.addEventListener('change', toggleProgramYearSection);
         });
     </script>
