@@ -13,15 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const userProfile = document.getElementById('userProfile');
     const userMenuDropdown = document.getElementById('userMenuDropdown');
-    const mobileToggle = document.getElementById('mobileToggle');
     
     console.log('Elements found:', {
         sidebar: !!sidebar,
         contentWrapper: !!contentWrapper,
         sidebarToggle: !!sidebarToggle,
         userProfile: !!userProfile,
-        userMenuDropdown: !!userMenuDropdown,
-        mobileToggle: !!mobileToggle
+        userMenuDropdown: !!userMenuDropdown
     });
 
     // User dropdown functionality
@@ -55,27 +53,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Function to check if on mobile view
-    function isMobile() {
-        return window.innerWidth <= 992;
-    }
-    
     // Responsive sidebar handling
     function handleResponsive() {
+        console.log('Window resized:', window.innerWidth);
         if (window.innerWidth <= 992) {
-            // Mobile view
             sidebar.classList.add('mobile-view');
-            // Restore previous mobile state if it exists
-            sidebar.classList.remove('mobile-open');
-            // Always show sidebar on mobile unless explicitly toggled
-            sidebar.classList.remove('hidden');
-            contentWrapper.classList.remove('full-width');
+            sidebar.classList.remove('collapsed');
+            contentWrapper.classList.remove('expanded');
         } else {
-            // Desktop view
             sidebar.classList.remove('mobile-view', 'mobile-open');
-            // Only hide if user explicitly hid it
-            sidebar.classList.remove('hidden');
-            contentWrapper.classList.remove('full-width');
         }
     }
     
@@ -86,63 +72,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Sidebar toggle functionality
     if (sidebarToggle) {
         sidebarToggle.addEventListener('click', function(e) {
+            console.log('Sidebar toggle clicked');
             e.preventDefault();
-            if (window.innerWidth <= 992) {
-                // Mobile toggle - just show/hide
-                if (sidebar.classList.contains('mobile-open')) {
-                    sidebar.classList.remove('mobile-open');
-                } else {
-                    sidebar.classList.add('mobile-open');
-                }
-            } else {
-                // Desktop toggle - show/hide
-                if (sidebar.classList.contains('hidden')) {
-                    sidebar.classList.remove('hidden');
-                    contentWrapper.classList.remove('full-width');
-                } else {
-                    sidebar.classList.add('hidden');
-                    contentWrapper.classList.add('full-width');
-                }
-            }
+            sidebar.classList.toggle('collapsed');
+            contentWrapper.classList.toggle('expanded');
         });
     }
 
-    // Mobile toggle button functionality
+    // Mobile toggle functionality
+    const mobileToggle = document.getElementById('mobileToggle');
     if (mobileToggle) {
-        mobileToggle.addEventListener('click', function (e) {
-            e.stopPropagation();
-            if (window.innerWidth <= 992) {
-                // Mobile toggle behavior
-                if (sidebar.classList.contains('mobile-open')) {
-                    sidebar.classList.remove('mobile-open');
-                } else {
-                    sidebar.classList.add('mobile-open');
-                }
-            } else {
-                // Desktop behavior
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebar.classList.remove('collapsed');
-                    contentWrapper.classList.remove('expanded');
-                } else if (sidebar.classList.contains('hidden')) {
-                    sidebar.classList.remove('hidden');
-                    contentWrapper.classList.remove('full-width');
-                } else {
-                    sidebar.classList.add('collapsed');
-                    contentWrapper.classList.add('expanded');
-                }
-            }
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function (e) {
-            if (
-                window.innerWidth <= 992 &&
-                sidebar.classList.contains('mobile-open') &&
-                !sidebar.contains(e.target) &&
-                e.target !== mobileToggle
-            ) {
-                sidebar.classList.remove('mobile-open');
-            }
+        mobileToggle.addEventListener('click', function(e) {
+            console.log('Mobile toggle clicked');
+            e.preventDefault();
+            sidebar.classList.toggle('mobile-open');
         });
     }
     
@@ -166,10 +109,4 @@ document.addEventListener('DOMContentLoaded', function() {
             feather.replace();
         }
     }, 500);
-
-    // After all event listeners and initialization, ensure sidebar is visible by default on desktop
-    if (window.innerWidth > 992 && localStorage.getItem('sidebarHidden') === null) {
-        sidebar.classList.remove('hidden');
-        contentWrapper.classList.remove('full-width');
-    }
-});
+}); 

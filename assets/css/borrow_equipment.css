@@ -95,23 +95,7 @@ h2 {
   transition: all 0.3s ease;
 }
 
-.btn-borrow-req {
-  background-color: #3498db;
-  color: white;
-}
-
-.btn-borrow-req:hover {
-  background-color: #2980b9;
-}
-
-.btn-cancel-borreq {
-  background-color: #ecf0f1;
-  color: #34495e;
-}
-
-.btn-cancel-borreq:hover {
-  background-color: #bdc3c7;
-}
+/* Button styles moved to styles.css */
 
 .error-message {
   background-color: #ffecee;

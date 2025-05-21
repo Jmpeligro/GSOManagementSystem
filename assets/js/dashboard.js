@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const available = parseInt(canvas.getAttribute('data-available')) || 0;
         const borrowed = parseInt(canvas.getAttribute('data-borrowed')) || 0;
         const maintenance = parseInt(canvas.getAttribute('data-maintenance')) || 0;
+        const critical = parseInt(canvas.getAttribute('data-critical')) || 0; 
      
         canvas.width = 300;
         canvas.height = 300;
@@ -16,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const equipmentStatusChart = new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Available', 'Borrowed', 'Maintenance'],
+                labels: ['Available', 'Borrowed', 'Maintenance', 'Critical'],
                 datasets: [{
-                    data: [available, borrowed, maintenance],
-                    backgroundColor: ['#8ecae6', '#219ebc', '#023047'],
+                    data: [available, borrowed, maintenance, critical],
+                    backgroundColor: ['#8ecae6', '#219ebc', '#023047', '#e74c3c'],
                     borderWidth: 1
                 }]
             },
@@ -33,6 +34,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             boxWidth: 12,
                             font: {
                                 size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((acc, val) => acc + val, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
                             }
                         }
                     }

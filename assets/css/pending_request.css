@@ -1,0 +1,87 @@
+/* Action buttons with icons */
+.btn.btn-approve,
+.btn.btn-deny,
+.btn.btn-view {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin: 0 4px;
+}
+
+.btn.btn-approve {
+    background-color: var(--primary);
+    color: white;
+}
+
+.btn.btn-approve:hover {
+    background-color: var(--secondary);
+}
+
+.btn.btn-deny {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn.btn-deny:hover {
+    background-color: #c0392b;
+}
+
+.btn.btn-view {
+    background-color: var(--info);
+    color: white;
+}
+
+.btn.btn-view:hover {
+    background-color: #2980b9;
+}
+
+/* Deny form styling */
+.deny-form {
+    position: absolute;
+    background: white;
+    padding: 16px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--gray-light);
+    z-index: 100;
+    margin-top: 8px;
+}
+
+.deny-form textarea {
+    width: 100%;
+    min-width: 300px;
+    padding: 8px 12px;
+    border: 1px solid var(--gray-light);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+.denial-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.denial-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+}
+
+/* Make table actions relative for proper deny form positioning */
+.actions {
+    position: relative;
+}
+
+/* Icon sizing */
+.btn i {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}

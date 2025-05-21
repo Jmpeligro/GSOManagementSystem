@@ -11,4 +11,3 @@ put
     document.getElementById('due_date').value = formatDate(nextWeek);
 });
 
-

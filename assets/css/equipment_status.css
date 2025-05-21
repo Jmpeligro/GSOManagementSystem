@@ -18,18 +18,37 @@
 }
 
 .status-borrowed {
- background-color: rgba(46, 204, 113, 0.15);
+  background-color: rgba(46, 204, 113, 0.15);
   color: #27ae60;
 }
 
-.status-partially_borrowed {
+.status-partially-borrowed {
   background-color: rgba(241, 196, 15, 0.15);
   color: #d68910;
 }
 
+.status-critical {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
 .status-maintenance {
-    background-color: #ffc107;  /* Yellow/Amber */
-    color: #212529;  /* Dark text for better contrast on yellow */
+    background-color: #ecc95f;
+    color: #212529; 
 }
 
 .status-retired {
@@ -40,6 +59,24 @@
 .status-denied {
   background-color: rgba(231, 76, 60, 0.15);
   color: #c0392b;
+}
+
+.status-returned_overdue {
+  background-color: rgba(230, 126, 34, 0.15);
+  color: #d35400;
+  border: 1px dashed #e67e22;
+}
+
+.status-critical {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+    border: 1px dashed #e74c3c;
+}
+
+.status-critical::after {
+    content: " (Critical)";
+    font-size: 0.7em;
+    font-style: italic;
 }
 
 /* Hover effects for better user experience */

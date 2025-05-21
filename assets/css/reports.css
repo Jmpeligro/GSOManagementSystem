@@ -198,6 +198,10 @@
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
+    .report-chart-container{
+        width: 100%;
+        overflow-x:auto;
+    }
     .report-cards {
         grid-template-columns: 1fr;
     }
@@ -215,6 +219,39 @@
     
     .date-range-inputs input {
         width: 100%;
+    }
+
+    .data-table.report-table{
+        table-layout: fixed;
+        width:100% !important;
+
+    }
+}
+
+@media (max-width:968px) {
+    .report-cards {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+    
+    .radio-group,
+    .checkbox-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .date-range-inputs {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .date-range-inputs input {
+        width: 100%;
+    }
+
+    .data-table.report-table{
+        table-layout: fixed;
+        width:100% !important;
+
     }
 }
 
