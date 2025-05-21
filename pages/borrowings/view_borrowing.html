@@ -40,9 +40,14 @@
                 
                 <div class="info-row">
                     <span class="label">Status:</span>
-                    <span class="value">
-                        <span class="status-badge status-<?php echo $status_class; ?>">
-                            <?php echo $is_overdue ? 'Overdue' : ucfirst($borrowing_data['status']); ?>
+                    <span class="value">                        <span class="status-badge status-<?php echo $status_class; ?>">
+                            <?php 
+                            if ($borrowing_data['status'] === 'returned_overdue') {
+                                echo 'Returned/Overdue';
+                            } else {
+                                echo $is_overdue ? 'Overdue' : ucfirst($borrowing_data['status']);
+                            }
+                            ?>
                         </span>
                     </span>
                 </div>
@@ -150,11 +155,8 @@
                     <span class="value"><?php echo $borrowing_data['returned_first_name'] . ' ' . $borrowing_data['returned_last_name']; ?></span>
                 </div>
                 <?php endif; ?>
-            </div>
-            
-            <?php if ($borrowing_data['status'] == 'active' && $borrowing_data['approval_status'] == 'approved' && $borrower['user_id'] == $_SESSION['user_id']): ?>
-            <div class="section-title">Return Equipment</div>
-            <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"] . "?id=" . $borrowing_id); ?>" class="return-form">
+            </div>            
+            <?php if (($borrowing_data['status'] == 'active' || $borrowing_data['status'] == 'overdue') && $borrowing_data['approval_status'] == 'approved' && $borrower['user_id'] == $_SESSION['user_id']): ?>            <div class="section-title">Return Equipment</div>            <form method="post" action="../../php/borrowings/view_borrowing.php?id=<?php echo $borrowing_id; ?>" class="return-form">
                 <div class="form-group">
                     <label for="condition">Equipment Condition</label>
                     <select id="condition" name="condition" required>
@@ -163,13 +165,12 @@
                         <option value="damaged">Damaged</option>
                     </select>
                 </div>
-                
                 <div class="form-group">
-                    <label for="return_notes">Return Notes (Optional)</label>
-                    <textarea id="return_notes" name="return_notes" rows="2" placeholder="Add any notes about the condition of the equipment or return process"></textarea>
+                    <label for="return_notes">Return Notes</label>
+                    <textarea id="return_notes" name="return_notes" rows="2" placeholder="Add any notes about the condition of the equipment or return process" required></textarea>
                 </div>
                 <div class="form-buttons">
-                    <button type="submit" name="return" class="btn btn-return-equipment" onclick="return confirm('Are you sure you want to return this equipment?')">Return Equipment</button>
+                    <button type="submit" name="return" value="1" class="btn btn-return-equipment" onclick="return confirm('Are you sure you want to return this equipment?')">Return Equipment</button>
                 </div>
             </form>
             <?php endif; ?>

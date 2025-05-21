@@ -50,13 +50,11 @@
         
         <div class="filter-section">
             <form method="get" action="../../php/categories/categories.php" class="filter-form">
-                <div class="form-group search-group">
-                    <div class="search-bar-wrapper">
+                <div class="form-group search-group" style="grid-column: 1 / -1;">
+                    <label for="search">Search Categories</label>
+                    <div class="search-container">
                         <input type="text" id="search" name="search" value="<?php echo htmlspecialchars($search_query); ?>" placeholder="Search by name or description...">
-                        <button type="submit" class="btn btn-filter-equipment">Search</button>
-                        <?php if (!empty($search_query)): ?>
-                        <a href="../../php/categories/categories.php" class="btn btn-secondary">Clear</a>
-                        <?php endif; ?>
+                        <button type="submit" class="btn btn-search">Search</button>
                     </div>
                 </div>
             </form>
@@ -64,7 +62,7 @@
         
         <div class="categories-list">
             <?php if (isset($categories) && count($categories) > 0): ?>
-                <table class="data-table">
+                <table class="data-table table">
                     <thead>
                         <tr>
                             <th>Category Name</th>

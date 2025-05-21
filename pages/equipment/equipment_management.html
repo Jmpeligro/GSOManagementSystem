@@ -33,85 +33,94 @@
         <?php endif; ?>
         
         <?php
-        // Initialize $notes to avoid undefined variable warning
         $notes = $notes ?? '';
         ?>
         
-        <form method="post" action="../../php/equipment/equipment_management.php" class="form">
-            <div class="form-group">
-                <label for="name">Equipment Name <span class="required">*</span></label>
-                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="equipment_code">Equipment Code <span class="required">*</span></label>
-                <input type="text" id="equipment_code" name="equipment_code" value="<?php echo htmlspecialchars($equipment_code); ?>" required>
-                <small>A unique identifier for this equipment</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="description">Description</label>
-                <textarea id="description" name="description" rows="4"><?php echo htmlspecialchars($description); ?></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="category_id">Category <span class="required">*</span></label>
-                <select id="category_id" name="category_id" required>
-                    <option value="">Select Category</option>
-                    <?php 
-                    // Reset the result pointer
-                    $categories_result->data_seek(0);
-                    while ($category = $categories_result->fetch_assoc()): 
-                    ?>
-                    <option value="<?php echo $category['category_id']; ?>" <?php echo $category_id == $category['category_id'] ? 'selected' : ''; ?>>
-                        <?php echo $category['name']; ?>
-                    </option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="condition_status">Condition <span class="required">*</span></label>
-                <select id="condition_status" name="condition_status" required>
-                    <option value="">Select Condition</option>
-                    <option value="new" <?php echo $condition_status == 'new' ? 'selected' : ''; ?>>New</option>
-                    <option value="good" <?php echo $condition_status == 'good' ? 'selected' : ''; ?>>Good</option>
-                    <option value="fair" <?php echo $condition_status == 'fair' ? 'selected' : ''; ?>>Fair</option>
-                    <option value="poor" <?php echo $condition_status == 'poor' ? 'selected' : ''; ?>>Poor</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="status">Status <span class="required">*</span></label>
-                <select id="status" name="status" required>
-                    <option value="">Select Status</option>
-                    <option value="available" <?php echo $status == 'available' ? 'selected' : ''; ?>>Available</option>
-                    <option value="maintenance" <?php echo $status == 'maintenance' ? 'selected' : ''; ?>>Maintenance</option>
-                    <option value="retired" <?php echo $status == 'retired' ? 'selected' : ''; ?>>Retired</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="quantity">Quantity <span class="required">*</span></label>
-                <input type="number" id="quantity" name="quantity" value="<?php echo isset($quantity) ? htmlspecialchars($quantity) : 1; ?>" min="1" required>
-                <small>Number of units available for this equipment</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="acquisition_date">Acquisition Date <span class="required">*</span></label>
-                <input type="date" id="acquisition_date" name="acquisition_date" value="<?php echo htmlspecialchars($acquisition_date); ?>" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="notes">Notes</label>
-                <textarea id="notes" name="notes" rows="4"><?php echo htmlspecialchars($notes); ?></textarea>
-            </div>
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="../../php/equipment/equipment_management.php" class="auth-form">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="name">Equipment Name <span class="required">*</span></label>
+                            <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="equipment_code">Equipment Code <span class="required">*</span></label>
+                            <input type="text" id="equipment_code" name="equipment_code" value="<?php echo htmlspecialchars($equipment_code); ?>" required>
+                            <div class="form-text">A unique identifier for this equipment</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" rows="4"><?php echo htmlspecialchars($description); ?></textarea>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="category_id">Category <span class="required">*</span></label>
+                            <select id="category_id" name="category_id" required>
+                                <option value="">Select Category</option>
+                                <?php 
+                                $categories_result->data_seek(0);
+                                while ($category = $categories_result->fetch_assoc()): 
+                                ?>
+                                <option value="<?php echo $category['category_id']; ?>" <?php echo $category_id == $category['category_id'] ? 'selected' : ''; ?>>
+                                    <?php echo $category['name']; ?>
+                                </option>
+                                <?php endwhile; ?>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="condition_status">Condition <span class="required">*</span></label>
+                            <select id="condition_status" name="condition_status" required>
+                                <option value="">Select Condition</option>
+                                <option value="new" <?php echo $condition_status == 'new' ? 'selected' : ''; ?>>New</option>
+                                <option value="good" <?php echo $condition_status == 'good' ? 'selected' : ''; ?>>Good</option>
+                                <option value="fair" <?php echo $condition_status == 'fair' ? 'selected' : ''; ?>>Fair</option>
+                                <option value="poor" <?php echo $condition_status == 'poor' ? 'selected' : ''; ?>>Poor</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="status">Status <span class="required">*</span></label>
+                            <select id="status" name="status" required>
+                                <option value="">Select Status</option>
+                                <option value="available" <?php echo $status == 'available' ? 'selected' : ''; ?>>Available</option>
+                                <option value="maintenance" <?php echo $status == 'maintenance' ? 'selected' : ''; ?>>Maintenance</option>
+                                <option value="retired" <?php echo $status == 'retired' ? 'selected' : ''; ?>>Retired</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="quantity">Quantity <span class="required">*</span></label>
+                            <input type="number" id="quantity" name="quantity" value="<?php echo isset($quantity) ? htmlspecialchars($quantity) : 1; ?>" min="1" required>
+                            <div class="form-text">Number of units available for this equipment</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="acquisition_date">Acquisition Date <span class="required">*</span></label>
+                            <input type="date" id="acquisition_date" name="acquisition_date" value="<?php echo htmlspecialchars($acquisition_date); ?>" required>
+                        </div>
+                        
+                        <div class="form-group">                            <label for="notes">Notes</label>
+                            <textarea id="notes" name="notes" rows="4"><?php echo isset($notes) ? htmlspecialchars($notes) : ''; ?></textarea>
+                        </div>
+                    </div>
 
-            <div class="form-actions">
-                <button type="submit" class="btn btn-add-equipment">Add Equipment</button>
-                <button type="reset" class="btn btn-reset-addequipment">Reset</button>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn-add-equipment">Add Equipment</button>
+                        <button type="reset" class="btn btn-cancel-equipment">Reset</button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
     
     <?php include '../../components/footer.php'; ?>

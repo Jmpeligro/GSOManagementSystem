@@ -6,6 +6,7 @@
     <title>View Equipment - University GSO</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/view_equipment.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <?php include '../../components/sidebar.php'; ?>
@@ -17,15 +18,14 @@
         </div>
         
         <?php if (isset($_SESSION['success'])): ?>
-        <div class="success-message">
+        <div class="alert alert-success">
             <?php 
                 echo $_SESSION['success']; 
                 unset($_SESSION['success']);
             ?>
         </div>
         <?php endif; ?>
-        
-        <?php if (isset($_SESSION['error'])): ?>
+          <?php if (isset($_SESSION['error'])): ?>
         <div class="error-message">
             <?php 
                 echo $_SESSION['error']; 
@@ -158,11 +158,31 @@
             </div>
             <?php endif; ?>
             
-            <div class="equipment-history">
-                <h4>Borrowing History</h4>
+           <div class="equipment-history">
+                <h4>
+                    <?php if (isAdmin()): ?>
+                        Borrowing History
+                    <?php else: ?>
+                        Your Borrowing History
+                    <?php endif; ?>
+                </h4>
                 
-                <?php if (empty($borrowing_history)): ?>
-                <p class="no-history">No borrowing history for this equipment.</p>
+                <?php 
+                if (!isAdmin()) {
+                    $borrowing_history = array_filter($borrowing_history, function($history) {
+                        return $history['user_id'] == $_SESSION['user_id'];
+                    });
+                }
+                
+                if (empty($borrowing_history)): 
+                ?>
+                <p class="no-history">
+                    <?php if (isAdmin()): ?>
+                        No borrowing history for this equipment.
+                    <?php else: ?>
+                        You haven't borrowed this equipment before.
+                    <?php endif; ?>
+                </p>
                 <?php else: ?>
                 <div class="history-table-container">
                     <table class="history-table">
@@ -204,7 +224,9 @@
                                 </td>
                                 <?php if (isAdmin()): ?>
                                 <td class="action-column">
-                                    <a href="../../php/equipment/view_borrowing.php?id=<?php echo $history['borrowing_id']; ?>" class="btn btn-sm btn-view">View</a>
+                                    <a href="/GSO System/php/borrowings/view_borrowing.php?id=<?php echo $history['borrowing_id']; ?>" class="btn btn-sm btn-view">
+                                        <i class="fa fa-eye"></i>
+                                    </a>
                                 </td>
                                 <?php endif; ?>
                             </tr>

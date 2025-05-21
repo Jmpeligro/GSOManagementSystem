@@ -18,13 +18,12 @@
         </div>
         
         <?php if (isset($_SESSION['error'])): ?>
-            <div class="error-message">
+            <div class="alert alert-danger">
                 <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
             </div>
         <?php endif; ?>
         
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="success-message">
+        <?php if (isset($_SESSION['success'])): ?>            <div class="success-message">
                 <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
             </div>
         <?php endif; ?>
@@ -241,17 +240,17 @@
             <div class="report-summary-boxes">
                 <?php $stats = getReportStats($conn); ?>
                 
-                <div class="summary-box summary-box-available">
+                <div class="summary-box">
                     <div class="label">Available Equipment</div>
                     <div class="value"><?php echo $stats['equipment_status']['available'] ?? 0; ?></div>
                 </div>
                 
-                <div class="summary-box summary-box-maintenance">
+                <div class="summary-box maintenance">
                     <div class="label">Under Maintenance</div>
                     <div class="value"><?php echo $stats['equipment_status']['maintenance'] ?? 0; ?></div>
                 </div>
                 
-                <div class="summary-box summary-box-active">
+                <div class="summary-box">
                     <div class="label">Active Borrowings</div>
                     <div class="value"><?php echo $stats['borrowing_status']['active'] ?? 0; ?></div>
                 </div>

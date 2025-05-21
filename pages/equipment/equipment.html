@@ -9,21 +9,21 @@
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link rel="stylesheet" href="../../assets/css/search_autocomplete.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
+<body>    
     <?php include '../../components/sidebar.php'; ?>
     
     <div class="container">
         <div class="page-header">
-            <h2>Equipment Management</h2>
+            <h2><?php echo (isAdmin() ? 'Equipment Management' : 'Available Equipment'); ?></h2>
             <?php if (isAdmin()): ?>
-            <a href="../../php/equipment/equipment_management.php" class="btn btn-add-equipment">Add New Equipment</a>
-            <a href="../../php/equipment/maintenance.php" class="btn-maintenance">Equipment Maintenance</a>
+            <a href="equipment_management.php" class="btn btn-add-equipment">Add New Equipment</a>
+            <a href="maintenance.php" class="btn-maintenance">Equipment Maintenance</a>
+            <?php else: ?>
+            <a href="../borrowings/borrow_equipment.php" class="btn btn-borrow">Borrow Equipment</a>
             <?php endif; ?>
         </div>
         
-        
-        <?php if (isset($_SESSION['success'])): ?>
+          <?php if (isset($_SESSION['success'])): ?>
         <div class="success-message">
             <?php 
                 echo $_SESSION['success']; 
@@ -42,22 +42,7 @@
         <?php endif; ?>
         
     <div class="filter-section">
-    <form method="get" action="../equipment/equipment.php" class="filter-form" id="equipmentFilterForm">
-        <div class="search-bar-wrapper">
-            <input 
-                type="text" 
-                id="search" 
-                name="search" 
-                value="<?php echo htmlspecialchars($search_query); ?>" 
-                placeholder="Search equipment, category, status..."
-                autocomplete="off"
-            >
-            <button type="button" class="btn btn-advanced-filter" id="toggleAdvancedFilters">
-                <i class="fa fa-filter"></i> Advanced
-            </button>
-            <button type="submit" class="btn btn-filter-equipment">Search</button>
-        </div>
-        <div class="advanced-filters" id="advancedFilters" style="display: none;">
+        <form method="get" action="../equipment/equipment.php" class="filter-form">
             <div class="form-group">
                 <label for="status">Status</label>
                 <select id="status" name="status">
@@ -67,6 +52,7 @@
                     <option value="retired" <?php echo $status_filter == 'retired' ? 'selected' : ''; ?>>Retired</option>
                 </select>
             </div>
+        
             <div class="form-group">
                 <label for="category">Category</label>
                 <select id="category" name="category">
@@ -81,13 +67,30 @@
                     <?php endwhile; ?>
                 </select>
             </div>
-        </div>
-    </form>
-</div>
+            
+            <button type="submit" class="btn btn-filter-equipment">Apply Filters</button>
+            <a href="../equipment/equipment.php" class="btn btn-reset-equipment">Reset</a>
+
+            <div class="form-group search-group" style="grid-column: 1 / -1;">
+                <label for="search">Search Equipment</label>
+                <div class="search-container">
+                    <input 
+                        type="text" 
+                        id="search" 
+                        name="search" 
+                        value="<?php echo htmlspecialchars($search_query); ?>" 
+                        placeholder="Search equipment..."
+                        autocomplete="off"
+                    >
+                    <button type="submit" class="btn btn-search">Search</button>
+                </div>
+            </div>
+        </form>
+    </div>
         
         <div class="equipment-list">
             <?php if (!empty($result)): ?>
-                <table class="data-table">
+                <table class="data-table table">
                     <thead>
                         <tr>  
                             <th>Name</th>
@@ -102,18 +105,12 @@
                         <?php foreach ($result as $row): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($row['name']); ?></td>
-                            <td><?php echo htmlspecialchars($row['category_name']); ?></td>
-                            <td>
+                            <td><?php echo htmlspecialchars($row['category_name']); ?></td>                            <td>
                                 <?php 
-                                $display_status = $row['display_status'];
-                                $status_class = $display_status;
-                                $status_text = ucfirst($display_status);
-                                
-                                if ($display_status == 'partially_borrowed') {
-                                    $status_text = 'Partially Borrowed';
-                                }
+                                $display_status = isset($row['display_status']) ? $row['display_status'] : $row['status'];
+                                $status_info = getEquipmentStatusDisplay($display_status, $row['available_quantity'], $row['quantity']);
                                 ?>
-                                <span class="status-badge status-<?php echo $status_class; ?>"><?php echo $status_text; ?></span>
+                                <span class="status-badge status-<?php echo $status_info['class']; ?>"><?php echo $status_info['text']; ?></span>
                             </td>
                             <td><?php echo ucfirst($row['condition_status']); ?></td>
                             <td>
@@ -125,7 +122,7 @@
                                     <?php if (isAdmin()): ?>
                                         <?php if ($row['display_status'] != 'borrowed'): ?>
                                         <button type="button" class="btn btn-small btn-update-status" title="Update Status" 
-                                            onclick="openStatusModal('<?php echo $row['equipment_id']; ?>', '<?php echo $row['display_status']; ?>')">
+                                            onclick="openStatusModal('<?php echo $row['equipment_id']; ?>','<?php echo $row['display_status']; ?>')">
                                             <i class="fa fa-check"></i>
                                         </button>
                                         <?php endif; ?>
@@ -149,8 +146,7 @@
                                         </form>
                                         <?php endif; ?>
                                     <?php endif; ?>
-                                    
-                                    <?php if (($row['display_status'] == 'available' || $row['display_status'] == 'partially_borrowed') && $row['available_quantity'] > 0 && $_SESSION['role'] !== 'admin'): ?>
+                                      <?php if ($row['available_quantity'] > 0 && $_SESSION['role'] !== 'admin'): ?>
                                     <a href="../borrowings/borrow_equipment.php?id=<?php echo $row['equipment_id']; ?>" class="btn btn-small btn-borrow" title="Borrow"><i class="fa fa-arrow-right-to-bracket"></i></a>
                                     <?php endif; ?>
                                 </td>
@@ -173,9 +169,9 @@
     <script src="../../assets/js/equipment_search.js"></script>
     <script src="../../assets/js/apply_status_badges.js"></script>
 
-    <div id="statusModal" class="status-modal">
-      <div class="status-modal-content">
-        <span class="close" onclick="closeStatusModal()">&times;</span>
+    <div id="statusModal" class="modal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+      <div class="modal-content" style="background:#fff; padding:2rem; border-radius:8px; max-width:400px; margin:auto; position:relative;">
+        <span class="close" onclick="closeStatusModal()" style="position:absolute; top:10px; right:20px; font-size:1.5rem; cursor:pointer;">&times;</span>
         <h3>Update Equipment Status</h3>
         <form id="statusModalForm" method="post" action="../equipment/equipment.php">
         <input type="hidden" name="equipment_id" id="modal_equipment_id">
