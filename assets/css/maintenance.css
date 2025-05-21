@@ -207,14 +207,14 @@
 .maint-listbox {
   display: block;
   width: 100%;
-  height: 38px;  /* Increased from 10px to make it visible */
+  height: 38px; 
   padding: 6px 12px;
   font-size: 14px;
   color: #333;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 4px;
-  appearance: auto; /* Ensure native dropdown arrow is visible */
+  appearance: auto; 
 }
 
 /* Make cost input match other form elements */

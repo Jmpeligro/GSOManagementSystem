@@ -1,0 +1,127 @@
+h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+}
+
+.equipment-details {
+  background-color: #f8f9fa;
+  border-left: 4px solid #3498db;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 0 5px 5px 0;
+}
+
+.equipment-details h3 {
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.details-row {
+  display: flex;
+  margin-bottom: 10px;
+  align-items: baseline;
+}
+
+.label {
+  font-weight: bold;
+  min-width: 150px;
+  color: #34495e;
+}
+
+.value {
+  color: #2c3e50;
+}
+
+.borrow-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #34495e;
+}
+
+.form-group input[type="datetime-local"],
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.agreement {
+  grid-column: span 2;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.agreement input {
+  margin-top: 5px;
+}
+
+.form-buttons {
+  grid-column: span 2;
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+  margin-bottom: 10%;
+}
+
+.btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* Button styles moved to styles.css */
+
+.error-message {
+  background-color: #ffecee;
+  color: #e74c3c;
+  padding: 12px;
+  border-left: 4px solid #e74c3c;
+  margin-bottom: 20px;
+  border-radius: 0 4px 4px 0;
+}
+
+.success-message {
+  background-color: #efffef;
+  color: #27ae60;
+  padding: 12px;
+  border-left: 4px solid #27ae60;
+  margin-bottom: 20px;
+  border-radius: 0 4px 4px 0;
+}
+
+@media (max-width: 768px) {
+  .borrow-form {
+    grid-template-columns: 1fr;
+  }
+
+  .agreement,
+  .form-buttons {
+    grid-column: 1;
+  }
+}

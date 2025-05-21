@@ -190,51 +190,6 @@
     margin-bottom: 32px;
   }
   
-  /* Borrowing history */
-  .borrowing-history {
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    padding: 24px;
-  }
-  
-  .borrowing-history h4 {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--primary);
-    margin-top: 0;
-    margin-bottom: 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--gray-light);
-  }
-  
-  .borrowing-history .data-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .borrowing-history .data-table th {
-    background-color: rgba(67, 97, 238, 0.05);
-    color: var(--primary);
-    font-weight: 600;
-    padding: 12px 16px;
-    text-align: left;
-    border-bottom: 2px solid var(--gray-light);
-  }
-  
-  .borrowing-history .data-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--gray-light);
-  }
-  
-  .borrowing-history .data-table tr:last-child td {
-    border-bottom: none;
-  }
-  
-  .borrowing-history .data-table tr:hover {
-    background-color: rgba(240, 240, 240, 0.5);
-  }
-  
   /* Page header styling */
   .page-header {
     display: flex;
@@ -391,3 +346,173 @@
       overflow-x: auto;
     }
   }
+
+  /* Enhanced Borrowing History Section */
+.equipment-history {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.equipment-history h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin-top: 0;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.no-history {
+  padding: 16px;
+  background-color: rgba(240, 240, 240, 0.5);
+  border-radius: 8px;
+  font-style: italic;
+  color: var(--gray-dark);
+  text-align: center;
+}
+
+.history-table-container {
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.history-table th {
+  background-color: rgba(67, 97, 238, 0.05);
+  color: var(--primary);
+  font-weight: 600;
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--gray-light);
+}
+
+.history-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.history-table tr:last-child td {
+  border-bottom: none;
+}
+
+.history-table tr:hover {
+  background-color: rgba(240, 240, 240, 0.5);
+}
+
+/* Status badges for history table */
+.history-table .status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.history-table .status-returned {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+.history-table .status-overdue {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.history-table .status-borrowed {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.not-returned {
+  color: var(--danger);
+  font-weight: 500;
+  font-style: italic;
+}
+
+.overdue-row {
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+.overdue-row:hover {
+  background-color: rgba(231, 76, 60, 0.1) !important;
+}
+
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.btn-view {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-view:hover {
+  background-color: var(--secondary);
+}
+
+/* Return Form Styling */
+.return-quantity, .condition-select, .notes-field {
+  margin-bottom: 15px;
+}
+
+.return-quantity label, .condition-select label, .notes-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-dark);
+  margin-bottom: 6px;
+}
+
+.return-quantity input, .condition-select select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-light);
+  border-radius: 4px;
+}
+
+.quantity-info {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--gray-dark);
+  margin-top: 4px;
+}
+
+.notes-field textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--gray-light);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+/* Action column */
+.action-column {
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .history-table {
+    min-width: 600px;
+  }
+  
+  .history-table-container {
+    margin: 0 -24px;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+}

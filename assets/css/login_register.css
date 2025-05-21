@@ -60,7 +60,6 @@ body::before {
     margin: 0 auto;
 }
 
-/* Register page specific */
 .register-container {
     max-width: 800px;
     margin: 0 auto;
@@ -77,4 +76,30 @@ body::before {
 .plp-logo {
     width: 100px;
     height: auto;
+}
+
+.small {
+    align-self: center;
+    padding-right: 175px;
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #c0392b;
+  border-left: 4px solid #e74c3c;
+  padding: 10px;
+  margin-bottom: 5px;
+}
+
+.success-message {
+  background-color: #efffef;
+  color: #27ae60;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #27ae60;
+  margin: 20px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.3s ease-in-out;
 }

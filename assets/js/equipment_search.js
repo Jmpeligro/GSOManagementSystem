@@ -1,27 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('search');
-    const searchContainer = searchInput ? searchInput.closest('.search-container') : null;
+    if (!searchInput) return;
+
+    let searchContainer = searchInput.parentElement;
+    if (!searchContainer.classList.contains('search-container')) {
+        searchContainer = document.createElement('div');
+        searchContainer.className = 'search-container';
+        searchInput.parentNode.insertBefore(searchContainer, searchInput);
+        searchContainer.appendChild(searchInput);
+    }
     
-    if (!searchInput || !searchContainer) return;
-    
-    // Create search results container
     const searchResults = document.createElement('div');
     searchResults.className = 'search-results';
     searchResults.style.display = 'none';
     
-    // Create search icon
     const searchIconContainer = document.createElement('div');
     searchIconContainer.className = 'search-icon-container';
-    searchIconContainer.innerHTML = '<i class="fa fa-search"></i>';
     
-    // Add the search icon to the input container
     searchContainer.classList.add('has-search-icon');
-    searchContainer.appendChild(searchIconContainer);
-    
-    // Insert the search results container after the search input
+    searchContainer.insertBefore(searchIconContainer, searchInput);
     searchContainer.appendChild(searchResults);
     
-    // Add event listeners
+    searchInput.closest('form').addEventListener('submit', function(e) {
+        if (document.activeElement === searchInput) {
+            e.preventDefault();
+        }
+    });
+    
     searchInput.addEventListener('input', debounce(handleSearch, 300));
     searchInput.addEventListener('focus', function() {
         if (searchInput.value.length > 1) {
@@ -29,14 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Close results when clicking outside
     document.addEventListener('click', function(event) {
         if (!searchInput.contains(event.target) && !searchResults.contains(event.target)) {
             hideResults();
         }
     });
     
-    // Debounce function to limit API calls
     function debounce(func, delay) {
         let timeout;
         return function() {
@@ -47,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
     
-    // Handle search input
     function handleSearch() {
         const query = searchInput.value.trim();
         
@@ -59,24 +61,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Show search results
     function showResults() {
         searchResults.style.display = 'block';
     }
     
-    // Hide search results
     function hideResults() {
         searchResults.style.display = 'none';
     }
     
-    // Fetch equipment data via AJAX
     function fetchEquipmentData(query) {
-        // Show loading indicator
-        searchResults.innerHTML = '<div class="search-loading"><i class="fa fa-spinner fa-spin"></i> Loading...</div>';
-        
-        // Make AJAX request
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `search_equipment.php?q=${encodeURIComponent(query)}`, true);
+        searchResults.innerHTML = '<div class="search-loading"><i class="fa fa-spinner fa-spin"></i> Loading...</div>';        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `../../php/equipment/search_equipment.php?q=${encodeURIComponent(query)}`, true);
         
         xhr.onload = function() {
             if (xhr.status === 200) {
@@ -98,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
         xhr.send();
     }
     
-    // Render search results
+
     function renderResults(data, query) {
         if (data.length === 0) {
             searchResults.innerHTML = `<div class="search-no-results"><i class="fa fa-info-circle"></i> No equipment found matching "${escapeHtml(query)}"</div>`;
@@ -108,18 +103,29 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '<ul class="search-results-list">';
         
         data.forEach(item => {
+            const isAdmin = item.is_admin;
+            const canBorrow = (item.status === 'available' || item.display_status === 'partially_borrowed') && 
+                            item.available_quantity > 0 && 
+                            !isAdmin;
+            
             html += `
                 <li class="search-result-item">
                     <div class="search-result-info">
                         <div class="search-result-name">${escapeHtml(item.name)}</div>
                         <div class="search-result-category">${escapeHtml(item.category_name)}</div>
+                        ${item.available_quantity ? 
+                            `<div class="search-result-quantity">Available: ${item.available_quantity} / ${item.quantity}</div>` 
+                            : ''}
                     </div>
                     <div class="search-result-actions">
-                        <span class="status-badge status-${item.status}">${capitalizeFirstLetter(item.status)}</span>
-                        ${item.status === 'available' ? 
+                        <span class="status-badge status-${item.display_status || item.status}">
+                            ${capitalizeFirstLetter(item.display_status === 'partially_borrowed' ? 'Partially Borrowed' : (item.display_status || item.status))}
+                        </span>
+                        ${canBorrow ? 
                             `<a href="../borrowings/borrow_equipment.php?id=${item.equipment_id}" class="btn-borrow">
                                 <i class="fa fa-arrow-right-to-bracket"></i> Borrow
-                            </a>` : ''}
+                            </a>` 
+                            : ''}
                         <a href="../equipment/view_equipment.php?id=${item.equipment_id}" class="btn btn-small btn-primary">
                             <i class="fa fa-eye"></i>
                         </a>
@@ -131,11 +137,9 @@ document.addEventListener('DOMContentLoaded', function() {
         html += '</ul>';
         searchResults.innerHTML = html;
         
-        // Add click handlers for search result items
         const resultItems = searchResults.querySelectorAll('.search-result-item');
         resultItems.forEach(item => {
             item.addEventListener('click', function(e) {
-                // Don't trigger if clicking on a button or link
                 if (e.target.tagName !== 'A' && !e.target.closest('a')) {
                     const name = this.querySelector('.search-result-name').textContent;
                     searchInput.value = name;
@@ -145,7 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Helper function to get status class
     function getStatusClass(status) {
         switch (status) {
             case 'available': return 'status-available';
@@ -156,12 +159,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Helper function to capitalize first letter
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
     
-    // Helper function to escape HTML
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")

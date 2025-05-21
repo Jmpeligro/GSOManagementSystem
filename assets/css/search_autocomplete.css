@@ -6,8 +6,23 @@
 
 .search-container {
     position: relative;
+    width: 200%;
 }
 
+.search-container input[type="text"] {
+    width: 100%;
+    padding: 10px 35px 10px 40px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+
+.search-container input[type="text"]:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+}
 
 .search-container.has-search-icon input[type="text"] {
     padding-left: 35px;
@@ -32,11 +47,16 @@
     z-index: 1000;
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 0 0 6px 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-height: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 400px;
     overflow-y: auto;
-    margin-top: 5px;
+    margin-top: 8px;
+    display: none;
+}
+
+.search-results.show {
+    display: block;
 }
 
 .search-results-list {
@@ -76,6 +96,13 @@
 .search-result-category {
     font-size: 0.85em;
     color: #6B7280;
+    margin-bottom: 2px;
+}
+
+.search-result-quantity {
+    font-size: 0.85em;
+    color: #374151;
+    margin-top: 2px;
 }
 
 .search-result-actions {
@@ -103,7 +130,6 @@
     color: #e53e3e;
 }
 
-/* Status badges in search results */
 .search-result-actions .status-badge {
     padding: 3px 8px;
     border-radius: 12px;
@@ -133,7 +159,6 @@
     color: #4b5563;
 }
 
-/* Borrow button in search results */
 .search-result-actions .btn-borrow {
     background-color: #3b82f6;
     color: white;
@@ -154,7 +179,7 @@
     background-color: #2563eb;
 }
 
-/* Responsive adjustments */
+
 @media (max-width: 640px) {
     .search-result-item {
         flex-direction: column;
@@ -168,14 +193,12 @@
     }
 }
 
-/* Focus styles for better accessibility */
 .filter-form input[type="text"]:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
 }
 
-/* Animation for search results */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }

@@ -1,0 +1,103 @@
+/* Equipment Status Badges Styling */
+.status-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Status Colors */
+.status-available {
+  background-color: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+}
+
+.status-borrowed {
+  background-color: rgba(46, 204, 113, 0.15);
+  color: #27ae60;
+}
+
+.status-partially-borrowed {
+  background-color: rgba(241, 196, 15, 0.15);
+  color: #d68910;
+}
+
+.status-partially-both {
+  color: #d68910;
+  background-color: rgba(241, 196, 15, 0.15);
+}
+
+.status-critical {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+  border: 1px solid rgba(231, 76, 60, 0.5);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(231, 76, 60, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+  }
+}
+
+.status-maintenance {
+  background-color: rgba(236, 201, 95, 0.15);
+  color: #8B6E10;
+}
+
+.status-retired {
+    background-color: #6c757d; 
+    border: 1px solid #5a6268;
+}
+
+.status-denied {
+  background-color: rgba(231, 76, 60, 0.15);
+  color: #c0392b;
+}
+
+.status-returned_overdue {
+  background-color: rgba(230, 126, 34, 0.15);
+  color: #d35400;
+  border: 1px dashed #e67e22;
+}
+
+.status-critical {
+    background-color: rgba(231, 76, 60, 0.15);
+    color: #c0392b;
+    border: 1px dashed #e74c3c;
+}
+
+.status-critical::after {
+    content: " (Critical)";
+    font-size: 0.7em;
+    font-style: italic;
+}
+
+.status-partially-maintenance {
+  background-color: rgba(236, 201, 95, 0.15);
+  color: #8B6E10;
+}
+
+.status-badge:hover {
+    opacity: 0.9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .status-badge {
+        margin-bottom: 4px;
+        min-width: 80px;
+        font-size: 0.8rem;
+    }
+}
